@@ -56,6 +56,7 @@ services:
       retries: 30
     networks:
       - app
+      - fixture
     restart: unless-stopped
 
   api:
@@ -138,6 +139,9 @@ services:
 networks:
   app:
     driver: bridge
+  fixture:
+    driver: bridge
+    internal: true
 
 volumes:
   postgres-data:

@@ -1,0 +1,247 @@
+{
+  "$defs": {
+    "CallSource": {
+      "enum": [
+        "fixture",
+        "manual_upload",
+        "broadvoice"
+      ],
+      "title": "CallSource",
+      "type": "string"
+    },
+    "DiarizationStatus": {
+      "enum": [
+        "available",
+        "partial",
+        "unavailable"
+      ],
+      "title": "DiarizationStatus",
+      "type": "string"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "analysis_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Adapter",
+          "type": "string"
+        },
+        "analysis_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Model Version",
+          "type": "string"
+        },
+        "call_source": {
+          "$ref": "#/$defs/CallSource"
+        },
+        "environment": {
+          "enum": [
+            "fixture",
+            "demonstration",
+            "staging",
+            "real_client"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "playbook_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Playbook Version",
+          "type": "string"
+        },
+        "processing_attempt_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Processing Attempt Id",
+          "type": "string"
+        },
+        "prompt_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "review-contracts-v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Call Id",
+          "type": "string"
+        },
+        "source_event_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Event Id",
+          "type": "string"
+        },
+        "transcript_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Adapter",
+          "type": "string"
+        },
+        "transcript_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Model Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "call_source",
+        "source_event_id",
+        "source_call_id",
+        "transcript_adapter",
+        "transcript_model_version",
+        "analysis_adapter",
+        "analysis_model_version",
+        "prompt_version",
+        "playbook_version",
+        "adapter_version",
+        "generated_at",
+        "processing_attempt_id",
+        "environment"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "Speaker": {
+      "enum": [
+        "staff",
+        "outside_caller",
+        "unknown_participant"
+      ],
+      "title": "Speaker",
+      "type": "string"
+    },
+    "SpeakerIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "asserted_label": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asserted Label"
+        },
+        "speaker": {
+          "$ref": "#/$defs/Speaker"
+        },
+        "verification_state": {
+          "enum": [
+            "unknown",
+            "unverified"
+          ],
+          "title": "Verification State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "speaker",
+        "verification_state"
+      ],
+      "title": "SpeakerIdentity",
+      "type": "object"
+    },
+    "TranscriptSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "identity": {
+          "$ref": "#/$defs/SpeakerIdentity"
+        },
+        "segment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "speaker": {
+          "$ref": "#/$defs/Speaker"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id",
+        "speaker",
+        "identity",
+        "start_seconds",
+        "end_seconds",
+        "text"
+      ],
+      "title": "TranscriptSegment",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "call_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Call Id",
+      "type": "string"
+    },
+    "diarization_status": {
+      "$ref": "#/$defs/DiarizationStatus"
+    },
+    "language": {
+      "enum": [
+        "en",
+        "es"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "segments": {
+      "items": {
+        "$ref": "#/$defs/TranscriptSegment"
+      },
+      "title": "Segments",
+      "type": "array"
+    },
+    "transcript_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Transcript Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "transcript_id",
+    "call_id",
+    "language",
+    "diarization_status",
+    "segments",
+    "provenance"
+  ],
+  "title": "Transcript",
+  "type": "object"
+}

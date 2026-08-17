@@ -1,0 +1,236 @@
+{
+  "$defs": {
+    "CallSource": {
+      "enum": [
+        "fixture",
+        "manual_upload",
+        "broadvoice"
+      ],
+      "title": "CallSource",
+      "type": "string"
+    },
+    "FailureClass": {
+      "enum": [
+        "invalid_media",
+        "transcriber_unavailable",
+        "invalid_structured_output",
+        "analyzer_unavailable"
+      ],
+      "title": "FailureClass",
+      "type": "string"
+    },
+    "ProcessingState": {
+      "enum": [
+        "RECEIVED",
+        "VALIDATED",
+        "QUEUED",
+        "MEDIA_READY",
+        "TRANSCRIBING",
+        "TRANSCRIBED",
+        "EXTRACTING_FACTS",
+        "APPLYING_PLAYBOOK",
+        "ANALYZED",
+        "AUDIO_INVALID",
+        "TRANSCRIPTION_FAILED",
+        "OUTPUT_VALIDATION_FAILED",
+        "ANALYSIS_FAILED"
+      ],
+      "title": "ProcessingState",
+      "type": "string"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "analysis_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Adapter",
+          "type": "string"
+        },
+        "analysis_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Model Version",
+          "type": "string"
+        },
+        "call_source": {
+          "$ref": "#/$defs/CallSource"
+        },
+        "environment": {
+          "enum": [
+            "fixture",
+            "demonstration",
+            "staging",
+            "real_client"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "playbook_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Playbook Version",
+          "type": "string"
+        },
+        "processing_attempt_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Processing Attempt Id",
+          "type": "string"
+        },
+        "prompt_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "review-contracts-v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Call Id",
+          "type": "string"
+        },
+        "source_event_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Event Id",
+          "type": "string"
+        },
+        "transcript_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Adapter",
+          "type": "string"
+        },
+        "transcript_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Model Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "call_source",
+        "source_event_id",
+        "source_call_id",
+        "transcript_adapter",
+        "transcript_model_version",
+        "analysis_adapter",
+        "analysis_model_version",
+        "prompt_version",
+        "playbook_version",
+        "adapter_version",
+        "generated_at",
+        "processing_attempt_id",
+        "environment"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "SanitizedProcessingFailure": {
+      "additionalProperties": false,
+      "properties": {
+        "diagnostic_code": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Diagnostic Code",
+          "type": "string"
+        },
+        "failure_class": {
+          "$ref": "#/$defs/FailureClass"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        },
+        "terminal_state": {
+          "enum": [
+            "AUDIO_INVALID",
+            "TRANSCRIPTION_FAILED",
+            "OUTPUT_VALIDATION_FAILED",
+            "ANALYSIS_FAILED"
+          ],
+          "title": "Terminal State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "failure_class",
+        "terminal_state",
+        "diagnostic_code",
+        "retryable"
+      ],
+      "title": "SanitizedProcessingFailure",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "attempt_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Attempt Id",
+      "type": "string"
+    },
+    "attempt_number": {
+      "minimum": 1,
+      "title": "Attempt Number",
+      "type": "integer"
+    },
+    "call_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Call Id",
+      "type": "string"
+    },
+    "completed_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Completed At"
+    },
+    "failure": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SanitizedProcessingFailure"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "state": {
+      "$ref": "#/$defs/ProcessingState"
+    }
+  },
+  "required": [
+    "attempt_id",
+    "call_id",
+    "attempt_number",
+    "state",
+    "started_at",
+    "provenance"
+  ],
+  "title": "ProcessingAttempt",
+  "type": "object"
+}

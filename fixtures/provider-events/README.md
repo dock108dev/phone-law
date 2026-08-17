@@ -1,3 +1,4 @@
-# Empty until an authorized later slice
+# Source-neutral ingestion fixtures
 
-No Broadvoice field shape or provider event is guessed in Slice 0.
+`../manifest.json` contains generic synthetic ingestion events. It does not model or guess any
+provider payload, URL, credential, webhook, or authentication contract.

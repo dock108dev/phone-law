@@ -1,0 +1,768 @@
+{
+  "$defs": {
+    "AdvisoryStatus": {
+      "enum": [
+        "advisory"
+      ],
+      "title": "AdvisoryStatus",
+      "type": "string"
+    },
+    "AnalysisAcceptanceState": {
+      "enum": [
+        "accepted",
+        "needs_review",
+        "rejected"
+      ],
+      "title": "AnalysisAcceptanceState",
+      "type": "string"
+    },
+    "AnalysisCategory": {
+      "enum": [
+        "new_intake",
+        "existing_client_follow_up",
+        "administrative",
+        "dissatisfaction_escalation",
+        "routine_no_action",
+        "unknown"
+      ],
+      "title": "AnalysisCategory",
+      "type": "string"
+    },
+    "AppointmentFact": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DateFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "purpose": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
+        "state": {
+          "$ref": "#/$defs/ValueState"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "AppointmentFact",
+      "type": "object"
+    },
+    "CallSource": {
+      "enum": [
+        "fixture",
+        "manual_upload",
+        "broadvoice"
+      ],
+      "title": "CallSource",
+      "type": "string"
+    },
+    "Confidence": {
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    },
+    "DateFact": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "expression": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expression"
+        },
+        "is_deadline": {
+          "default": false,
+          "title": "Is Deadline",
+          "type": "boolean"
+        },
+        "iso_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Iso Date"
+        },
+        "state": {
+          "$ref": "#/$defs/ValueState"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "DateFact",
+      "type": "object"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "excerpt": {
+          "minLength": 1,
+          "title": "Excerpt",
+          "type": "string"
+        },
+        "segment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "speaker": {
+          "$ref": "#/$defs/Speaker"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "segment_id",
+        "start_seconds",
+        "end_seconds",
+        "speaker",
+        "excerpt"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "ExtractedFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "appointments": {
+          "items": {
+            "$ref": "#/$defs/AppointmentFact"
+          },
+          "title": "Appointments",
+          "type": "array"
+        },
+        "caller_identity": {
+          "$ref": "#/$defs/IdentityClaim"
+        },
+        "caller_request": {
+          "$ref": "#/$defs/TextFact"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "dates": {
+          "items": {
+            "$ref": "#/$defs/DateFact"
+          },
+          "title": "Dates",
+          "type": "array"
+        },
+        "missing_context": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Missing Context",
+          "type": "array"
+        },
+        "monetary_figures": {
+          "items": {
+            "$ref": "#/$defs/MonetaryFigure"
+          },
+          "title": "Monetary Figures",
+          "type": "array"
+        },
+        "people_or_organizations": {
+          "items": {
+            "$ref": "#/$defs/TextFact"
+          },
+          "title": "People Or Organizations",
+          "type": "array"
+        },
+        "reported_facts": {
+          "items": {
+            "$ref": "#/$defs/TextFact"
+          },
+          "title": "Reported Facts",
+          "type": "array"
+        },
+        "requested_follow_up": {
+          "$ref": "#/$defs/TextFact"
+        },
+        "staff_commitments": {
+          "items": {
+            "$ref": "#/$defs/StaffCommitment"
+          },
+          "title": "Staff Commitments",
+          "type": "array"
+        },
+        "unresolved_questions": {
+          "items": {
+            "$ref": "#/$defs/UnresolvedQuestion"
+          },
+          "title": "Unresolved Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "caller_request",
+        "reported_facts",
+        "people_or_organizations",
+        "dates",
+        "appointments",
+        "monetary_figures",
+        "staff_commitments",
+        "requested_follow_up",
+        "unresolved_questions",
+        "missing_context",
+        "caller_identity",
+        "confidence"
+      ],
+      "title": "ExtractedFacts",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "finding_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "kind": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Kind",
+          "type": "string"
+        },
+        "material": {
+          "title": "Material",
+          "type": "boolean"
+        },
+        "statement": {
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "finding_id",
+        "kind",
+        "statement",
+        "material"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "IdentityClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "metadata_verified": {
+          "default": false,
+          "title": "Metadata Verified",
+          "type": "boolean"
+        },
+        "state": {
+          "enum": [
+            "unknown",
+            "unverified",
+            "present"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "IdentityClaim",
+      "type": "object"
+    },
+    "MonetaryFigure": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "anyOf": [
+            {
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,2})?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "state": {
+          "$ref": "#/$defs/ValueState"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "MonetaryFigure",
+      "type": "object"
+    },
+    "Priority": {
+      "enum": [
+        "immediate",
+        "high",
+        "normal",
+        "low"
+      ],
+      "title": "Priority",
+      "type": "string"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "analysis_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Adapter",
+          "type": "string"
+        },
+        "analysis_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Model Version",
+          "type": "string"
+        },
+        "call_source": {
+          "$ref": "#/$defs/CallSource"
+        },
+        "environment": {
+          "enum": [
+            "fixture",
+            "demonstration",
+            "staging",
+            "real_client"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "playbook_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Playbook Version",
+          "type": "string"
+        },
+        "processing_attempt_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Processing Attempt Id",
+          "type": "string"
+        },
+        "prompt_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "review-contracts-v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Call Id",
+          "type": "string"
+        },
+        "source_event_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Event Id",
+          "type": "string"
+        },
+        "transcript_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Adapter",
+          "type": "string"
+        },
+        "transcript_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Model Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "call_source",
+        "source_event_id",
+        "source_call_id",
+        "transcript_adapter",
+        "transcript_model_version",
+        "analysis_adapter",
+        "analysis_model_version",
+        "prompt_version",
+        "playbook_version",
+        "adapter_version",
+        "generated_at",
+        "processing_attempt_id",
+        "environment"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "ResponsibleRole": {
+      "enum": [
+        "intake_team",
+        "case_team",
+        "records_coordinator",
+        "supervising_attorney",
+        "spanish_speaking_intake",
+        "unassigned"
+      ],
+      "title": "ResponsibleRole",
+      "type": "string"
+    },
+    "Speaker": {
+      "enum": [
+        "staff",
+        "outside_caller",
+        "unknown_participant"
+      ],
+      "title": "Speaker",
+      "type": "string"
+    },
+    "StaffCommitment": {
+      "additionalProperties": false,
+      "properties": {
+        "commitment": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commitment"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "responsible_role": {
+          "$ref": "#/$defs/ResponsibleRole"
+        },
+        "state": {
+          "$ref": "#/$defs/ValueState"
+        },
+        "timing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DateFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "state",
+        "responsible_role"
+      ],
+      "title": "StaffCommitment",
+      "type": "object"
+    },
+    "TextFact": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "state": {
+          "$ref": "#/$defs/ValueState"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "TextFact",
+      "type": "object"
+    },
+    "UnresolvedQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "question": {
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "unknown",
+            "missing",
+            "unverified"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question",
+        "state"
+      ],
+      "title": "UnresolvedQuestion",
+      "type": "object"
+    },
+    "ValueState": {
+      "enum": [
+        "present",
+        "missing",
+        "unknown",
+        "unverified",
+        "not_mentioned"
+      ],
+      "title": "ValueState",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "acceptance_state": {
+      "$ref": "#/$defs/AnalysisAcceptanceState"
+    },
+    "advisory_status": {
+      "$ref": "#/$defs/AdvisoryStatus"
+    },
+    "analysis_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Analysis Id",
+      "type": "string"
+    },
+    "attorney_attention_issues": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Attorney Attention Issues",
+      "type": "array"
+    },
+    "call_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Call Id",
+      "type": "string"
+    },
+    "category": {
+      "$ref": "#/$defs/AnalysisCategory"
+    },
+    "confidence": {
+      "$ref": "#/$defs/Confidence"
+    },
+    "dissatisfaction_indicators": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Dissatisfaction Indicators",
+      "type": "array"
+    },
+    "facts": {
+      "$ref": "#/$defs/ExtractedFacts"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "internal_file_note_draft": {
+      "minLength": 1,
+      "title": "Internal File Note Draft",
+      "type": "string"
+    },
+    "omitted_information_findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Omitted Information Findings",
+      "type": "array"
+    },
+    "priority": {
+      "$ref": "#/$defs/Priority"
+    },
+    "proposed_next_steps": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Proposed Next Steps",
+      "type": "array"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "responsible_role": {
+      "$ref": "#/$defs/ResponsibleRole"
+    },
+    "suggested_response_timing": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Suggested Response Timing"
+    },
+    "summary": {
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    }
+  },
+  "required": [
+    "analysis_id",
+    "call_id",
+    "category",
+    "priority",
+    "summary",
+    "proposed_next_steps",
+    "responsible_role",
+    "attorney_attention_issues",
+    "dissatisfaction_indicators",
+    "omitted_information_findings",
+    "internal_file_note_draft",
+    "confidence",
+    "findings",
+    "acceptance_state",
+    "advisory_status",
+    "facts",
+    "provenance"
+  ],
+  "title": "StructuredAnalysis",
+  "type": "object"
+}

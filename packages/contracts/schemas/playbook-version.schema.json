@@ -1,0 +1,174 @@
+{
+  "$defs": {
+    "PlaybookRule": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "evidence_required": {
+          "title": "Evidence Required",
+          "type": "boolean"
+        },
+        "outcome": {
+          "minLength": 1,
+          "title": "Outcome",
+          "type": "string"
+        },
+        "rule_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Rule Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "description",
+        "evidence_required",
+        "outcome"
+      ],
+      "title": "PlaybookRule",
+      "type": "object"
+    },
+    "ResponsibleRole": {
+      "enum": [
+        "intake_team",
+        "case_team",
+        "records_coordinator",
+        "supervising_attorney",
+        "spanish_speaking_intake",
+        "unassigned"
+      ],
+      "title": "ResponsibleRole",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "allowed_responsible_roles": {
+      "items": {
+        "$ref": "#/$defs/ResponsibleRole"
+      },
+      "title": "Allowed Responsible Roles",
+      "type": "array"
+    },
+    "category_definitions": {
+      "items": {
+        "$ref": "#/$defs/PlaybookRule"
+      },
+      "title": "Category Definitions",
+      "type": "array"
+    },
+    "commitment_handling": {
+      "items": {
+        "$ref": "#/$defs/PlaybookRule"
+      },
+      "title": "Commitment Handling",
+      "type": "array"
+    },
+    "date_uncertainty_rules": {
+      "items": {
+        "$ref": "#/$defs/PlaybookRule"
+      },
+      "title": "Date Uncertainty Rules",
+      "type": "array"
+    },
+    "dissatisfaction_indicators": {
+      "items": {
+        "$ref": "#/$defs/PlaybookRule"
+      },
+      "title": "Dissatisfaction Indicators",
+      "type": "array"
+    },
+    "evidence_requirements": {
+      "items": {
+        "$ref": "#/$defs/PlaybookRule"
+      },
+      "title": "Evidence Requirements",
+      "type": "array"
+    },
+    "label": {
+      "minLength": 1,
+      "title": "Label",
+      "type": "string"
+    },
+    "playbook_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Playbook Id",
+      "type": "string"
+    },
+    "priority_rules": {
+      "items": {
+        "$ref": "#/$defs/PlaybookRule"
+      },
+      "title": "Priority Rules",
+      "type": "array"
+    },
+    "prohibited_conclusions": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "title": "Prohibited Conclusions",
+      "type": "array"
+    },
+    "prompt_injection_boundary": {
+      "items": {
+        "$ref": "#/$defs/PlaybookRule"
+      },
+      "title": "Prompt Injection Boundary",
+      "type": "array"
+    },
+    "routine_no_action_criteria": {
+      "items": {
+        "$ref": "#/$defs/PlaybookRule"
+      },
+      "title": "Routine No Action Criteria",
+      "type": "array"
+    },
+    "spanish_language_handling": {
+      "items": {
+        "$ref": "#/$defs/PlaybookRule"
+      },
+      "title": "Spanish Language Handling",
+      "type": "array"
+    },
+    "status": {
+      "const": "draft",
+      "title": "Status",
+      "type": "string"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "version": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "playbook_id",
+    "version",
+    "label",
+    "synthetic",
+    "status",
+    "allowed_responsible_roles",
+    "category_definitions",
+    "priority_rules",
+    "evidence_requirements",
+    "routine_no_action_criteria",
+    "dissatisfaction_indicators",
+    "commitment_handling",
+    "date_uncertainty_rules",
+    "spanish_language_handling",
+    "prompt_injection_boundary",
+    "prohibited_conclusions"
+  ],
+  "title": "PlaybookVersion",
+  "type": "object"
+}

@@ -2,13 +2,13 @@
 
 | Profile | Purpose | Real data | Adapters | Storage/auth |
 |---|---|---|---|---|
-| `test` | Deterministic automated checks | Always rejected | Fixture placeholders | Local synthetic/fake |
-| `demo` | Default local application | Always rejected | Fixture placeholders | Local synthetic/fake |
+| `test` | Deterministic automated checks | Always rejected | Fixture adapters | Local synthetic/fake |
+| `demo` | Default local application | Always rejected | Fixture adapters | Local synthetic/fake |
 | `staging` | Future firm-owned preproduction | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 | `production` | Future authorized deployment | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 
-The default is `demo` and `ALLOW_REAL_CALL_DATA=false`. Slice 0 has no route or model capable of
-accepting a call.
+The default is `demo` and `ALLOW_REAL_CALL_DATA=false`. Slice 1 has no route capable of accepting
+a call; its review models receive only committed synthetic fixtures.
 
 For `staging` or `production`, startup rejects:
 

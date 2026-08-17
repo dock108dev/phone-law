@@ -1,9 +1,10 @@
-# Colacci Law Call Review — Slice 0
+# Colacci Law Call Review — Slice 1
 
-This repository is the synthetic-only application foundation. It provides the API, worker,
-React web shell, PostgreSQL database, migration baseline, configuration safety rails, and
-offline test surface. It contains no call analysis, transcript fixture, real recording,
-Broadvoice contract, live AI integration, or cloud infrastructure.
+This repository contains the synthetic-only application foundation and deterministic review
+contract. It proves normalized ingestion, timestamped transcripts, facts-first analysis,
+playbook application, strict evidence validation, immutable accepted output, idempotency, and
+retry behavior. It contains no real recording, live AI, manual-upload route, Broadvoice
+contract, report, reviewer UI, notification, or cloud infrastructure.
 
 The sole roadmap and next-steps source is
 `/Users/michaelfuscoletti/Desktop/colacci_law_next_steps.md`. Do not add a repository-level
@@ -55,12 +56,13 @@ make dev
 ## Stable command surface
 
 ```bash
-make bootstrap          # build pinned images, start PostgreSQL, apply migration 0001
+make bootstrap          # build pinned images, start PostgreSQL, apply migration 0002
 make dev                # start database, migrate, and start API, worker, and web
 make lint               # formatting, lint, code security, pins, and secret scan
 make typecheck          # strict Python and TypeScript checks
 make test               # offline unit/security and web tests
 make test-integration   # empty-test-database migration and readiness tests
+make test-fixtures      # all 12 deterministic fixtures; report under /tmp
 make smoke              # API, worker, web, dashboard, database, and migration readiness
 ```
 
@@ -73,10 +75,11 @@ advisory/package registries and is therefore not part of the deterministic offli
 - `apps/worker`: Python worker process with independent health server. No jobs exist yet.
 - `apps/web`: React/TypeScript dashboard and health page.
 - `packages/config`: shared profiles and fail-closed startup validation.
-- `packages/contracts`: only the content-free health contract in Slice 0.
-- `packages/database`: database and current-migration readiness.
+- `packages/contracts`: strict review models and synchronized versioned JSON Schemas.
+- `packages/database`: readiness plus immutable synthetic review persistence.
+- `packages/review`: state machine, evidence validation, adapter protocols, and fixture pipeline.
 - `packages/observability`: correlation IDs and allowlisted structured logs.
-- `fixtures`: empty synthetic-only boundaries reserved for Slice 1.
+- `fixtures`: the twelve-scenario synthetic manifest and draft synthetic playbook.
 - `infrastructure/local`: pinned local containers and test database initialization.
 - `docs`: architecture, security, decisions, and runbooks.
 - `scripts`: stable command implementation and deterministic scanners.
@@ -89,9 +92,14 @@ adapters are configured. `staging` and `production` reject fake authentication, 
 missing secrets, local storage, fixture sources/transcribers/analyzers, absent retention,
 unauthorized real processing, debug mode, unsafe CORS, and local/example databases.
 
-The API and worker log only allowlisted operational metadata. Access logs are disabled. Request
+The API and worker log only allowlisted operational metadata. The review pipeline does not log
+call or transcript content. Access logs are disabled. Request
 headers, query strings, error details, database URLs, caller data, audio, and transcript content
 cannot enter the application logger.
+
+`make test-fixtures` uses only the local `colacci_test` database and local fixture adapters. It
+writes `report.json`, accepted English and Spanish examples, and one rejected-output example to
+`/tmp/colacci-law-fixtures/`; generated evidence is never written into the repository.
 
 See [architecture](docs/architecture.md), [technology choices](docs/technology.md),
 [configuration rules](docs/configuration.md), [adapter boundaries](docs/adapters.md), and the

@@ -1,13 +1,14 @@
 # Adapter boundaries
 
-These are architecture seams, not Slice 0 integrations. No call-shaped payload, vendor header,
-signature rule, credential, provider URL, retry schedule, or external request is implemented.
+These are architecture seams. Slice 1 implements only local deterministic fixture adapters. No
+vendor header, signature rule, credential, provider URL, external retry assumption, or network
+request is implemented.
 
-| Boundary | Synthetic/test option | Future option | Slice 0 state |
+| Boundary | Synthetic/test option | Future option | Slice 1 state |
 |---|---|---|---|
-| `CallSource` | `FixtureCallSource` | `ManualUploadCallSource`; `BroadvoiceCallSourcePlaceholder` | Configuration name only; no call contract or route |
-| `Transcriber` | `FixtureTranscriber` | Approved provider adapter | Configuration name only; disabled in deployment profiles |
-| `Analyzer` | `FixtureAnalyzer` | Approved structured analyzer | Configuration name only; disabled in deployment profiles |
+| `CallSource` | `FixtureCallSource` | Manual upload; Broadvoice only after approval | Deterministic generic ingestion events; no route |
+| `Transcriber` | `FixtureTranscriber` | Approved provider adapter | Exact fixture responses and named synthetic failures |
+| `Analyzer` | `FixtureAnalyzer` | Approved structured analyzer | Exact facts-first fixture responses; no keyword engine |
 | `ObjectStore` | `LocalSyntheticObjectStore` | `PrivateCloudObjectStore` | No object content stored; deployment requires private cloud setting |
 | `Notifier` | `NoOpNotifier` | `SecureReportReadyNotifier` | No-op setting only; no message or delivery code |
 

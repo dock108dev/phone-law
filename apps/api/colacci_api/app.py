@@ -1,4 +1,4 @@
-"""FastAPI liveness and readiness application for Slice 0."""
+"""FastAPI liveness and readiness application for the synthetic review stack."""
 
 from __future__ import annotations
 

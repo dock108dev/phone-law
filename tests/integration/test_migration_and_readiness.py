@@ -28,9 +28,17 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
 
     engine = create_engine(settings.sqlalchemy_database_url)
     try:
-        assert {"alembic_version", "system_metadata"}.issubset(
-            set(inspect(engine).get_table_names())
-        )
+        expected_tables = {
+            "alembic_version",
+            "analyses",
+            "calls",
+            "ingestion_events",
+            "playbook_versions",
+            "processing_attempts",
+            "system_metadata",
+            "transcripts",
+        }
+        assert expected_tables == set(inspect(engine).get_table_names())
         with engine.connect() as connection:
             revision = connection.execute(
                 text("SELECT version_num FROM alembic_version")
@@ -39,7 +47,7 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
                 text("SELECT value FROM system_metadata WHERE key = 'schema_purpose'")
             ).scalar_one()
         assert revision == EXPECTED_ALEMBIC_REVISION
-        assert purpose == "foundation_only"
+        assert purpose == "synthetic_review_contracts"
     finally:
         engine.dispose()
 

@@ -1,3 +1,4 @@
-# Empty until Slice 1
+# Synthetic transcript fixtures
 
-No transcript fixture or call-like content is authorized in Slice 0.
+English and Spanish timestamped transcripts are stored in `../manifest.json`. Every person,
+organization, date, identifier, and fact is invented for this deterministic suite.
