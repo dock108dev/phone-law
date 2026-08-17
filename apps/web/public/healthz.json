@@ -1,0 +1,6 @@
+{
+  "status": "up",
+  "service": "web",
+  "profile": "demo",
+  "synthetic_data": true
+}

@@ -1,0 +1,56 @@
+[project]
+name = "colacci-law-foundation"
+version = "0.1.0"
+description = "Synthetic-only Slice 0 foundation for Colacci Law Call Review"
+requires-python = "==3.13.5"
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --strict-config"
+cache_dir = "/tmp/colacci-law-pytest-cache"
+testpaths = ["tests"]
+markers = [
+  "integration: requires only the local PostgreSQL test database",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["apps", "packages"]
+omit = [
+  "apps/api/colacci_api/main.py",
+  "apps/api/migrations/*",
+  "apps/worker/colacci_worker/main.py",
+]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+extend-exclude = ["apps/api/migrations/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "S", "UP", "B", "A", "C4", "SIM", "RUF"]
+ignore = ["S101"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S105", "S106", "S107"]
+"apps/api/migrations/**/*.py" = ["N999"]
+"packages/config/settings.py" = ["S104"]
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+warn_unreachable = true
+show_error_codes = true
+exclude = ["apps/api/migrations/versions"]
+
+[[tool.mypy.overrides]]
+module = ["alembic.*"]
+ignore_missing_imports = true
+
+[tool.bandit]
+exclude_dirs = ["tests", "apps/api/migrations/versions"]
+skips = ["B101", "B104"]

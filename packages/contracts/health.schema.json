@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:colacci-law:foundation:health:v1",
+  "title": "Foundation health response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "service",
+    "profile",
+    "version",
+    "synthetic_data",
+    "database",
+    "migration"
+  ],
+  "properties": {
+    "status": { "enum": ["up", "ready", "not_ready"] },
+    "service": { "enum": ["api", "worker"] },
+    "profile": { "enum": ["test", "demo", "staging", "production"] },
+    "version": { "type": "string" },
+    "synthetic_data": { "type": "boolean" },
+    "database": { "enum": ["not_checked", "ready", "not_ready"] },
+    "migration": { "enum": ["not_checked", "current", "not_current"] }
+  }
+}
