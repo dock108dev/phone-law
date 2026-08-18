@@ -1,5 +1,14 @@
 # Adapter boundaries
 
+## Bounded OpenAI live verification
+
+The candidate OpenAI file-transcription adapter has a gated `live_test` factory. The
+factory revalidates every owner gate before client construction, sets SDK retries to
+zero, refuses redirects and arbitrary endpoints, and uses an injected shared request
+guard. Live requests use only `/v1/audio/transcriptions`,
+`gpt-4o-transcribe-diarize`, and `diarized_json`; longer media uses automatic chunking.
+Provider speaker labels remain opaque and map only to `unknown_participant`.
+
 These are architecture seams. Slices 1 and 2 implement local deterministic fixture adapters.
 Slice 3A adds a disabled candidate file-transcription adapter exercised only through an injected
 mock transport. No vendor credential, live provider URL, or external request is implemented.

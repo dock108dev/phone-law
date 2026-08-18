@@ -179,13 +179,40 @@
           "title": "Analysis Model Version",
           "type": "string"
         },
+        "authorization_reference": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Authorization Reference"
+        },
         "call_source": {
           "$ref": "#/$defs/CallSource"
+        },
+        "endpoint_class": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endpoint Class"
         },
         "environment": {
           "enum": [
             "fixture",
             "demonstration",
+            "live_test",
             "staging",
             "real_client"
           ],
@@ -206,6 +233,19 @@
           "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
           "title": "Processing Attempt Id",
           "type": "string"
+        },
+        "project_configuration": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Configuration"
         },
         "prompt_version": {
           "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",

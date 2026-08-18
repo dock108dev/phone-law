@@ -1,4 +1,4 @@
-"""Production-shaped OpenAI file-transcription adapter with no live Slice 3A factory."""
+"""OpenAI file-transcription adapter with a fail-closed Slice 3B live factory."""
 
 from __future__ import annotations
 
@@ -9,16 +9,20 @@ from dataclasses import dataclass
 from time import monotonic, sleep
 from typing import Any, Protocol, cast
 
+import httpx2
 from openai import (
     APIConnectionError,
     APIStatusError,
     APITimeoutError,
     AuthenticationError,
+    BadRequestError,
+    OpenAI,
+    PermissionDeniedError,
     RateLimitError,
 )
 from pydantic import BaseModel, ValidationError
 
-from packages.config import Settings
+from packages.config import AppProfile, Settings
 from packages.contracts.media import (
     DiarizationAvailability,
     MediaErrorClass,
@@ -65,6 +69,10 @@ class MediaResolver(Protocol):
     ) -> tuple[TemporaryObjectReference, MediaInspectionResult, object]: ...
 
 
+class RequestGuard(Protocol):
+    def __call__(self, inspection: MediaInspectionResult) -> None: ...
+
+
 @dataclass(frozen=True)
 class ProviderAttemptRecord:
     attempt_number: int
@@ -84,7 +92,7 @@ class TranscriptionAdapterError(RuntimeError):
 
 
 class LiveTranscriptionBlockedError(RuntimeError):
-    """Slice 3A hard stop: a live client cannot be constructed or executed."""
+    """A live client cannot be constructed or executed until every gate passes."""
 
 
 class OpenAITranscriber:
@@ -101,11 +109,17 @@ class OpenAITranscriber:
         sleeper: Callable[[float], None] = sleep,
         jitter: Callable[[], float] = lambda: 0.0,
         attempt_recorder: Callable[[ProviderAttemptRecord], None] | None = None,
+        request_guard: RequestGuard | None = None,
+        adapter_name: str = "openai-transcriber-candidate",
+        adapter_version: str = "openai-transcriber-candidate-v1",
     ) -> None:
         if not settings.synthetic_mode:
             raise LiveTranscriptionBlockedError("candidate_adapter_offline_profiles_only")
-        if settings.live_transcription_enabled or settings.live_transcription_authorized:
-            raise LiveTranscriptionBlockedError("slice3b_not_implemented")
+        if settings.app_profile is AppProfile.LIVE_TEST:
+            if not settings.transcription_live_execution_confirmed or request_guard is None:
+                raise LiveTranscriptionBlockedError("live_execution_confirmation_required")
+        elif settings.live_transcription_enabled or settings.live_transcription_authorized:
+            raise LiveTranscriptionBlockedError("live_profile_required")
         self.client = client
         self.media_resolver = media_resolver
         self.settings = settings
@@ -113,6 +127,9 @@ class OpenAITranscriber:
         self.sleeper = sleeper
         self.jitter = jitter
         self.attempt_recorder = attempt_recorder or (lambda _: None)
+        self.request_guard = request_guard
+        self.adapter_name = adapter_name
+        self.adapter_version = adapter_version
         self.model_version = settings.transcription_model_id
         self.request_metadata: list[TranscriptionRequestMetadata] = []
         self.response_metadata: TranscriptionResponseMetadata | None = None
@@ -157,6 +174,8 @@ class OpenAITranscriber:
             self.request_metadata.append(request_metadata)
             started = self.clock()
             try:
+                if self.request_guard is not None:
+                    self.request_guard(inspection)
                 with cast(Any, raw_path).open("rb") as media_file:
                     kwargs: dict[str, Any] = {
                         "file": (
@@ -220,6 +239,8 @@ class OpenAITranscriber:
             payload.get("diarization") == "unavailable"
             or payload.get("model") == self.settings.transcription_fallback_model_id
         )
+        if self.settings.app_profile is AppProfile.LIVE_TEST and fallback:
+            raise ValueError(MediaErrorClass.TRANSCRIPTION_RESPONSE_INVALID.value)
         if raw_segments is None:
             if not fallback:
                 raise ValueError(MediaErrorClass.TRANSCRIPTION_RESPONSE_INVALID.value)
@@ -370,8 +391,11 @@ class OpenAITranscriber:
         self, exc: Exception, attempt_number: int
     ) -> TranscriptionErrorClassification:
         retry_after = self._retry_after(exc)
-        if isinstance(exc, AuthenticationError):
+        if isinstance(exc, AuthenticationError | PermissionDeniedError):
             error_class = MediaErrorClass.TRANSCRIPTION_AUTH_FAILED
+            retryable = False
+        elif isinstance(exc, BadRequestError):
+            error_class = MediaErrorClass.TRANSCRIPTION_PROVIDER_FAILED
             retryable = False
         elif isinstance(exc, APITimeoutError | APIConnectionError):
             error_class = MediaErrorClass.TRANSCRIPTION_TIMEOUT
@@ -416,8 +440,51 @@ class OpenAITranscriber:
         return TranscriptionAdapterError(classification, ())
 
 
-def create_live_openai_transcriber(settings: Settings) -> OpenAITranscriber:
-    """Reject live construction in Slice 3A regardless of ambient credentials."""
+def create_live_openai_transcriber(
+    settings: Settings,
+    *,
+    media_resolver: MediaResolver | None = None,
+    request_guard: RequestGuard | None = None,
+    client_builder: Callable[[Settings], InjectedOpenAIClient] | None = None,
+) -> OpenAITranscriber:
+    """Construct the live client only after validated settings and final confirmation."""
 
-    del settings
-    raise LiveTranscriptionBlockedError("slice3b_authorization_and_factory_not_implemented")
+    try:
+        validated = Settings(  # type: ignore[call-arg]
+            _env_file=None,
+            **settings.model_dump(),
+        )
+    except ValidationError as exc:
+        raise LiveTranscriptionBlockedError("live_settings_validation_failed") from exc
+    if validated.app_profile is not AppProfile.LIVE_TEST:
+        raise LiveTranscriptionBlockedError("slice3b_live_test_profile_required")
+    if not validated.transcription_live_execution_confirmed:
+        raise LiveTranscriptionBlockedError("live_execution_confirmation_required")
+    if media_resolver is None or request_guard is None:
+        raise LiveTranscriptionBlockedError("live_media_boundary_required")
+    builder = client_builder or _build_live_client
+    client = builder(validated)
+    return OpenAITranscriber(
+        client=client,
+        media_resolver=media_resolver,
+        settings=validated,
+        request_guard=request_guard,
+        adapter_name="openai-transcriber-live",
+        adapter_version="openai-transcriber-live-v1",
+    )
+
+
+def _build_live_client(settings: Settings) -> InjectedOpenAIClient:
+    if settings.openai_api_key is None or settings.openai_project_id is None:
+        raise LiveTranscriptionBlockedError("live_project_credentials_required")
+    http_client = httpx2.Client(follow_redirects=False)
+    return cast(
+        InjectedOpenAIClient,
+        OpenAI(
+            api_key=settings.openai_api_key.get_secret_value(),
+            project=settings.openai_project_id.get_secret_value(),
+            base_url=settings.openai_base_url,
+            http_client=http_client,
+            max_retries=0,
+        ),
+    )

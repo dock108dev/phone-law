@@ -1,5 +1,14 @@
 # Architecture and repository layout
 
+## Slice 3B isolation
+
+The `live_test` path is a separate command-line verification boundary, not part of the
+demo application factory. Fresh local synthetic media moves through the restrictive
+temporary object store, the gated transcription adapter, strict response validation,
+and a disposable evidence database. Downstream analysis and report generation are not
+connected. Terminal cleanup removes media and the database while retaining only
+sanitized preflight and designated synthetic evaluation evidence outside the repository.
+
 The accepted Slices 0 and 1 remain a four-component local stack. Slice 2 adds an immutable daily
 report snapshot, reviewer feedback/audit events, a failure queue, and playbook lifecycle routes:
 

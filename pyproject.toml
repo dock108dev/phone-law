@@ -48,9 +48,12 @@ ignore = ["S101"]
 "apps/api/migrations/**/*.py" = ["N999"]
 "packages/config/settings.py" = ["S104", "S108"]
 "packages/media/store.py" = ["S108"]
+"packages/transcription/live.py" = ["S108"]
 "scripts/generate_test_audio.py" = ["S108"]
 "scripts/test_audio_boundary.py" = ["S108"]
 "scripts/test_transcription_contract.py" = ["S108"]
+"scripts/test_transcription_live.py" = ["S108"]
+"scripts/transcription_live_preflight.py" = ["S108"]
 
 [tool.mypy]
 python_version = "3.13"

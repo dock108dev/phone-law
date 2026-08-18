@@ -1,5 +1,13 @@
 # Technology choices and pinned versions
 
+## Slice 3B live verification
+
+The existing pinned OpenAI Python SDK and `httpx2` client support the bounded file
+transcription probe. The SDK client is created only after profile, authorization,
+credential-presence, endpoint, model, media-source, and budget validation; SDK retries
+are disabled so the application owns the single global retry allowance. SQLite is used
+only as a disposable live-test evidence store, so no schema migration is added.
+
 | Layer | Exact version | Reason |
 |---|---:|---|
 | Python | 3.13.5 | Stable modern runtime with supported FastAPI/Pydantic/SQLAlchemy wheels; avoids adopting Python 3.14 in the foundation |

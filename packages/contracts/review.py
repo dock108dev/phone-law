@@ -251,7 +251,10 @@ class Provenance(StrictModel):
     adapter_version: OpaqueId
     generated_at: AwareDatetime
     processing_attempt_id: OpaqueId
-    environment: Literal["fixture", "demonstration", "staging", "real_client"]
+    environment: Literal["fixture", "demonstration", "live_test", "staging", "real_client"]
+    endpoint_class: OpaqueId | None = None
+    project_configuration: OpaqueId | None = None
+    authorization_reference: OpaqueId | None = None
 
 
 class Transcript(StrictModel):

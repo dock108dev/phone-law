@@ -1,4 +1,4 @@
-"""Generate invented non-human Slice 3A media with local macOS voices only."""
+"""Generate invented non-human media with local macOS voices only."""
 
 from __future__ import annotations
 
@@ -10,7 +10,19 @@ import subprocess  # nosec B404
 from pathlib import Path
 from typing import Any
 
-SLICE_ROOT = Path("/tmp/colacci-law-slice3a")  # nosec B108
+from packages.generated_audio_scripts import (
+    ENGLISH_LONG_A_TEXT,
+    ENGLISH_LONG_B_TEXT,
+    ENGLISH_SHORT_TEXT,
+    SPANISH_SHORT_TEXT,
+)
+
+SLICE_ROOT = Path(
+    os.environ.get(
+        "COLACCI_SYNTHETIC_ROOT",
+        "/tmp/colacci-law-slice3a",  # nosec B108
+    )
+)
 ASSET_ROOT = SLICE_ROOT / "generated"
 REPORT_ROOT = SLICE_ROOT / "reports"
 MANIFEST_PATH = SLICE_ROOT / "generated-manifest.json"
@@ -69,7 +81,7 @@ def _speak(text: str, voice: str, destination: Path, ffmpeg: str) -> None:
             "-ac",
             "1",
             "-ar",
-            "24000",
+            "16000",
             "-c:a",
             "pcm_s16le",
             str(destination),
@@ -106,37 +118,52 @@ def main() -> None:
     voices = _voices()
     entries: list[dict[str, Any]] = []
     unavailable: list[str] = []
-    english_short = (
-        "Good afternoon. This invented demonstration asks whether a packet can be reviewed "
-        "next week. No real person or matter is represented."
-    )
-    english_long = " ".join(
-        [
-            "This is an invented scheduling exchange for an offline engineering test.",
-            "One synthetic participant asks about a document checklist and a future callback.",
-            "The other synthetic participant explains that a reviewer must confirm every detail.",
-            "No real client, employee, legal issue, address, or telephone number is represented.",
-            "The generated example ends after one more invented quality-control reminder.",
-        ]
-    )
-    spanish_short = (
-        "Buenas tardes. Esta demostración inventada pregunta por una lista de documentos "
-        "para una revisión futura. No representa a una persona real."
-    )
-
     if voices["en"]:
         en_short_path = ASSET_ROOT / _opaque_name("english-short")
-        _speak(english_short, voices["en"][0], en_short_path, ffmpeg)
+        _speak(ENGLISH_SHORT_TEXT, voices["en"][0], en_short_path, ffmpeg)
         entries.append(_entry("english-short", "short_english_mono", en_short_path))
-        en_long_path = ASSET_ROOT / _opaque_name("english-long")
-        _speak(english_long, voices["en"][0], en_long_path, ffmpeg)
-        entries.append(_entry("english-long", "english_over_30_seconds", en_long_path))
     else:
         unavailable.append("english_local_voice")
 
+    if len(voices["en"]) >= 2:
+        long_first = ASSET_ROOT / _opaque_name("english-long-a")
+        long_second = ASSET_ROOT / _opaque_name("english-long-b")
+        _speak(ENGLISH_LONG_A_TEXT, voices["en"][0], long_first, ffmpeg)
+        _speak(ENGLISH_LONG_B_TEXT, voices["en"][1], long_second, ffmpeg)
+        en_long_path = ASSET_ROOT / _opaque_name("english-long")
+        _run(
+            [
+                ffmpeg,
+                "-nostdin",
+                "-v",
+                "error",
+                "-y",
+                "-i",
+                str(long_first),
+                "-i",
+                str(long_second),
+                "-filter_complex",
+                "[0:a][1:a]concat=n=2:v=0:a=1[out]",
+                "-map",
+                "[out]",
+                str(en_long_path),
+            ]
+        )
+        long_first.unlink(missing_ok=True)
+        long_second.unlink(missing_ok=True)
+        entry = _entry(
+            "english-long",
+            "english_multi_speaker_over_30_seconds",
+            en_long_path,
+        )
+        entry["speaker_source_count"] = 2
+        entries.append(entry)
+    else:
+        unavailable.append("english_long_multiple_local_voices")
+
     if voices["es"]:
         es_short_path = ASSET_ROOT / _opaque_name("spanish-short")
-        _speak(spanish_short, voices["es"][0], es_short_path, ffmpeg)
+        _speak(SPANISH_SHORT_TEXT, voices["es"][0], es_short_path, ffmpeg)
         entries.append(_entry("spanish-short", "short_spanish_mono", es_short_path))
     else:
         unavailable.append("spanish_local_voice")

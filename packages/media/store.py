@@ -34,7 +34,7 @@ class LocalSyntheticObjectStore:
         profile: AppProfile,
         approved_source_root: Path | None = None,
     ) -> None:
-        if profile not in {AppProfile.TEST, AppProfile.DEMO}:
+        if profile not in {AppProfile.TEST, AppProfile.DEMO, AppProfile.LIVE_TEST}:
             raise SyntheticObjectStoreError("local_synthetic_store_profile_forbidden")
         self.root = self._validate_root(root)
         self.approved_source_root = (

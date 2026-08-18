@@ -5,10 +5,10 @@ COMPOSE := docker compose
 PY_RUN := $(COMPOSE) run --rm --no-deps api
 WEB_RUN := $(COMPOSE) run --rm --no-deps web
 
-.PHONY: help bootstrap seed-demo dev stop clean generate-test-audio test-audio test-transcription-contract lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
+.PHONY: help bootstrap seed-demo dev stop clean generate-test-audio test-audio test-transcription-contract transcription-live-preflight test-transcription-live lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
 
 help:
-	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
+	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract transcription-live-preflight test-transcription-live seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -28,13 +28,20 @@ clean:
 	./scripts/clean-local.sh
 
 generate-test-audio:
-	python3 scripts/generate_test_audio.py
+	PYTHONPATH=. python3 scripts/generate_test_audio.py
 
 test-audio: generate-test-audio
 	$(COMPOSE) run --rm --no-deps --user root -v /tmp/colacci-law-slice3a:/tmp/colacci-law-slice3a api python scripts/test_audio_boundary.py
 
 test-transcription-contract: generate-test-audio
 	$(COMPOSE) run --rm --no-deps --user root -v /tmp/colacci-law-slice3a:/tmp/colacci-law-slice3a api python scripts/test_transcription_contract.py
+
+transcription-live-preflight:
+	PYTHONPATH=. COLACCI_SYNTHETIC_ROOT=/tmp/colacci-law-slice3b python3 scripts/generate_test_audio.py
+	docker run --rm --network none -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-slice3b:/tmp/colacci-law-slice3b -w /workspace -e PYTHONPATH=/workspace -e APP_PROFILE=live_test -e ALLOW_REAL_CALL_DATA=false -e REAL_CALL_PROCESSING_AUTHORIZED=false -e LIVE_TRANSCRIPTION_ENABLED=true -e LIVE_TRANSCRIPTION_AUTHORIZED=true -e TRANSCRIPTION_APPROVAL_REFERENCE=OWNER-CHAT-2026-08-17-SLICE-3B -e TRANSCRIPTION_MODEL_ID=gpt-4o-transcribe-diarize -e TRANSCRIPTION_MAX_REQUESTS=4 -e TRANSCRIPTION_MAX_TOTAL_AUDIO_SECONDS=120 -e TRANSCRIPTION_MAX_TOTAL_BYTES=20971520 -e TRANSCRIPTION_TEST_BUDGET_USD=1.00 -e CALL_SOURCE_ADAPTER=generated_synthetic -e TRANSCRIBER_ADAPTER=openai_live -e ANALYZER_ADAPTER=disabled -e NOTIFICATION_ADAPTER=noop -e OBJECT_STORAGE_BACKEND=local_synthetic -e MEDIA_TEMP_ROOT=/tmp/colacci-law-slice3b/objects -e OPENAI_BASE_URL="$${OPENAI_BASE_URL:-https://api.openai.com/v1}" -e OPENAI_API_KEY -e OPENAI_PROJECT_ID -e OPENAI_PROJECT_DATA_CONTROLS_APPROVED colacci-law-api:latest python scripts/transcription_live_preflight.py
+
+test-transcription-live:
+	docker run --rm -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-slice3b:/tmp/colacci-law-slice3b -w /workspace -e PYTHONPATH=/workspace -e APP_PROFILE=live_test -e ALLOW_REAL_CALL_DATA=false -e REAL_CALL_PROCESSING_AUTHORIZED=false -e LIVE_TRANSCRIPTION_ENABLED=true -e LIVE_TRANSCRIPTION_AUTHORIZED=true -e TRANSCRIPTION_APPROVAL_REFERENCE=OWNER-CHAT-2026-08-17-SLICE-3B -e TRANSCRIPTION_MODEL_ID=gpt-4o-transcribe-diarize -e TRANSCRIPTION_MAX_REQUESTS=4 -e TRANSCRIPTION_MAX_TOTAL_AUDIO_SECONDS=120 -e TRANSCRIPTION_MAX_TOTAL_BYTES=20971520 -e TRANSCRIPTION_TEST_BUDGET_USD=1.00 -e TRANSCRIPTION_LIVE_EXECUTION_CONFIRMED -e CALL_SOURCE_ADAPTER=generated_synthetic -e TRANSCRIBER_ADAPTER=openai_live -e ANALYZER_ADAPTER=disabled -e NOTIFICATION_ADAPTER=noop -e OBJECT_STORAGE_BACKEND=local_synthetic -e MEDIA_TEMP_ROOT=/tmp/colacci-law-slice3b/objects -e OPENAI_BASE_URL="$${OPENAI_BASE_URL:-https://api.openai.com/v1}" -e OPENAI_API_KEY -e OPENAI_PROJECT_ID -e OPENAI_PROJECT_DATA_CONTROLS_APPROVED colacci-law-api:latest python scripts/test_transcription_live.py
 
 lint:
 	$(PY_RUN) ruff format --check apps packages scripts tests

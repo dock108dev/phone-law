@@ -1,9 +1,27 @@
 # Environment profiles and configuration rules
 
+## Slice 3B live-test profile
+
+`live_test` is a fail-closed, generated-media-only verification profile. It requires the
+exact owner authorization, the approved transcription model, an explicit project-scoped
+credential, official OpenAI endpoint selection, and the exact request, retry, duration,
+byte, and application-budget caps. It disables analysis, notifications, real-data modes,
+manual upload, and Broadvoice. The normal application and Compose defaults remain the
+offline `demo` profile.
+
+Use `make transcription-live-preflight` first. It runs without network access and emits
+sanitized evidence under `/tmp/colacci-law-slice3b/reports`. Only a fresh passing report
+allows `make test-transcription-live`, which also requires
+`TRANSCRIPTION_LIVE_EXECUTION_CONFIRMED=true`. Credentials must arrive through an
+approved ephemeral environment and must never be written to `.env` or repository files.
+The account-specific data-control state must also be explicitly attested with
+`OPENAI_PROJECT_DATA_CONTROLS_APPROVED=true`; credentials alone do not satisfy the gate.
+
 | Profile | Purpose | Real data | Adapters | Storage/auth |
 |---|---|---|---|---|
 | `test` | Deterministic automated checks | Always rejected | Fixture adapters | Local synthetic/fake |
 | `demo` | Default local application | Always rejected | Fixture adapters | Local synthetic/fake |
+| `live_test` | Owner-gated generated-audio verification | Always rejected | Gated file transcription; analysis disabled | Temporary local synthetic/project credential |
 | `staging` | Future firm-owned preproduction | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 | `production` | Future authorized deployment | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 
@@ -32,13 +50,14 @@ separate stop condition.
 Configuration values are never dumped or included in an exception log. Only the content-free
 `unsafe_configuration` code is emitted when process startup is rejected.
 
-## Slice 3A live-use hard stop
+## Normal profiles remain offline
 
 - `LIVE_TRANSCRIPTION_ENABLED=false`
 - `LIVE_TRANSCRIPTION_AUTHORIZED=false`
 - `TRANSCRIPTION_APPROVAL_REFERENCE=`
 
-Any live flag or approval reference is rejected because Slice 3B is not implemented. An ambient
-API key is not authority. Generated media is confined beneath an explicit `/tmp/colacci-law-*`
-root, the application cap defaults to 20 MB and can never exceed the current documented 25 MB
-provider ceiling, and the conservative synthetic duration cap is 60 seconds.
+These defaults remain enforced for `test`, `demo`, `staging`, and `production`; any live flag or
+approval reference is rejected outside the exact `live_test` profile. An ambient API key is not
+authority. Generated media is confined beneath an explicit `/tmp/colacci-law-*` root, the
+application cap defaults to 20 MB and can never exceed the current documented 25 MB provider
+ceiling, and the conservative synthetic duration cap is 60 seconds.
