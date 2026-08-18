@@ -1,10 +1,10 @@
-# Colacci Law Call Review — Slice 1
+# Colacci Law Call Review — Slice 2
 
-This repository contains the synthetic-only application foundation and deterministic review
-contract. It proves normalized ingestion, timestamped transcripts, facts-first analysis,
-playbook application, strict evidence validation, immutable accepted output, idempotency, and
-retry behavior. It contains no real recording, live AI, manual-upload route, Broadvoice
-contract, report, reviewer UI, notification, or cloud infrastructure.
+This repository contains the synthetic-only daily review experience. It turns the deterministic
+Slice 1 fixtures into an immutable daily report, evidence-linked call analysis, append-only human
+feedback, a content-free failure queue, and an immutable playbook publication lifecycle. It
+contains no real recording, live AI, manual-upload route, Broadvoice contract, notification,
+production authentication, retention implementation, or cloud infrastructure.
 
 The sole roadmap and next-steps source is
 `/Users/michaelfuscoletti/Desktop/colacci_law_next_steps.md`. Do not add a repository-level
@@ -30,7 +30,13 @@ make dev
 make smoke
 ```
 
-Open [http://localhost:15173](http://localhost:15173). The dashboard must always display
+Seed the local synthetic review data, then open the app:
+
+```bash
+make seed-demo
+```
+
+Open [http://localhost:15173](http://localhost:15173). Every review view must display
 **Synthetic demo data**. Local endpoints are:
 
 - Web: `http://localhost:15173` and `/health`
@@ -56,14 +62,16 @@ make dev
 ## Stable command surface
 
 ```bash
-make bootstrap          # build pinned images, start PostgreSQL, apply migration 0002
+make bootstrap          # build pinned images, start PostgreSQL, apply migration 0003
+make seed-demo          # idempotently install all fixtures and the immutable daily report
 make dev                # start database, migrate, and start API, worker, and web
 make lint               # formatting, lint, code security, pins, and secret scan
 make typecheck          # strict Python and TypeScript checks
 make test               # offline unit/security and web tests
 make test-integration   # empty-test-database migration and readiness tests
 make test-fixtures      # all 12 deterministic fixtures; report under /tmp
-make smoke              # API, worker, web, dashboard, database, and migration readiness
+make test-e2e           # disposable seeded browser flow, accessibility, screenshots, log proof
+make smoke              # API, worker, web, review shell, database, and migration readiness
 ```
 
 `make audit` is the separately labeled vulnerability-advisory check. It contacts public
@@ -73,7 +81,7 @@ advisory/package registries and is therefore not part of the deterministic offli
 
 - `apps/api`: FastAPI service and Alembic migration.
 - `apps/worker`: Python worker process with independent health server. No jobs exist yet.
-- `apps/web`: React/TypeScript dashboard and health page.
+- `apps/web`: React/TypeScript daily report, call review, failure, and playbook views.
 - `packages/config`: shared profiles and fail-closed startup validation.
 - `packages/contracts`: strict review models and synchronized versioned JSON Schemas.
 - `packages/database`: readiness plus immutable synthetic review persistence.
@@ -92,14 +100,19 @@ adapters are configured. `staging` and `production` reject fake authentication, 
 missing secrets, local storage, fixture sources/transcribers/analyzers, absent retention,
 unauthorized real processing, debug mode, unsafe CORS, and local/example databases.
 
-The API and worker log only allowlisted operational metadata. The review pipeline does not log
-call or transcript content. Access logs are disabled. Request
+The API and worker log only allowlisted operational metadata. The review pipeline and reviewer
+routes do not log call, transcript, summary, or feedback content. Access logs are disabled. Request
 headers, query strings, error details, database URLs, caller data, audio, and transcript content
 cannot enter the application logger.
 
 `make test-fixtures` uses only the local `colacci_test` database and local fixture adapters. It
 writes `report.json`, accepted English and Spanish examples, and one rejected-output example to
 `/tmp/colacci-law-fixtures/`; generated evidence is never written into the repository.
+
+`make test-e2e` uses a disposable Compose project and database. It validates the report-first
+flow, evidence focus, feedback persistence, role denial, failure history, playbook publication,
+WCAG 2 A/AA and 2.1 A/AA automated checks, and content-free application logs. Evidence defaults
+to `/tmp/colacci-law-slice2-evidence/` and may be redirected with `SLICE2_EVIDENCE_DIR`.
 
 See [architecture](docs/architecture.md), [technology choices](docs/technology.md),
 [configuration rules](docs/configuration.md), [adapter boundaries](docs/adapters.md), and the

@@ -118,17 +118,6 @@ class ReviewExperienceRepository:
                 .mappings()
                 .all()
             )
-            event_rows = (
-                connection.execute(
-                    sa.select(
-                        ingestion_events.c.disposition,
-                        ingestion_events.c.duplicate_delivery_count,
-                    )
-                )
-                .mappings()
-                .all()
-            )
-
             report_calls: list[ReportCallInput] = []
             fingerprint_rows: list[dict[str, object]] = []
             for row in call_rows:
@@ -187,6 +176,19 @@ class ReviewExperienceRepository:
                         "failure": failure.model_dump(mode="json") if failure else None,
                     }
                 )
+            report_call_ids = tuple(item.call_id for item in report_calls)
+            event_rows = (
+                connection.execute(
+                    sa.select(
+                        ingestion_events.c.disposition,
+                        ingestion_events.c.duplicate_delivery_count,
+                    ).where(ingestion_events.c.call_id.in_(report_call_ids))
+                )
+                .mappings()
+                .all()
+                if report_call_ids
+                else []
+            )
             duplicates = sum(
                 int(row["duplicate_delivery_count"])
                 + (1 if row["disposition"] == "duplicate_call" else 0)

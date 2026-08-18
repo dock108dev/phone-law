@@ -7,8 +7,9 @@
 | `staging` | Future firm-owned preproduction | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 | `production` | Future authorized deployment | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 
-The default is `demo` and `ALLOW_REAL_CALL_DATA=false`. Slice 1 has no route capable of accepting
-a call; its review models receive only committed synthetic fixtures.
+The default is `demo` and `ALLOW_REAL_CALL_DATA=false`. Slice 2 has no route capable of accepting
+a call; its report and review routes read only committed synthetic fixtures and append synthetic
+human-review events.
 
 For `staging` or `production`, startup rejects:
 

@@ -1,27 +1,27 @@
 # Architecture and repository layout
 
-The accepted Slice 0 foundation remains a four-component local stack. Slice 1 adds strict review
-contracts, deterministic fixture adapters, and append-only review persistence without changing
-the dashboard or adding a call-data route:
+The accepted Slices 0 and 1 remain a four-component local stack. Slice 2 adds an immutable daily
+report snapshot, reviewer feedback/audit events, a failure queue, and playbook lifecycle routes:
 
 ```text
-Browser -> React/Vite web shell
-             (no call input)
+Browser -> React/Vite synthetic review UI
+             report -> call evidence -> feedback
 
 Health probe -> FastAPI API ----+
 Health probe -> Python worker --+--> PostgreSQL 17.6
-                                      synthetic review contracts
+                                      synthetic review + audit contracts
 ```
 
 The API and worker load the same fail-closed settings, operational logger, health contract, and
 database readiness code from `packages/`. Both expose liveness without touching the database.
 Readiness requires a connection and exact Alembic revision
-`0002_synthetic_review_contracts`. The web container
-serves a content-free health artifact and a persistent synthetic-data banner.
+`0003_synthetic_review_experience`. The web container serves a content-free health artifact and
+a persistent synthetic-data banner on every review route.
 
-No queue, upload, object content, identity integration, notification, report, reviewer workflow,
-or vendor request exists. Fixture processing is an explicit local command; the worker remains a
-process and readiness boundary until a later accepted slice introduces jobs.
+There is no upload, external source, object content, identity integration, notification, live
+transcription, or vendor request. The demo principal header is allowlisted and accepted only in
+demo/test. Fixture processing is an explicit local command; the worker remains a process and
+readiness boundary until a later accepted slice introduces jobs.
 
 Docker Compose publishes every port to loopback only. PostgreSQL is the only stateful service.
 The database contains only typed synthetic review records and the non-sensitive schema marker.
@@ -33,6 +33,9 @@ The database contains only typed synthetic review records and the non-sensitive 
 - Database readiness: `packages/database`
 - Content-free logging: `packages/observability`
 - Fixture adapters: local deterministic implementations; future external seams remain disabled
+- Daily report: deterministic America/New_York cutoff, explicit reconciliation, immutable versions
+- Human review: append-only labels/notes paired transactionally with content-free audit events
+- Playbooks: immutable structured payload; draft-to-published lifecycle metadata only
 
 The Desktop roadmap is the only next-steps source. This repository intentionally has no
 `NEXT_STEPS.md`.

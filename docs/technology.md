@@ -16,6 +16,8 @@
 | React / React DOM | 19.1.1 | Typed dashboard shell |
 | TypeScript | 5.9.2 | Strict static checks |
 | Vite | 7.3.6 | Local development server and deterministic production build; selected above known file-read advisories affecting earlier 7.x patches |
+| Playwright | 1.55.1 | Pinned Chromium end-to-end flow and responsive screenshots in a digest-pinned image |
+| axe-core Playwright | 4.10.2 | Automated WCAG 2 A/AA and 2.1 A/AA checks on report and call views |
 | PostgreSQL | 17.6-alpine3.22 | Supported database major with an exact patch/OS image tag |
 
 All direct Python requirements are exact in `requirements.in`; Linux's conditional SQLAlchemy

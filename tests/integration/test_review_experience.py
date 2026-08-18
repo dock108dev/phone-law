@@ -110,6 +110,32 @@ def test_report_review_failure_and_playbook_persistence(
             ).scalar_one()
             == 19
         )
+    changed = experience.generate_report(
+        business_date=date(2026, 8, 17),
+        cutoff_at=datetime(2026, 8, 17, 18, tzinfo=ZoneInfo("America/New_York")),
+        expected_source_call_ids=tuple(
+            sorted(
+                {
+                    *(event.call.source_call_id for event in FixtureCallSource().events()),
+                    "synthetic-expected-but-missing",
+                }
+            )
+        ),
+    )
+    assert changed.report_id != report.report_id
+    assert changed.version == 2
+    assert changed.completeness.reconciliation.missing == 1
+    with engine.connect() as connection:
+        assert (
+            connection.execute(sa.select(sa.func.count()).select_from(daily_reports)).scalar_one()
+            == 2
+        )
+        assert (
+            connection.execute(
+                sa.select(sa.func.count()).select_from(daily_report_items)
+            ).scalar_one()
+            == 38
+        )
 
     detail = experience.call_detail(call_ids["CL-FX-002"])
     assert detail is not None
@@ -166,7 +192,11 @@ def test_report_review_failure_and_playbook_persistence(
     with pytest.raises(DBAPIError, match="immutable"), engine.begin() as connection:
         connection.execute(review_events.update().values(note="forbidden"))
     with pytest.raises(DBAPIError, match="immutable"), engine.begin() as connection:
+        connection.execute(review_events.delete())
+    with pytest.raises(DBAPIError, match="immutable"), engine.begin() as connection:
         connection.execute(audit_events.update().values(result="forbidden"))
+    with pytest.raises(DBAPIError, match="immutable"), engine.begin() as connection:
+        connection.execute(audit_events.delete())
     with pytest.raises(DBAPIError, match="immutable"), engine.begin() as connection:
         connection.execute(daily_reports.update().values(status="complete"))
 

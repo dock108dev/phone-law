@@ -1,4 +1,5 @@
 import {
+  Fragment,
   type FormEvent,
   type ReactNode,
   useEffect,
@@ -405,6 +406,7 @@ function CallPage({ callId, principal }: { callId: string; principal: DemoPrinci
   }, [callId, principal]);
 
   function jump(segmentId: string): void {
+    handledInitialHash.current = true;
     setHighlighted(segmentId);
     window.history.replaceState(null, "", `#${segmentId}`);
     window.setTimeout(() => {
@@ -475,10 +477,10 @@ function CallPage({ callId, principal }: { callId: string; principal: DemoPrinci
         </div>
 
         <aside className="analysis-side">
-          <section className="side-card"><span className="content-origin fact-origin">Transcript fact</span><h2>Extracted facts</h2><dl><dt>Caller request</dt><dd>{detail.facts.caller_request.value ?? humanize(detail.facts.caller_request.state)}</dd>{detail.facts.reported_facts.map((fact, index) => <span key={`${fact.value ?? "reported"}-${index.toString()}`}><dt>Reported fact</dt><dd>{fact.value ?? humanize(fact.state)}</dd></span>)}{detail.facts.dates.map((fact, index) => <span key={`${fact.expression ?? "date"}-${index.toString()}`}><dt>Date</dt><dd>{fact.expression ?? "Unknown"} · {humanize(fact.state)}{fact.is_deadline ? " · deadline" : ""}</dd></span>)}</dl></section>
+          <section className="side-card"><span className="content-origin fact-origin">Transcript fact</span><h2>Extracted facts</h2><dl><dt>Caller request</dt><dd>{detail.facts.caller_request.value ?? humanize(detail.facts.caller_request.state)}</dd>{detail.facts.reported_facts.map((fact, index) => <Fragment key={`${fact.value ?? "reported"}-${index.toString()}`}><dt>Reported fact</dt><dd>{fact.value ?? humanize(fact.state)}</dd></Fragment>)}{detail.facts.dates.map((fact, index) => <Fragment key={`${fact.expression ?? "date"}-${index.toString()}`}><dt>Date</dt><dd>{fact.expression ?? "Unknown"} · {humanize(fact.state)}{fact.is_deadline ? " · deadline" : ""}</dd></Fragment>)}</dl></section>
           <section className="side-card"><h2>Proposed next steps</h2><ol>{detail.proposed_next_steps.map((step) => <li key={step}>{step}</li>)}</ol><p><b>Role:</b> {humanize(detail.responsible_role)}</p><p><b>Timing:</b> {detail.suggested_response_timing ?? "Not specified"}</p></section>
           <section className="side-card"><h2>Processing attempts</h2><ol className="attempt-list">{detail.attempts.map((attempt) => <li key={attempt.attempt_id}><b>Attempt {attempt.attempt_number}</b><span>{attempt.state}</span>{attempt.diagnostic_code && <small>{attempt.diagnostic_code}</small>}</li>)}</ol></section>
-          <section className="side-card provenance"><h2>Provenance</h2><dl>{Object.entries(detail.provenance).map(([key, value]) => <span key={key}><dt>{humanize(key)}</dt><dd>{value}</dd></span>)}</dl></section>
+          <section className="side-card provenance"><h2>Provenance</h2><dl>{Object.entries(detail.provenance).map(([key, value]) => <Fragment key={key}><dt>{humanize(key)}</dt><dd>{value}</dd></Fragment>)}</dl></section>
         </aside>
       </div>
 
@@ -502,7 +504,7 @@ function FailureCard({ item, principal, reload }: { item: FailureItem; principal
       setMessage(reason instanceof Error ? reason.message : "Retry could not be completed.");
     }
   }
-  return <article className="failure-card"><div className="item-topline"><h3>{item.synthetic_reference}</h3><span className={item.resolved ? "resolved-badge" : "failure-badge"}>{item.resolved ? "Resolved" : "Current failure"}</span></div><dl className="failure-meta"><dt>Failed stage</dt><dd>{item.failed_stage}</dd><dt>Diagnostic code</dt><dd>{item.diagnostic_code}</dd><dt>Attempts</dt><dd>{item.attempt_count}</dd><dt>Terminal state</dt><dd>{item.current_terminal_state}</dd></dl><ol className="attempt-list">{item.attempt_history.map((attempt) => <li key={attempt.attempt_id}><b>Attempt {attempt.attempt_number}</b><span>{attempt.state}</span>{attempt.diagnostic_code && <small>{attempt.diagnostic_code}</small>}</li>)}</ol>{!item.resolved && <button type="button" className="secondary-button" disabled={!item.retryable} onClick={() => void retry()}>{item.retryable ? "Retry synthetic processing" : "Permanent failure · Retry unavailable"}</button>}<p className="form-message" aria-live="polite">{message}</p></article>;
+  return <article className="failure-card"><div className="item-topline"><h3>{item.synthetic_reference}</h3><span className={item.resolved ? "resolved-badge" : "failure-badge"}>{item.resolved ? "Resolved" : "Current failure"}</span></div><dl className="failure-meta"><dt>Failed stage</dt><dd>{item.failed_stage}</dd><dt>Diagnostic code</dt><dd>{item.diagnostic_code}</dd><dt>First attempt</dt><dd>{new Date(item.first_attempt_at).toLocaleString()}</dd><dt>Latest attempt</dt><dd>{new Date(item.latest_attempt_at).toLocaleString()}</dd><dt>Attempts</dt><dd>{item.attempt_count}</dd><dt>Terminal state</dt><dd>{item.current_terminal_state}</dd></dl><ol className="attempt-list">{item.attempt_history.map((attempt) => <li key={attempt.attempt_id}><b>Attempt {attempt.attempt_number}</b><span>{attempt.state}</span>{attempt.diagnostic_code && <small>{attempt.diagnostic_code}</small>}</li>)}</ol>{!item.resolved && <button type="button" className="secondary-button" disabled={!item.retryable} onClick={() => void retry()}>{item.retryable ? "Retry synthetic processing" : "Permanent failure · Retry unavailable"}</button>}<p className="form-message" aria-live="polite">{message}</p></article>;
 }
 
 function FailurePage({ principal }: { principal: DemoPrincipal }): ReactNode {

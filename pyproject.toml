@@ -1,7 +1,7 @@
 [project]
 name = "colacci-law-foundation"
 version = "0.1.0"
-description = "Synthetic-only Slice 1 review contract for Colacci Law Call Review"
+description = "Synthetic-only Slice 2 review experience for Colacci Law Call Review"
 requires-python = "==3.13.5"
 
 [tool.pytest.ini_options]

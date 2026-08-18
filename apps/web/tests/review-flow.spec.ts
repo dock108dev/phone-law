@@ -26,6 +26,19 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
   await expect(page.getByText("Failed").locator("..").getByText("1")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Immediate attention" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Processing failures" })).toBeVisible();
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor)).toBe("rgb(243, 240, 233)");
+  for (const section of [
+    "Immediate attention",
+    "Potential new matters",
+    "Time-sensitive dates",
+    "Dissatisfaction and escalation",
+    "Staff commitments",
+    "Administrative tasks",
+    "Routine / no action",
+    "Processing failures",
+  ]) {
+    await expect(page.getByRole("heading", { name: section })).toBeVisible();
+  }
 
   const reportAccessibility = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -33,10 +46,16 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
   expect(reportAccessibility.violations, JSON.stringify(reportAccessibility.violations, null, 2)).toEqual([]);
 
   await page.setViewportSize({ width: 1440, height: 1000 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   await page.screenshot({ path: `${evidenceDirectory}/desktop-report.png`, fullPage: true });
   await page.locator(".attention-section").screenshot({ path: `${evidenceDirectory}/immediate-attention.png` });
   await page.setViewportSize({ width: 1280, height: 800 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   await page.screenshot({ path: `${evidenceDirectory}/laptop-report.png`, fullPage: true });
+
+  await page.getByRole("link", { name: "CL-FX-003" }).first().click();
+  await expect(page.getByText("Hola. Tuve una caída en una tienda la semana pasada y me lastimé la muñeca.")).toBeVisible();
+  await page.getByRole("link", { name: "← Back to daily report" }).click();
 
   await page.getByRole("link", { name: "CL-FX-002" }).first().click();
   await expect(page.getByRole("heading", { name: "CL-FX-002" })).toBeVisible();
@@ -73,13 +92,13 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-operations");
   await page.goto("/failures");
   await expect(page.getByRole("heading", { name: "Synthetic failure queue" })).toBeVisible();
-  const permanentFailure = page.getByRole("heading", { name: "CL-FX-011" }).locator("..");
+  const permanentFailure = page.locator(".failure-card").filter({ hasText: "CL-FX-011" });
   await expect(permanentFailure.getByRole("button", { name: /Retry unavailable/ })).toBeDisabled();
-  await expect(page.getByRole("heading", { name: "CL-FX-010" }).locator("..")).toContainText("Resolved");
+  await expect(page.locator(".failure-card").filter({ hasText: "CL-FX-010" })).toContainText("Resolved");
   await page.screenshot({ path: `${evidenceDirectory}/failure-queue.png`, fullPage: true });
 
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
   await page.goto("/playbooks");
+  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
   await page.getByRole("button", { name: "Publish synthetic draft" }).click();
   await expect(page.getByRole("status").filter({ hasText: /administrator/ })).toBeVisible();
   await page.screenshot({ path: `${evidenceDirectory}/playbook-authorization.png`, fullPage: true });
@@ -87,7 +106,7 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-admin");
   await page.getByRole("button", { name: "Publish synthetic draft" }).click();
   await expect(page.getByText("Synthetic playbook published.", { exact: false })).toBeVisible();
-  await expect(page.getByText("Published", { exact: true })).toBeVisible();
+  await expect(page.locator(".lifecycle-published")).toHaveText("Published");
 
   await page.goto(callUrl);
   await expect(page.locator(".provenance")).toContainText("synthetic-draft-v1");
@@ -96,11 +115,14 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
   const unexpectedFailures = failedRequests.filter(
     (item) => !(item.status === 403 && item.url.includes("/playbooks/") && item.url.endsWith("/publish")),
   );
-  expect(consoleErrors).toEqual([]);
+  const expectedAuthorizationConsoleErrors = consoleErrors.filter((message) => message.includes("403 (Forbidden)"));
+  const unexpectedConsoleErrors = consoleErrors.filter((message) => !message.includes("403 (Forbidden)"));
+  expect(expectedAuthorizationConsoleErrors.length).toBeGreaterThan(0);
+  expect(unexpectedConsoleErrors).toEqual([]);
   expect(unexpectedFailures).toEqual([]);
   await writeFile(
     `${evidenceDirectory}/browser-diagnostics.json`,
-    `${JSON.stringify({ consoleErrors, failedRequests, accessibility: { report: [], call: [] }, manualKeyboard: "passed in automated focus assertions; repeated manually" }, null, 2)}\n`,
+    `${JSON.stringify({ consoleErrors: unexpectedConsoleErrors, expectedAuthorizationConsoleErrors, failedRequests, accessibility: { report: [], call: [] }, manualKeyboard: "passed in automated focus assertions; repeated manually" }, null, 2)}\n`,
     "utf8",
   );
 });

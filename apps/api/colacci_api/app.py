@@ -38,7 +38,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             logger.event("service_stopped", component="http", status="stopped")
 
     app = FastAPI(
-        title="Colacci Law Call Review Foundation",
+        title="Colacci Law Synthetic Review Experience",
         version=configured.app_version,
         docs_url=None,
         redoc_url=None,
