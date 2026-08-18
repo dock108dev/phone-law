@@ -1,5 +1,20 @@
 # Environment profiles and configuration rules
 
+## Slice 3C local-development profile
+
+`local_dev` remains synthetic-only and rejects both live-transcription flags, an approval
+reference, real data, non-local storage, real notifications, and non-fake authentication. Its
+media root is fixed at `/tmp/colacci-law-slice3c/objects`. Only these adapter triples are valid:
+
+- `fixture` / `fixture` / `fixture`
+- `generated_synthetic` / `openai_cli_local` / `disabled`
+- `transcript_only` / `transcript_only_import` / `fixture`
+
+The local CLI transport is not selected by an ambient credential. Exact capability preflight is
+required first; an unsupported result keeps the process on the fixture/transcript-only fallback.
+The normal Compose services remain `demo`, and their application factories do not construct a
+CLI client.
+
 ## Slice 3B live-test profile
 
 `live_test` is a fail-closed, generated-media-only verification profile. It requires the
@@ -21,6 +36,7 @@ The account-specific data-control state must also be explicitly attested with
 |---|---|---|---|---|
 | `test` | Deterministic automated checks | Always rejected | Fixture adapters | Local synthetic/fake |
 | `demo` | Default local application | Always rejected | Fixture adapters | Local synthetic/fake |
+| `local_dev` | Bounded local CLI or transcript-only development | Always rejected | Exact allowlisted synthetic triples | Temporary local synthetic/fake |
 | `live_test` | Owner-gated generated-audio verification | Always rejected | Gated file transcription; analysis disabled | Temporary local synthetic/project credential |
 | `staging` | Future firm-owned preproduction | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 | `production` | Future authorized deployment | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |

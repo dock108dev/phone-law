@@ -24,6 +24,11 @@ environment configuration, container images, logs, and the source repository.
 | Broadvoice contract is guessed | No route, fields, header, signature, URL, fixture, or code | Account-specific feasibility evidence |
 | Overbroad network exposure | Every published local port binds to loopback | TLS, firewall, private networking, and approved ingress in staging |
 | Denial of service | Local synthetic-only routes, bounded fixture corpus, no ingestion | Rate limits and resource limits before ingestion |
+| CLI argument injection or shell expansion | Direct argument array, `shell=False`, fixed option surface, absolute allowlisted executable | Reassess before any broader command surface |
+| Ambient environment or credential leakage | Rebuilt child environment, named-variable allowlist, no value logging, no command logging | Managed ephemeral credential delivery before any separately authorized live run |
+| Child hangs, floods output, or leaves descendants | Wall-clock timeout, output cap, cancellation, process-group termination, private temporary input, cleanup confirmation | Provider-specific operational limits before production |
+| Unsupported CLI changes response semantics | Exact version and command-surface preflight; fail closed to offline fallback | Re-accept every declared CLI contract change |
+| Transcript-only artifact bypasses validation | Regular private bounded file, strict existing contracts, full validation before first database write, deterministic idempotency | Authenticated approved ingestion before real data |
 
 ## Abuse cases checked
 
@@ -35,6 +40,10 @@ environment configuration, container images, logs, and the source repository.
 - A permanent failure cannot be retried and a reviewer cannot open the operations queue.
 - A reviewer cannot publish a playbook; an administrator can publish only an existing draft.
 - Evidence links move keyboard focus to the cited original-language segment.
+- CLI timeout, cancellation, oversized output, missing executable, and nonzero exits return only
+  typed content-free failures and leave no temporary media.
+- Malformed, unsupported, oversized, or unsafe transcript-only artifacts leave database counts
+  unchanged.
 
 ## Stop conditions
 

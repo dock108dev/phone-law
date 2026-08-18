@@ -1,5 +1,26 @@
 # Architecture and repository layout
 
+## Slice 3C local development bridge
+
+`local_dev` is a synthetic-only command-line profile, not an API or worker runtime. It allows
+exactly two additional local paths:
+
+```text
+generated synthetic media -> openai_cli_local -> shared response converter -> Transcript
+invented transcript artifact -> strict import -> existing analysis/report/review contracts
+```
+
+The CLI path has one injected child-process boundary. Arguments are an array, the shell is never
+used, the executable is allowlisted, the child environment is rebuilt from a small allowlist,
+stdout/stderr are bounded, and timeout or cancellation terminates the process group. Only exact
+CLI version `1.6.0` with the declared transcription surface is supported. Capability mismatch
+selects an offline fallback and cannot install, upgrade, or make a request.
+
+The transcript-only path validates the entire strict artifact before its first database write,
+stores no media reference, records source mode and safe transport provenance, and reuses the
+existing state machine, fixture analyzer, immutable report, evidence, and feedback flows. Its
+deterministic identifiers make repeated import idempotent.
+
 ## Slice 3B isolation
 
 The `live_test` path is a separate command-line verification boundary, not part of the
@@ -48,6 +69,10 @@ The database contains only typed synthetic review records and the non-sensitive 
   generated-media-only local object storage in demo/test
 - Candidate transcription adapter: exact SDK pin, injected mock transport, opaque speaker labels,
   capped deterministic retries, and no normal application factory
+- Local CLI development transport: exact CLI/contract declaration, injected command runner,
+  restricted child process, shared converter/retries, safe provenance, and offline fallback
+- Transcript-only import: invented strict artifact, no media object, deterministic identity, and
+  existing downstream review contracts
 - Daily report: deterministic America/New_York cutoff, explicit reconciliation, immutable versions
 - Human review: append-only labels/notes paired transactionally with content-free audit events
 - Playbooks: immutable structured payload; draft-to-published lifecycle metadata only

@@ -76,6 +76,7 @@
     "CallSource": {
       "enum": [
         "fixture",
+        "transcript_only",
         "manual_upload",
         "broadvoice"
       ],
@@ -454,6 +455,7 @@
           "enum": [
             "fixture",
             "demonstration",
+            "local_dev",
             "live_test",
             "staging",
             "real_client"
@@ -518,6 +520,17 @@
           "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
           "title": "Transcript Model Version",
           "type": "string"
+        },
+        "transcription_transport": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TranscriptionTransportProvenance"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -641,6 +654,88 @@
         "state"
       ],
       "title": "TextFact",
+      "type": "object"
+    },
+    "TranscriptionTransportProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_number": {
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Attempt Number",
+          "type": "integer"
+        },
+        "declared_contract_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Declared Contract Version",
+          "type": "string"
+        },
+        "generated_asset_fingerprint": {
+          "anyOf": [
+            {
+              "pattern": "^sha256:[a-f0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Generated Asset Fingerprint"
+        },
+        "model_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Model Id",
+          "type": "string"
+        },
+        "observed_cli_version": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "const": "unavailable",
+              "type": "string"
+            }
+          ],
+          "title": "Observed Cli Version"
+        },
+        "requested_response_format": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Requested Response Format",
+          "type": "string"
+        },
+        "result_kind": {
+          "enum": [
+            "deterministic_fixture",
+            "separately_authorized_live",
+            "transcript_only"
+          ],
+          "title": "Result Kind",
+          "type": "string"
+        },
+        "transport": {
+          "enum": [
+            "fixture",
+            "openai_cli_local",
+            "sdk",
+            "transcript_only"
+          ],
+          "title": "Transport",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transport",
+        "declared_contract_version",
+        "observed_cli_version",
+        "model_id",
+        "requested_response_format",
+        "attempt_number",
+        "result_kind"
+      ],
+      "title": "TranscriptionTransportProvenance",
       "type": "object"
     },
     "UnresolvedQuestion": {

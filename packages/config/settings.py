@@ -14,6 +14,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class AppProfile(StrEnum):
     TEST = "test"
     DEMO = "demo"
+    LOCAL_DEV = "local_dev"
     LIVE_TEST = "live_test"
     STAGING = "staging"
     PRODUCTION = "production"
@@ -98,7 +99,12 @@ class Settings(BaseSettings):
 
     @property
     def synthetic_mode(self) -> bool:
-        return self.app_profile in {AppProfile.TEST, AppProfile.DEMO, AppProfile.LIVE_TEST}
+        return self.app_profile in {
+            AppProfile.TEST,
+            AppProfile.DEMO,
+            AppProfile.LOCAL_DEV,
+            AppProfile.LIVE_TEST,
+        }
 
     @property
     def sqlalchemy_database_url(self) -> str:
@@ -125,6 +131,8 @@ class Settings(BaseSettings):
 
         if self.app_profile is AppProfile.LIVE_TEST:
             self._collect_live_test_issues(issues)
+        elif self.app_profile is AppProfile.LOCAL_DEV:
+            self._collect_local_dev_issues(issues)
         else:
             if self.live_transcription_enabled or self.live_transcription_authorized:
                 issues.add("live_transcription_profile")
@@ -153,6 +161,34 @@ class Settings(BaseSettings):
             raise ValueError(f"unsafe configuration fields: {field_names}")
 
         return self
+
+    def _collect_local_dev_issues(self, issues: set[str]) -> None:
+        safe_shapes = {
+            ("fixture", "fixture", "fixture"),
+            ("generated_synthetic", "openai_cli_local", "disabled"),
+            ("transcript_only", "transcript_only_import", "fixture"),
+        }
+        configured_shape = (
+            self.call_source_adapter,
+            self.transcriber_adapter,
+            self.analyzer_adapter,
+        )
+        if configured_shape not in safe_shapes:
+            issues.add("local_dev_adapter_shape")
+        if self.object_storage_backend != "local_synthetic":
+            issues.add("object_storage_backend")
+        if self.notification_adapter != "noop":
+            issues.add("notification_adapter")
+        if self.auth_mode != "fake":
+            issues.add("auth_mode")
+        if self.live_transcription_enabled or self.live_transcription_authorized:
+            issues.add("live_transcription_profile")
+        if self.transcription_approval_reference.strip():
+            issues.add("transcription_approval_reference")
+        if self.media_temp_root.resolve(strict=False) != Path(
+            "/tmp/colacci-law-slice3c/objects"  # nosec B108
+        ):
+            issues.add("media_temp_root")
 
     def _collect_live_test_issues(self, issues: set[str]) -> None:
         if not self.live_transcription_enabled:

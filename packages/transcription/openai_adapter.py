@@ -95,6 +95,22 @@ class LiveTranscriptionBlockedError(RuntimeError):
     """A live client cannot be constructed or executed until every gate passes."""
 
 
+class SafeTranscriptionTransportError(RuntimeError):
+    """Content-free transport failure shared by SDK and local CLI adapters."""
+
+    def __init__(
+        self,
+        *,
+        error_class: MediaErrorClass,
+        retryable: bool,
+        retry_after_seconds: float | None = None,
+    ) -> None:
+        super().__init__(error_class.value)
+        self.error_class = error_class
+        self.retryable = retryable
+        self.retry_after_seconds = retry_after_seconds
+
+
 class OpenAITranscriber:
     adapter_name = "openai-transcriber-candidate"
     adapter_version = "openai-transcriber-candidate-v1"
@@ -187,6 +203,8 @@ class OpenAITranscriber:
                         "response_format": "diarized_json",
                         "timeout": self.settings.transcription_timeout_seconds,
                     }
+                    if call.language_hint is not None:
+                        kwargs["language"] = call.language_hint
                     if request_metadata.chunking_strategy is not None:
                         kwargs["chunking_strategy"] = request_metadata.chunking_strategy
                     response = self.client.audio.transcriptions.create(**kwargs)
@@ -391,7 +409,11 @@ class OpenAITranscriber:
         self, exc: Exception, attempt_number: int
     ) -> TranscriptionErrorClassification:
         retry_after = self._retry_after(exc)
-        if isinstance(exc, AuthenticationError | PermissionDeniedError):
+        if isinstance(exc, SafeTranscriptionTransportError):
+            error_class = exc.error_class
+            retryable = exc.retryable
+            retry_after = exc.retry_after_seconds
+        elif isinstance(exc, AuthenticationError | PermissionDeniedError):
             error_class = MediaErrorClass.TRANSCRIPTION_AUTH_FAILED
             retryable = False
         elif isinstance(exc, BadRequestError):

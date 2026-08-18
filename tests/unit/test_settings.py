@@ -48,6 +48,66 @@ def test_demo_rejects_real_call_data() -> None:
         Settings(_env_file=None, allow_real_call_data=True)
 
 
+def local_dev_settings(**overrides: object) -> Settings:
+    values: dict[str, object] = {
+        "_env_file": None,
+        "app_profile": AppProfile.LOCAL_DEV,
+        "media_temp_root": "/tmp/colacci-law-slice3c/objects",
+    }
+    values.update(overrides)
+    return Settings(**values)
+
+
+def test_local_dev_is_explicit_synthetic_and_distinct() -> None:
+    settings = local_dev_settings()
+    assert settings.app_profile is AppProfile.LOCAL_DEV
+    assert settings.synthetic_mode is True
+    assert settings.allow_real_call_data is False
+    assert settings.notification_adapter == "noop"
+
+
+@pytest.mark.parametrize(
+    "overrides",
+    [
+        {"allow_real_call_data": True},
+        {"real_call_processing_authorized": True},
+        {"call_source_adapter": "manual_upload"},
+        {"transcriber_adapter": "openai_live"},
+        {"analyzer_adapter": "openai_live"},
+        {"notification_adapter": "external"},
+        {"object_storage_backend": "private_cloud"},
+        {"auth_mode": "sso"},
+        {"media_temp_root": "/tmp/colacci-law-other/objects"},
+        {"live_transcription_enabled": True},
+        {"transcription_approval_reference": "approval-reference"},
+    ],
+)
+def test_local_dev_rejects_unsafe_or_incompatible_configuration(
+    overrides: dict[str, object],
+) -> None:
+    with pytest.raises(ValidationError):
+        local_dev_settings(**overrides)
+
+
+@pytest.mark.parametrize(
+    ("source", "transcriber", "analyzer"),
+    [
+        ("fixture", "fixture", "fixture"),
+        ("generated_synthetic", "openai_cli_local", "disabled"),
+        ("transcript_only", "transcript_only_import", "fixture"),
+    ],
+)
+def test_local_dev_accepts_only_the_three_safe_adapter_shapes(
+    source: str, transcriber: str, analyzer: str
+) -> None:
+    settings = local_dev_settings(
+        call_source_adapter=source,
+        transcriber_adapter=transcriber,
+        analyzer_adapter=analyzer,
+    )
+    assert settings.call_source_adapter == source
+
+
 def test_staging_rejects_demo_defaults() -> None:
     with pytest.raises(ValidationError, match="auth_mode") as error:
         Settings(_env_file=None, app_profile=AppProfile.STAGING)

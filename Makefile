@@ -5,10 +5,10 @@ COMPOSE := docker compose
 PY_RUN := $(COMPOSE) run --rm --no-deps api
 WEB_RUN := $(COMPOSE) run --rm --no-deps web
 
-.PHONY: help bootstrap seed-demo dev stop clean generate-test-audio test-audio test-transcription-contract transcription-live-preflight test-transcription-live lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
+.PHONY: help bootstrap seed-demo dev stop clean generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
 
 help:
-	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract transcription-live-preflight test-transcription-live seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
+	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -35,6 +35,18 @@ test-audio: generate-test-audio
 
 test-transcription-contract: generate-test-audio
 	$(COMPOSE) run --rm --no-deps --user root -v /tmp/colacci-law-slice3a:/tmp/colacci-law-slice3a api python scripts/test_transcription_contract.py
+
+transcription-cli-preflight:
+	PYTHONPATH=. python3 scripts/transcription_cli_preflight.py
+
+test-transcription-cli-offline:
+	$(COMPOSE) up -d --wait db
+	$(COMPOSE) exec -T db psql -v ON_ERROR_STOP=1 -U colacci_demo -d postgres -f /docker-entrypoint-initdb.d/001-init-databases.sql
+	$(COMPOSE) run --rm -e APP_PROFILE=test -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test api /bin/bash -c 'alembic downgrade base && alembic upgrade head'
+	docker run --rm --user root --network none -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-slice3c:/tmp/colacci-law-slice3c -w /workspace -e PYTHONPATH=/workspace colacci-law-api:latest /bin/bash -c 'pytest -q tests/unit/test_cli_transcription.py tests/unit/test_transcript_import.py && python scripts/collect_cli_contract_evidence.py'
+	docker run --rm --user root --network none -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-slice3c:/tmp/colacci-law-slice3c -w /workspace -e PYTHONPATH=/workspace colacci-law-api:latest python scripts/test_cli_process_security.py
+	docker run --rm --user root --network colacci-law_fixture -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-slice3c:/tmp/colacci-law-slice3c -w /workspace -e PYTHONPATH=/workspace -e APP_PROFILE=local_dev -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test -e CALL_SOURCE_ADAPTER=transcript_only -e TRANSCRIBER_ADAPTER=transcript_only_import -e ANALYZER_ADAPTER=fixture -e NOTIFICATION_ADAPTER=noop -e OBJECT_STORAGE_BACKEND=local_synthetic -e MEDIA_TEMP_ROOT=/tmp/colacci-law-slice3c/objects colacci-law-api:latest python scripts/import_transcript_only.py
+	PYTHONPATH=. python3 scripts/inspect_slice3c_evidence.py
 
 transcription-live-preflight:
 	PYTHONPATH=. COLACCI_SYNTHETIC_ROOT=/tmp/colacci-law-slice3b python3 scripts/generate_test_audio.py

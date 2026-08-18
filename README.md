@@ -1,10 +1,12 @@
-# Colacci Law Call Review — Slice 2
+# Colacci Law Call Review — Slice 3C
 
-This repository contains the synthetic-only daily review experience. It turns the deterministic
-Slice 1 fixtures into an immutable daily report, evidence-linked call analysis, append-only human
-feedback, a content-free failure queue, and an immutable playbook publication lifecycle. It
-contains no real recording, live AI, manual-upload route, Broadvoice contract, notification,
-production authentication, retention implementation, or cloud infrastructure.
+This repository contains the synthetic-only daily review experience and its bounded local
+development bridges. It turns deterministic fixtures into an immutable daily report,
+evidence-linked call analysis, append-only human feedback, a content-free failure queue, and an
+immutable playbook publication lifecycle. Slice 3C adds an offline-tested local OpenAI CLI
+transcription transport and a transcript-only import loop. It contains no real recording,
+unapproved live AI request, manual-upload route, Broadvoice contract, notification, production
+authentication, retention implementation, or cloud infrastructure.
 
 The sole roadmap and next-steps source is
 `/Users/michaelfuscoletti/Desktop/colacci_law_next_steps.md`. Do not add a repository-level
@@ -72,10 +74,18 @@ make test-integration   # empty-test-database migration and readiness tests
 make test-fixtures      # all 12 deterministic fixtures; report under /tmp
 make test-e2e           # disposable seeded browser flow, accessibility, screenshots, log proof
 make smoke              # API, worker, web, review shell, database, and migration readiness
+make transcription-cli-preflight # inspect the installed CLI without credentials or a request
+make test-transcription-cli-offline # network-blocked CLI contracts and transcript-only full loop
 ```
 
 `make audit` is the separately labeled vulnerability-advisory check. It contacts public
 advisory/package registries and is therefore not part of the deterministic offline suite.
+
+The Slice 3C bridge declares exact support for OpenAI CLI `1.6.0` and contract
+`openai-cli-audio-transcriptions-v1`. Run `make transcription-cli-preflight` before selecting the
+transport. An absent, mismatched, or legacy CLI selects the fixture and transcript-only fallback;
+it never triggers installation, upgrade, or a provider request. Sanitized evidence is written
+under `/tmp/colacci-law-slice3c/evidence/`.
 
 ## Repository map
 
@@ -85,7 +95,10 @@ advisory/package registries and is therefore not part of the deterministic offli
 - `packages/config`: shared profiles and fail-closed startup validation.
 - `packages/contracts`: strict review models and synchronized versioned JSON Schemas.
 - `packages/database`: readiness plus immutable synthetic review persistence.
-- `packages/review`: state machine, evidence validation, adapter protocols, and fixture pipeline.
+- `packages/review`: state machine, evidence validation, adapter protocols, fixture pipeline, and
+  strict transcript-only import.
+- `packages/transcription`: shared response conversion plus the bounded SDK and local CLI
+  transports.
 - `packages/observability`: correlation IDs and allowlisted structured logs.
 - `fixtures`: the twelve-scenario synthetic manifest and draft synthetic playbook.
 - `infrastructure/local`: pinned local containers and test database initialization.
@@ -113,6 +126,13 @@ writes `report.json`, accepted English and Spanish examples, and one rejected-ou
 flow, evidence focus, feedback persistence, role denial, failure history, playbook publication,
 WCAG 2 A/AA and 2.1 A/AA automated checks, and content-free application logs. Evidence defaults
 to `/tmp/colacci-law-slice2-evidence/` and may be redirected with `SLICE2_EVIDENCE_DIR`.
+
+`make test-transcription-cli-offline` runs the injected CLI contract suite and the dedicated real
+child-process harness with external networking disabled. It also imports one invented transcript
+artifact through the existing review, report, evidence, and feedback contracts, repeats the import
+to prove idempotency, and rejects invalid artifacts before database mutation. The normal API and
+worker still construct no CLI client. The owner-gated Slice 3B live command remains a separate,
+unchanged future verification boundary.
 
 See [architecture](docs/architecture.md), [technology choices](docs/technology.md),
 [configuration rules](docs/configuration.md), [adapter boundaries](docs/adapters.md), and the

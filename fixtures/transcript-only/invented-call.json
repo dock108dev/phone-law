@@ -1,0 +1,106 @@
+{
+  "artifact_version": "transcript-only-artifact-v1",
+  "source_identifier": "invented-transcript-only-001",
+  "analysis_fixture_reference": "CL-FX-002",
+  "event": {
+    "fixture_id": "CL-TX-001",
+    "received_at": "2026-08-17T14:00:05Z",
+    "call": {
+      "source": "transcript_only",
+      "source_event_id": "evt-invented-transcript-only-001",
+      "source_call_id": "invented-transcript-only-001",
+      "recording_id": null,
+      "occurred_at": "2026-08-17T14:00:00Z",
+      "direction": "inbound",
+      "duration_seconds": 78.0,
+      "staff_extension": "104",
+      "language_hint": "en",
+      "media_reference": null,
+      "transcript_fixture_reference": "transcript.invented-only-001",
+      "metadata": {"source_mode": "transcript_only"},
+      "synthetic": true
+    }
+  },
+  "transcript": {
+    "transcript_id": "3adacbe91af77c5940fd97eef749fead",
+    "call_id": "57ce0c5e257be4428c58c56be845059d",
+    "language": "en",
+    "diarization_status": "available",
+    "original_language_text": "I am checking whether the photos I sent yesterday were received. I can see that something arrived, but I need the case team to confirm the attachments. Could someone let me know this week? Yes. I will ask the case team to call you back by Friday. Thank you, that is all I needed.",
+    "timestamp_availability": "available",
+    "provider_response_version": "transcript-only-contract-v1",
+    "media_hash_reference": null,
+    "validation_state": "accepted",
+    "segments": [
+      {
+        "segment_id": "fx002-seg-1",
+        "speaker": "outside_caller",
+        "identity": {"speaker": "outside_caller", "asserted_label": null, "verification_state": "unverified", "raw_provider_speaker_label": null},
+        "start_seconds": 4.0,
+        "end_seconds": 13.0,
+        "text": "I am checking whether the photos I sent yesterday were received."
+      },
+      {
+        "segment_id": "fx002-seg-2",
+        "speaker": "staff",
+        "identity": {"speaker": "staff", "asserted_label": null, "verification_state": "unverified", "raw_provider_speaker_label": null},
+        "start_seconds": 15.0,
+        "end_seconds": 25.0,
+        "text": "I can see that something arrived, but I need the case team to confirm the attachments."
+      },
+      {
+        "segment_id": "fx002-seg-3",
+        "speaker": "outside_caller",
+        "identity": {"speaker": "outside_caller", "asserted_label": null, "verification_state": "unverified", "raw_provider_speaker_label": null},
+        "start_seconds": 28.0,
+        "end_seconds": 35.0,
+        "text": "Could someone let me know this week?"
+      },
+      {
+        "segment_id": "fx002-seg-4",
+        "speaker": "staff",
+        "identity": {"speaker": "staff", "asserted_label": null, "verification_state": "unverified", "raw_provider_speaker_label": null},
+        "start_seconds": 38.0,
+        "end_seconds": 49.0,
+        "text": "Yes. I will ask the case team to call you back by Friday."
+      },
+      {
+        "segment_id": "fx002-seg-5",
+        "speaker": "outside_caller",
+        "identity": {"speaker": "outside_caller", "asserted_label": null, "verification_state": "unverified", "raw_provider_speaker_label": null},
+        "start_seconds": 52.0,
+        "end_seconds": 58.0,
+        "text": "Thank you, that is all I needed."
+      }
+    ],
+    "provenance": {
+      "schema_version": "review-contracts-v1",
+      "call_source": "transcript_only",
+      "source_event_id": "evt-invented-transcript-only-001",
+      "source_call_id": "invented-transcript-only-001",
+      "transcript_adapter": "transcript-only-import",
+      "transcript_model_version": "transcript-only-artifact-v1",
+      "analysis_adapter": "fixture-analyzer",
+      "analysis_model_version": "deterministic-analysis-v1",
+      "prompt_version": "facts-first-prompt-v1",
+      "playbook_version": "synthetic-draft-v1",
+      "adapter_version": "transcript-only-import-v1",
+      "generated_at": "2026-08-17T14:00:05Z",
+      "processing_attempt_id": "b28cd19901e0dc2c477d2117162b489b",
+      "environment": "local_dev",
+      "endpoint_class": null,
+      "project_configuration": null,
+      "authorization_reference": null,
+      "transcription_transport": {
+        "transport": "transcript_only",
+        "declared_contract_version": "transcript-only-artifact-v1",
+        "observed_cli_version": "unavailable",
+        "model_id": "invented-local-transcript",
+        "requested_response_format": "contract-json",
+        "generated_asset_fingerprint": null,
+        "attempt_number": 1,
+        "result_kind": "transcript_only"
+      }
+    }
+  }
+}

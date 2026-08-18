@@ -3,6 +3,7 @@
     "CallSource": {
       "enum": [
         "fixture",
+        "transcript_only",
         "manual_upload",
         "broadvoice"
       ],

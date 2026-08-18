@@ -29,6 +29,7 @@ class StrictModel(BaseModel):
 
 class CallSource(StrEnum):
     FIXTURE = "fixture"
+    TRANSCRIPT_ONLY = "transcript_only"
     MANUAL_UPLOAD = "manual_upload"
     BROADVOICE = "broadvoice"
 
@@ -163,8 +164,13 @@ class NormalizedCall(StrictModel):
 
     @model_validator(mode="after")
     def enforce_source_boundary(self) -> NormalizedCall:
-        if self.source is CallSource.FIXTURE and not self.synthetic:
-            raise ValueError("fixture calls must be marked synthetic")
+        if self.source in {CallSource.FIXTURE, CallSource.TRANSCRIPT_ONLY} and not self.synthetic:
+            raise ValueError("local synthetic sources must be marked synthetic")
+        if self.source is CallSource.TRANSCRIPT_ONLY:
+            if self.media_reference is not None or self.transcript_fixture_reference is None:
+                raise ValueError("transcript-only calls require only a transcript reference")
+            if self.metadata.get("source_mode") != "transcript_only":
+                raise ValueError("transcript-only calls require the explicit source label")
         forbidden = {
             "access_token",
             "authorization",
@@ -237,6 +243,19 @@ class TranscriptSegment(StrictModel):
         return self
 
 
+class TranscriptionTransportProvenance(StrictModel):
+    transport: Literal["fixture", "openai_cli_local", "sdk", "transcript_only"]
+    declared_contract_version: OpaqueId
+    observed_cli_version: OpaqueId | Literal["unavailable"]
+    model_id: OpaqueId
+    requested_response_format: OpaqueId
+    generated_asset_fingerprint: (
+        Annotated[str, StringConstraints(pattern=r"^sha256:[a-f0-9]{12}$")] | None
+    ) = None
+    attempt_number: Annotated[int, Field(ge=1, le=3)]
+    result_kind: Literal["deterministic_fixture", "separately_authorized_live", "transcript_only"]
+
+
 class Provenance(StrictModel):
     schema_version: Literal["review-contracts-v1"]
     call_source: CallSource
@@ -251,10 +270,13 @@ class Provenance(StrictModel):
     adapter_version: OpaqueId
     generated_at: AwareDatetime
     processing_attempt_id: OpaqueId
-    environment: Literal["fixture", "demonstration", "live_test", "staging", "real_client"]
+    environment: Literal[
+        "fixture", "demonstration", "local_dev", "live_test", "staging", "real_client"
+    ]
     endpoint_class: OpaqueId | None = None
     project_configuration: OpaqueId | None = None
     authorization_reference: OpaqueId | None = None
+    transcription_transport: TranscriptionTransportProvenance | None = None
 
 
 class Transcript(StrictModel):

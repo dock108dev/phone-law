@@ -56,7 +56,9 @@ class ReviewRepository:
     def __init__(self, engine: Engine) -> None:
         self.engine = engine
 
-    def ingest(self, event: IngestionEvent) -> IngestionResult:
+    def ingest(
+        self, event: IngestionEvent, *, preferred_call_id: str | None = None
+    ) -> IngestionResult:
         call = event.call
         payload = event.model_dump(mode="json")
         with self.engine.begin() as connection:
@@ -112,7 +114,7 @@ class ReviewRepository:
                     disposition=IngestionDisposition.DUPLICATE_CALL,
                 )
 
-            call_id = opaque_id()
+            call_id = preferred_call_id or opaque_id()
             connection.execute(
                 calls.insert().values(
                     id=call_id,
