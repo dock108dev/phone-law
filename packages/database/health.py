@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from sqlalchemy import Engine, create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 
-EXPECTED_ALEMBIC_REVISION = "0004_offline_transcription_readiness"
+EXPECTED_ALEMBIC_REVISION = "0005_manual_upload_local"
 
 
 @dataclass(frozen=True)

@@ -5,10 +5,10 @@ COMPOSE := docker compose
 PY_RUN := $(COMPOSE) run --rm --no-deps api
 WEB_RUN := $(COMPOSE) run --rm --no-deps web
 
-.PHONY: help bootstrap seed-demo dev stop clean generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
+.PHONY: help bootstrap seed-demo dev stop clean generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
 
 help:
-	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
+	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -48,6 +48,9 @@ test-transcription-cli-offline:
 	docker run --rm --user root --network colacci-law_fixture -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-slice3c:/tmp/colacci-law-slice3c -w /workspace -e PYTHONPATH=/workspace -e APP_PROFILE=local_dev -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test -e CALL_SOURCE_ADAPTER=transcript_only -e TRANSCRIBER_ADAPTER=transcript_only_import -e ANALYZER_ADAPTER=fixture -e NOTIFICATION_ADAPTER=noop -e OBJECT_STORAGE_BACKEND=local_synthetic -e MEDIA_TEMP_ROOT=/tmp/colacci-law-slice3c/objects colacci-law-api:latest python scripts/import_transcript_only.py
 	PYTHONPATH=. python3 scripts/inspect_slice3c_evidence.py
 
+test-manual-upload:
+	./scripts/test_manual_upload.sh
+
 transcription-live-preflight:
 	PYTHONPATH=. COLACCI_SYNTHETIC_ROOT=/tmp/colacci-law-slice3b python3 scripts/generate_test_audio.py
 	docker run --rm --network none -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-slice3b:/tmp/colacci-law-slice3b -w /workspace -e PYTHONPATH=/workspace -e APP_PROFILE=live_test -e ALLOW_REAL_CALL_DATA=false -e REAL_CALL_PROCESSING_AUTHORIZED=false -e LIVE_TRANSCRIPTION_ENABLED=true -e LIVE_TRANSCRIPTION_AUTHORIZED=true -e TRANSCRIPTION_APPROVAL_REFERENCE=OWNER-CHAT-2026-08-17-SLICE-3B -e TRANSCRIPTION_MODEL_ID=gpt-4o-transcribe-diarize -e TRANSCRIPTION_MAX_REQUESTS=4 -e TRANSCRIPTION_MAX_TOTAL_AUDIO_SECONDS=120 -e TRANSCRIPTION_MAX_TOTAL_BYTES=20971520 -e TRANSCRIPTION_TEST_BUDGET_USD=1.00 -e CALL_SOURCE_ADAPTER=generated_synthetic -e TRANSCRIBER_ADAPTER=openai_live -e ANALYZER_ADAPTER=disabled -e NOTIFICATION_ADAPTER=noop -e OBJECT_STORAGE_BACKEND=local_synthetic -e MEDIA_TEMP_ROOT=/tmp/colacci-law-slice3b/objects -e OPENAI_BASE_URL="$${OPENAI_BASE_URL:-https://api.openai.com/v1}" -e OPENAI_API_KEY -e OPENAI_PROJECT_ID -e OPENAI_PROJECT_DATA_CONTROLS_APPROVED colacci-law-api:latest python scripts/transcription_live_preflight.py
@@ -73,6 +76,7 @@ test:
 	$(WEB_RUN) npm test -- --run
 
 test-integration:
+	PYTHONPATH=. python3 scripts/generate_manual_upload_assets.py
 	$(COMPOSE) up -d --wait db
 	$(COMPOSE) exec -T db psql -v ON_ERROR_STOP=1 -U colacci_demo -d postgres -f /docker-entrypoint-initdb.d/001-init-databases.sql
 	$(COMPOSE) run --rm -e APP_PROFILE=test -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test api pytest -m integration

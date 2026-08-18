@@ -19,7 +19,9 @@ export async function apiRequest<T>(
   init?: RequestInit,
 ): Promise<T> {
   const headers = new Headers(init?.headers);
-  headers.set("Content-Type", "application/json");
+  if (!(init?.body instanceof FormData) && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
   headers.set("X-Demo-Principal", principal);
 
   const response = await fetch(`${apiBase}${path}`, {

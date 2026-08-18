@@ -326,3 +326,10 @@ class ReviewRepository:
                 sa.select(analyses.c.original_payload).where(analyses.c.call_id == call_id)
             ).scalar_one_or_none()
         return payload if isinstance(payload, dict) else None
+
+    def transcript_payload(self, call_id: str) -> dict[str, object] | None:
+        with self.engine.connect() as connection:
+            payload = connection.execute(
+                sa.select(transcripts.c.original_payload).where(transcripts.c.call_id == call_id)
+            ).scalar_one_or_none()
+        return payload if isinstance(payload, dict) else None

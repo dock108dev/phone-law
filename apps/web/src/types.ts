@@ -129,7 +129,7 @@ export type CallDetail = {
   proposed_next_steps: string[];
   responsible_role: string;
   suggested_response_timing: string | null;
-  provenance: Record<string, string>;
+  provenance: Record<string, unknown>;
   attempts: {
     attempt_id: string;
     attempt_number: number;
@@ -177,4 +177,73 @@ export type Playbook = {
   key_rules: string[];
   created_at: string;
   published_at: string | null;
+};
+
+export type UploadState =
+  | "received"
+  | "validating"
+  | "ready"
+  | "processing"
+  | "analyzed"
+  | "validation_failed"
+  | "transcription_failed"
+  | "analysis_failed"
+  | "cancelled"
+  | "deletion_failed";
+
+export type UploadReceipt = {
+  schema_version: "manual-upload-v1";
+  upload_id: string;
+  source_event_id: string;
+  call_id: string | null;
+  submission_kind: "synthetic_audio" | "transcript_only";
+  synthetic: true;
+  content_hash_reference: string;
+  language_hint: "en" | "es";
+  direction: "inbound" | "outbound" | "unknown";
+  captured_at: string;
+  staff_extension: string;
+  principal_id: DemoPrincipal;
+  role: "reviewer" | "administrator" | "operations";
+  state: UploadState;
+  attempt_number: number;
+  diagnostic_code: string | null;
+  retryable: boolean;
+  deletion_confirmed: boolean | null;
+  validation: {
+    kind: "synthetic_audio" | "transcript_only";
+    contract_version: string;
+    byte_size: number;
+    duration_seconds: number;
+    media_format: string | null;
+    channel_count: number | null;
+    sample_rate_hz: number | null;
+    segment_count: number | null;
+  };
+  created_at: string;
+  updated_at: string;
+  cancelled_at: string | null;
+  deleted_at: string | null;
+  duplicate: boolean;
+  call_path: string | null;
+  report_path: string | null;
+  history: {
+    event_id: string;
+    state: UploadState;
+    attempt_number: number;
+    diagnostic_code: string | null;
+    occurred_at: string;
+  }[];
+};
+
+export type UploadCapabilities = {
+  principal_id: DemoPrincipal;
+  role: "reviewer" | "administrator" | "operations";
+  can_open_completed: boolean;
+  can_append_feedback: boolean;
+  can_submit: boolean;
+  can_view_receipts: boolean;
+  can_retry: boolean;
+  can_cancel: boolean;
+  can_publish_playbook: boolean;
 };

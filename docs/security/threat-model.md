@@ -11,7 +11,7 @@ environment configuration, container images, logs, and the source repository.
 
 | Threat | Control now | Remaining requirement |
 |---|---|---|
-| Real data enters demo/test accidentally | Profiles reject real-data switches; no ingestion, upload, recording, or vendor route exists | Authenticated approved ingestion in a later slice |
+| Real data enters demo/test accidentally | Profiles reject real-data switches; explicit prohibition and attestation; only private generated fingerprints or a strict invented artifact pass | Authenticated approved real-data ingestion in a later slice |
 | Unsafe deployment uses demo controls | Staging/production startup rejects fake auth, local storage, fixtures, weak secrets, absent retention, debug, permissive CORS, and local DB | Firm-owned SSO, private storage, secrets, region, and approvals |
 | Sensitive request or error data reaches logs | Access logs off; bodies ignored; allowlisted logger; opaque errors; browser suite scans application logs for fixture/review content, credentials, and URLs | Central logging access/retention decision |
 | Secret enters source | Ignore rules, deterministic scanner, high-signal scanner test, review | Managed secret store and rotation runbook |
@@ -29,6 +29,10 @@ environment configuration, container images, logs, and the source repository.
 | Child hangs, floods output, or leaves descendants | Wall-clock timeout, output cap, cancellation, process-group termination, private temporary input, cleanup confirmation | Provider-specific operational limits before production |
 | Unsupported CLI changes response semantics | Exact version and command-surface preflight; fail closed to offline fallback | Re-accept every declared CLI contract change |
 | Transcript-only artifact bypasses validation | Regular private bounded file, strict existing contracts, full validation before first database write, deterministic idempotency | Authenticated approved ingestion before real data |
+| Upload bypasses authenticated role | Principal is resolved before buffering/allocation; request role fields are rejected; reviewer denials are audited | Firm SSO and centralized policy before staging |
+| Filename or multipart input escapes local storage | Single file, strict safe name, no destination field, no path import, opaque object ID, fixed `/tmp` root, no symlinks | Private cloud object boundary before real use |
+| Duplicate or retry creates competing records | Unique submission/content/source IDs; row locks; retry increments attempt on the same call | Distributed idempotency design before external ingestion |
+| Temporary media survives its lifecycle | Cleanup on validation failure, terminal result, success, cancellation, and unexpected exception; deletion failure is visible and audited | Approved retention/deletion policy belongs to Slice 5 |
 
 ## Abuse cases checked
 
@@ -44,6 +48,10 @@ environment configuration, container images, logs, and the source repository.
   typed content-free failures and leave no temporary media.
 - Malformed, unsupported, oversized, or unsafe transcript-only artifacts leave database counts
   unchanged.
+- Missing attestation, empty or invalid multipart, unsupported/corrupt/overlong media, unsafe name,
+  and invalid language/direction/time leave no receipt or temporary object.
+- Object-store, database, unexpected-processing, cancellation-race, and deletion failures return
+  content-free named outcomes; the focused suite confirms no test orphan remains.
 
 ## Stop conditions
 

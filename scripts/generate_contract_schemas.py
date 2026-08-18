@@ -8,6 +8,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from packages.contracts.manual_upload import UploadReceipt, UploadStateEvent
 from packages.contracts.media import (
     MediaDeletionEvent,
     MediaInput,
@@ -57,6 +58,8 @@ MODELS: dict[str, type[BaseModel]] = {
     "transcription-request-metadata.schema.json": TranscriptionRequestMetadata,
     "transcription-response-metadata.schema.json": TranscriptionResponseMetadata,
     "transcription-error-classification.schema.json": TranscriptionErrorClassification,
+    "manual-upload-receipt.schema.json": UploadReceipt,
+    "manual-upload-state-event.schema.json": UploadStateEvent,
 }
 
 

@@ -15,6 +15,16 @@ required first; an unsupported result keeps the process on the fixture/transcrip
 The normal Compose services remain `demo`, and their application factories do not construct a
 CLI client.
 
+## Slice 4 local demo boundary
+
+The `demo`, `test`, and `local_dev` profiles may use `LocalSyntheticObjectStore` only beneath an
+absolute `/tmp/colacci-law-slice4-*` root. The default manual-upload root and private fingerprint
+manifest are fixed configuration values, not request fields. The root is `0700`, objects and the
+manifest are `0600`, symlinks are rejected, and the configured media caps remain 20 MiB and 60
+seconds. `staging` and `production` cannot activate this local bridge. Live-transcription flags,
+real-data flags, remote storage, real notification, and non-fake authentication remain rejected in
+the local profiles.
+
 ## Slice 3B live-test profile
 
 `live_test` is a fail-closed, generated-media-only verification profile. It requires the
@@ -41,9 +51,9 @@ The account-specific data-control state must also be explicitly attested with
 | `staging` | Future firm-owned preproduction | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 | `production` | Future authorized deployment | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 
-The default is `demo` and `ALLOW_REAL_CALL_DATA=false`. Slice 2 has no route capable of accepting
-a call; its report and review routes read only committed synthetic fixtures and append synthetic
-human-review events.
+The default is `demo` and `ALLOW_REAL_CALL_DATA=false`. Its only call-submission route accepts
+allowlisted generated non-human audio or a strict invented transcript artifact; report and review
+routes otherwise read committed synthetic data and append synthetic human-review events.
 
 For `staging` or `production`, startup rejects:
 

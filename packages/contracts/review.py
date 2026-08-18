@@ -171,6 +171,13 @@ class NormalizedCall(StrictModel):
                 raise ValueError("transcript-only calls require only a transcript reference")
             if self.metadata.get("source_mode") != "transcript_only":
                 raise ValueError("transcript-only calls require the explicit source label")
+        if self.source is CallSource.MANUAL_UPLOAD:
+            if not self.synthetic or self.media_reference is None:
+                raise ValueError("local manual uploads require synthetic media")
+            if self.transcript_fixture_reference is not None:
+                raise ValueError("manual audio cannot carry a transcript fixture reference")
+            if self.metadata.get("source_mode") != "manual_upload":
+                raise ValueError("manual uploads require the explicit source label")
         forbidden = {
             "access_token",
             "authorization",

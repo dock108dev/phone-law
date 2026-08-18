@@ -18,7 +18,7 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
     if (response.status() >= 400) failedRequests.push({ url: response.url(), status: response.status() });
   });
 
-  await page.goto("/");
+  await page.goto("/reports/2026-08-17");
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
   await expect(page.getByRole("heading", { name: "Coverage is partial." })).toBeVisible();
   await expect(page.getByText("Expected").locator("..").getByText("11")).toBeVisible();

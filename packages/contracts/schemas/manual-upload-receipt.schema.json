@@ -1,0 +1,389 @@
+{
+  "$defs": {
+    "DemoPrincipalId": {
+      "enum": [
+        "demo-reviewer",
+        "demo-admin",
+        "demo-operations"
+      ],
+      "title": "DemoPrincipalId",
+      "type": "string"
+    },
+    "DemoRole": {
+      "enum": [
+        "reviewer",
+        "administrator",
+        "operations"
+      ],
+      "title": "DemoRole",
+      "type": "string"
+    },
+    "Direction": {
+      "enum": [
+        "inbound",
+        "outbound",
+        "unknown"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "UploadKind": {
+      "enum": [
+        "synthetic_audio",
+        "transcript_only"
+      ],
+      "title": "UploadKind",
+      "type": "string"
+    },
+    "UploadState": {
+      "enum": [
+        "received",
+        "validating",
+        "ready",
+        "processing",
+        "analyzed",
+        "validation_failed",
+        "transcription_failed",
+        "analysis_failed",
+        "cancelled",
+        "deletion_failed"
+      ],
+      "title": "UploadState",
+      "type": "string"
+    },
+    "UploadStateEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_number": {
+          "maximum": 3,
+          "minimum": 0,
+          "title": "Attempt Number",
+          "type": "integer"
+        },
+        "diagnostic_code": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_]{2,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Diagnostic Code"
+        },
+        "event_id": {
+          "pattern": "^[a-f0-9]{32}$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/UploadState"
+        }
+      },
+      "required": [
+        "event_id",
+        "state",
+        "attempt_number",
+        "occurred_at"
+      ],
+      "title": "UploadStateEvent",
+      "type": "object"
+    },
+    "UploadValidationSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_size": {
+          "exclusiveMinimum": 0,
+          "title": "Byte Size",
+          "type": "integer"
+        },
+        "channel_count": {
+          "anyOf": [
+            {
+              "maximum": 2,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel Count"
+        },
+        "contract_version": {
+          "title": "Contract Version",
+          "type": "string"
+        },
+        "duration_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "kind": {
+          "$ref": "#/$defs/UploadKind"
+        },
+        "media_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Format"
+        },
+        "sample_rate_hz": {
+          "anyOf": [
+            {
+              "maximum": 48000,
+              "minimum": 8000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sample Rate Hz"
+        },
+        "segment_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Segment Count"
+        }
+      },
+      "required": [
+        "kind",
+        "contract_version",
+        "byte_size",
+        "duration_seconds"
+      ],
+      "title": "UploadValidationSummary",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "attempt_number": {
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Attempt Number",
+      "type": "integer"
+    },
+    "call_id": {
+      "anyOf": [
+        {
+          "pattern": "^[a-f0-9]{32}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Call Id"
+    },
+    "call_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Call Path"
+    },
+    "cancelled_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cancelled At"
+    },
+    "captured_at": {
+      "format": "date-time",
+      "title": "Captured At",
+      "type": "string"
+    },
+    "content_hash_reference": {
+      "pattern": "^sha256:[a-f0-9]{12}$",
+      "title": "Content Hash Reference",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "deleted_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deleted At"
+    },
+    "deletion_confirmed": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Deletion Confirmed"
+    },
+    "diagnostic_code": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z][a-z0-9_]{2,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Diagnostic Code"
+    },
+    "direction": {
+      "$ref": "#/$defs/Direction"
+    },
+    "duplicate": {
+      "default": false,
+      "title": "Duplicate",
+      "type": "boolean"
+    },
+    "history": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/UploadStateEvent"
+      },
+      "title": "History",
+      "type": "array"
+    },
+    "language_hint": {
+      "enum": [
+        "en",
+        "es"
+      ],
+      "title": "Language Hint",
+      "type": "string"
+    },
+    "principal_id": {
+      "$ref": "#/$defs/DemoPrincipalId"
+    },
+    "report_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Report Path"
+    },
+    "retryable": {
+      "title": "Retryable",
+      "type": "boolean"
+    },
+    "role": {
+      "$ref": "#/$defs/DemoRole"
+    },
+    "schema_version": {
+      "const": "manual-upload-v1",
+      "default": "manual-upload-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_event_id": {
+      "title": "Source Event Id",
+      "type": "string"
+    },
+    "staff_extension": {
+      "pattern": "^SYN-[0-9]{3}$",
+      "title": "Staff Extension",
+      "type": "string"
+    },
+    "state": {
+      "$ref": "#/$defs/UploadState"
+    },
+    "submission_kind": {
+      "$ref": "#/$defs/UploadKind"
+    },
+    "synthetic": {
+      "const": true,
+      "default": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "updated_at": {
+      "format": "date-time",
+      "title": "Updated At",
+      "type": "string"
+    },
+    "upload_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Upload Id",
+      "type": "string"
+    },
+    "validation": {
+      "$ref": "#/$defs/UploadValidationSummary"
+    }
+  },
+  "required": [
+    "upload_id",
+    "source_event_id",
+    "submission_kind",
+    "content_hash_reference",
+    "language_hint",
+    "direction",
+    "captured_at",
+    "staff_extension",
+    "principal_id",
+    "role",
+    "state",
+    "attempt_number",
+    "retryable",
+    "validation",
+    "created_at",
+    "updated_at"
+  ],
+  "title": "UploadReceipt",
+  "type": "object"
+}

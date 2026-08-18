@@ -45,3 +45,31 @@ idempotency, content-free evidence, and cleanup. Evidence is generated only unde
 Do not place human or realistic audio, a credential, a project identifier, transcript text, raw
 CLI output, or a command string in evidence. The Slice 3B command `make test-transcription-live`
 remains separately owner-gated and is not a fallback or completion requirement for Slice 3C.
+
+## Slice 4 local synthetic manual upload
+
+Run the complete isolated proof before using the page:
+
+```bash
+make test-manual-upload
+```
+
+The command creates only deterministic non-human tones and one invented transcript artifact,
+runs request/media/transcript/lifecycle failures on an internal-only network, then drives the
+administrator, operations, and reviewer browser loop. Sanitized JSON, logs, diagnostics, and
+redacted screenshots are retained under `/tmp/colacci-law-slice4-local/evidence/`; generated
+inputs and temporary objects are removed. A successful run ends with zero temporary media and zero
+CLI, SDK, or provider requests.
+
+For local interaction, run `make dev`, open `/uploads`, select Demo admin or Demo operations, and
+choose exactly one artifact created by `scripts/generate_manual_upload_assets.py`. Never choose a
+human recording or a real transcript. Check the generated-only attestation, use only `SYN-000`
+through `SYN-999`, and submit. A ready audio receipt may be cancelled before its short local
+processing delay; a retry button appears only for a named retryable failure. Completed receipts
+link to the immutable call and daily report. Demo operations cannot append feedback; switch to Demo
+reviewer for the review step.
+
+If a receipt reaches `deletion_failed`, stop. Do not retry by manually manipulating the object or
+database. Preserve only the content-free receipt/evidence, run the focused test to diagnose the
+local boundary, and do not treat the environment as a retention implementation. Slice 5 has not
+started.

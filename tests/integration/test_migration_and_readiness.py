@@ -52,6 +52,8 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
             "ingestion_events",
             "media_artifacts",
             "media_lifecycle_events",
+            "manual_upload_receipts",
+            "manual_upload_state_events",
             "playbook_versions",
             "processing_attempts",
             "review_events",
@@ -68,7 +70,7 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
                 text("SELECT value FROM system_metadata WHERE key = 'schema_purpose'")
             ).scalar_one()
         assert revision == EXPECTED_ALEMBIC_REVISION
-        assert purpose == "offline_transcription_readiness"
+        assert purpose == "manual_upload_local"
 
         repository = TranscriptionMetadataRepository(engine)
         inspection_result = MediaInspectionResult(
@@ -123,6 +125,23 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
                     "UPDATE media_artifacts SET byte_size = 1 "
                     "WHERE id = '0123456789abcdef0123456789abcdef'"
                 )
+            )
+
+        command.downgrade(alembic, "0004_offline_transcription_readiness")
+        assert not {
+            "manual_upload_receipts",
+            "manual_upload_state_events",
+        }.intersection(inspect(engine).get_table_names())
+        with engine.connect() as connection:
+            assert (
+                connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
+                == "0004_offline_transcription_readiness"
+            )
+            assert (
+                connection.execute(
+                    text("SELECT value FROM system_metadata WHERE key = 'schema_purpose'")
+                ).scalar_one()
+                == "offline_transcription_readiness"
             )
 
         command.downgrade(alembic, "0003_synthetic_review_experience")

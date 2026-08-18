@@ -68,6 +68,10 @@ class Settings(BaseSettings):
     notification_adapter: str = "noop"
 
     media_temp_root: Path = Path("/tmp/colacci-law-slice3a/objects")  # nosec B108
+    manual_upload_root: Path = Path("/tmp/colacci-law-slice4-local/objects")  # nosec B108
+    manual_upload_manifest_path: Path = Path(  # nosec B108
+        "/tmp/colacci-law-slice4-local/synthetic-manifest.json"
+    )
     media_max_bytes: int = 20 * 1024 * 1024
     media_max_duration_seconds: float = 60.0
     live_transcription_enabled: bool = False
@@ -147,6 +151,17 @@ class Settings(BaseSettings):
             "/tmp/colacci-law-"
         ):
             issues.add("media_temp_root")
+        resolved_upload_root = self.manual_upload_root.resolve(strict=False)
+        resolved_manifest = self.manual_upload_manifest_path.resolve(strict=False)
+        if self.synthetic_mode and (
+            not str(resolved_upload_root).startswith(  # nosec B108
+                "/tmp/colacci-law-slice4-"
+            )
+            or not str(resolved_manifest).startswith(  # nosec B108
+                "/tmp/colacci-law-slice4-"
+            )
+        ):
+            issues.add("manual_upload_boundary")
 
         if self.allow_real_call_data:
             if self.app_profile not in {AppProfile.STAGING, AppProfile.PRODUCTION}:

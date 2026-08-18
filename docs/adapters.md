@@ -30,6 +30,16 @@ object. Invalid, oversized, symlinked, or group/world-writable inputs are reject
 mutation. Valid import uses existing analysis, report, evidence, feedback, audit, and persistence
 contracts; deterministic IDs make duplicate import a no-op.
 
+## Slice 4 local request adapters
+
+The demo API adds only a request adapter around existing local components. Multipart audio is
+bounded before buffering, parsed as exactly one file, inspected by content, and admitted only when
+its SHA-256 fingerprint exists in the private generated-input allowlist. It then uses the accepted
+local object store, media normalizer, fixture transcriber, fixture analyzer, and report repository.
+The JSON mode passes the complete bounded body to the existing transcript-only parser and importer;
+it creates no object and never invokes a transcriber. Neither mode constructs an OpenAI client or
+CLI process.
+
 ## Bounded OpenAI live verification
 
 The candidate OpenAI file-transcription adapter has a gated `live_test` factory. The
@@ -45,7 +55,7 @@ mock transport. No vendor credential, live provider URL, or external request is 
 
 | Boundary | Synthetic/test option | Future option | Slice 1 state |
 |---|---|---|---|
-| `CallSource` | `FixtureCallSource` | Manual upload; Broadvoice only after approval | Deterministic generic ingestion events; no route |
+| `CallSource` | `FixtureCallSource`; local synthetic manual upload | Broadvoice only after approval | Deterministic generic ingestion events plus a narrow local route |
 | `Transcriber` | `FixtureTranscriber`; offline `OpenAITranscriber`; local `openai_cli_local` shim | Separately authorized approved provider adapter | Exact fixtures, network-blocked response contracts, and bounded local CLI process harness |
 | `Analyzer` | `FixtureAnalyzer` | Approved structured analyzer | Exact facts-first fixture responses; no keyword engine |
 | `ObjectStore` | `LocalSyntheticObjectStore` | `PrivateCloudObjectStore` | No object content stored; deployment requires private cloud setting |

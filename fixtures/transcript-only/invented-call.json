@@ -13,7 +13,7 @@
       "occurred_at": "2026-08-17T14:00:00Z",
       "direction": "inbound",
       "duration_seconds": 78.0,
-      "staff_extension": "104",
+      "staff_extension": "SYN-104",
       "language_hint": "en",
       "media_reference": null,
       "transcript_fixture_reference": "transcript.invented-only-001",

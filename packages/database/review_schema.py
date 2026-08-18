@@ -203,3 +203,50 @@ audit_events = sa.Table(
     sa.Column("result", sa.String(64), nullable=False),
     sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
 )
+
+manual_upload_receipts = sa.Table(
+    "manual_upload_receipts",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("client_submission_id", sa.String(64), nullable=False),
+    sa.Column("source_event_id", sa.String(128), nullable=False),
+    sa.Column("call_id", sa.String(32), sa.ForeignKey("calls.id"), nullable=True),
+    sa.Column("submission_kind", sa.String(32), nullable=False),
+    sa.Column("is_synthetic", sa.Boolean, nullable=False),
+    sa.Column("content_fingerprint", sa.String(64), nullable=False),
+    sa.Column("language_hint", sa.String(8), nullable=False),
+    sa.Column("direction", sa.String(16), nullable=False),
+    sa.Column("captured_at", sa.DateTime(timezone=True), nullable=False),
+    sa.Column("staff_extension", sa.String(16), nullable=False),
+    sa.Column("principal_id", sa.String(64), nullable=False),
+    sa.Column("role", sa.String(32), nullable=False),
+    sa.Column("state", sa.String(32), nullable=False),
+    sa.Column("attempt_number", sa.Integer, nullable=False),
+    sa.Column("diagnostic_code", sa.String(64), nullable=True),
+    sa.Column("retryable", sa.Boolean, nullable=False),
+    sa.Column("object_id", sa.String(32), nullable=True),
+    sa.Column("artifact_id", sa.String(32), nullable=True),
+    sa.Column("validation_summary", JSONB, nullable=False),
+    sa.Column("deletion_confirmed", sa.Boolean, nullable=True),
+    sa.Column("adapter_version", sa.String(128), nullable=False),
+    sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+    sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
+    sa.Column("cancelled_at", sa.DateTime(timezone=True), nullable=True),
+    sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True),
+    sa.UniqueConstraint("client_submission_id", name="uq_manual_upload_submission"),
+    sa.UniqueConstraint("content_fingerprint", name="uq_manual_upload_content"),
+    sa.UniqueConstraint("source_event_id", name="uq_manual_upload_source_event"),
+)
+
+manual_upload_state_events = sa.Table(
+    "manual_upload_state_events",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column(
+        "upload_id", sa.String(32), sa.ForeignKey("manual_upload_receipts.id"), nullable=False
+    ),
+    sa.Column("state", sa.String(32), nullable=False),
+    sa.Column("attempt_number", sa.Integer, nullable=False),
+    sa.Column("diagnostic_code", sa.String(64), nullable=True),
+    sa.Column("occurred_at", sa.DateTime(timezone=True), nullable=False),
+)

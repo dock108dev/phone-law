@@ -1,5 +1,35 @@
 # Architecture and repository layout
 
+## Slice 4 local manual-upload bridge
+
+The normal local demo now exposes one authenticated, single-item submission boundary:
+
+```text
+administrator/operations -> bounded request -> generated fingerprint allowlist
+                                           -> private temporary object -> normalize
+                                           -> fixture transcript -> facts-first analysis
+invented transcript JSON -> strict whole-artifact validation -----------------+
+                                                                            v
+reviewer <- append-only feedback <- call/evidence <- immutable daily report
+```
+
+The two accepted input shapes are an allowlisted generated non-human audio file and the existing
+`transcript-only-artifact-v1` JSON contract. There is no path, URL, folder, batch, manifest,
+recording, microphone, remote-download, or arbitrary filesystem import surface. Authorization is
+checked before request buffering and allocation. The receipt repository uses unique client
+submission IDs, content fingerprints, and source event IDs; its state history is append-only.
+Duplicate content returns the existing receipt and never creates a second normalized call or
+accepted analysis.
+
+Generated audio is inspected by signature, normalized through the accepted media boundary, then
+uses an allowlisted fingerprint to select a deterministic fixture outcome. Retry creates another
+attempt for the same call. Cancellation is limited to `ready`. Success, terminal failure, and
+cancellation confirm object deletion; deletion failure is a visible audited terminal state.
+Transcript-only input is validated before its first receipt write and creates no media object.
+Both modes reuse the accepted call, attempt, transcript, analysis, report, evidence, review, and
+audit tables. Migration `0005_manual_upload_local` adds only content-free receipts and state
+events; accepted transcripts, analyses, feedback, playbooks, and audit history remain immutable.
+
 ## Slice 3C local development bridge
 
 `local_dev` is a synthetic-only command-line profile, not an API or worker runtime. It allows
@@ -45,11 +75,11 @@ Health probe -> Python worker --+--> PostgreSQL 17.6
 The API and worker load the same fail-closed settings, operational logger, health contract, and
 database readiness code from `packages/`. Both expose liveness without touching the database.
 Readiness requires a connection and exact Alembic revision
-`0004_offline_transcription_readiness`. The web container serves a content-free health artifact and
+`0005_manual_upload_local`. The web container serves a content-free health artifact and
 a persistent synthetic-data banner on every review route.
 
-There is no upload, external source, identity integration, notification, live transcription, or
-vendor request. Slice 3A adds only locally generated non-human media outside the repository,
+There is no real-data upload, external source, identity integration, notification, live
+transcription, or vendor request. Slice 3A adds only locally generated non-human media outside the repository,
 restrictive temporary synthetic objects, and mocked response-contract tests. The demo principal
 header is allowlisted and accepted only in
 demo/test. Fixture processing is an explicit local command; the worker remains a process and
@@ -73,6 +103,8 @@ The database contains only typed synthetic review records and the non-sensitive 
   restricted child process, shared converter/retries, safe provenance, and offline fallback
 - Transcript-only import: invented strict artifact, no media object, deterministic identity, and
   existing downstream review contracts
+- Manual upload: one bounded authenticated request, generated fingerprint allowlist, opaque local
+  object, content-free receipt, explicit terminal state, retry/cancel/delete, and no external queue
 - Daily report: deterministic America/New_York cutoff, explicit reconciliation, immutable versions
 - Human review: append-only labels/notes paired transactionally with content-free audit events
 - Playbooks: immutable structured payload; draft-to-published lifecycle metadata only

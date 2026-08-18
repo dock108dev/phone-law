@@ -276,6 +276,22 @@ class ReviewExperienceRepository:
             )
         return tuple(cast(date, item) for item in values)
 
+    def expected_source_call_ids(self, business_date: date) -> tuple[str, ...]:
+        timezone = ZoneInfo("America/New_York")
+        with self.engine.connect() as connection:
+            rows = connection.execute(
+                sa.select(calls.c.source_call_id, calls.c.occurred_at).where(
+                    calls.c.is_synthetic.is_(True)
+                )
+            ).all()
+        return tuple(
+            sorted(
+                str(row.source_call_id)
+                for row in rows
+                if cast(datetime, row.occurred_at).astimezone(timezone).date() == business_date
+            )
+        )
+
     def report(self, business_date: date) -> DailyReport | None:
         with self.engine.connect() as connection:
             payload = connection.execute(

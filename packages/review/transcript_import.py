@@ -115,9 +115,19 @@ def load_transcript_only_artifact(path: Path) -> TranscriptOnlyArtifact:
     if info.st_size <= 0 or info.st_size > TRANSCRIPT_ONLY_MAX_BYTES:
         raise ValueError("transcript artifact size is outside the local boundary")
     try:
-        payload = path.read_bytes()
-        return TranscriptOnlyArtifact.model_validate_json(payload)
+        return parse_transcript_only_artifact(path.read_bytes())
     except (OSError, ValueError, json.JSONDecodeError) as exc:
+        raise ValueError("transcript artifact failed strict validation") from exc
+
+
+def parse_transcript_only_artifact(payload: bytes) -> TranscriptOnlyArtifact:
+    """Validate one bounded JSON artifact supplied by a non-filesystem boundary."""
+
+    if not payload or len(payload) > TRANSCRIPT_ONLY_MAX_BYTES:
+        raise ValueError("transcript artifact size is outside the local boundary")
+    try:
+        return TranscriptOnlyArtifact.model_validate_json(payload)
+    except (ValueError, json.JSONDecodeError) as exc:
         raise ValueError("transcript artifact failed strict validation") from exc
 
 

@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from apps.api.colacci_api.review_routes import router as review_router
+from apps.api.colacci_api.upload_routes import router as upload_router
 from packages.config import Settings
 from packages.contracts.health import HealthResponse
 from packages.database.health import create_database_engine, database_readiness
@@ -53,8 +54,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         CORSMiddleware,
         allow_origins=configured.cors_origins,
         allow_credentials=False,
-        allow_methods=["GET", "POST"],
-        allow_headers=["Content-Type", "X-Correlation-ID", "X-Demo-Principal"],
+        allow_methods=["GET", "POST", "DELETE"],
+        allow_headers=[
+            "Content-Type",
+            "X-Correlation-ID",
+            "X-Demo-Principal",
+            "X-Client-Submission-ID",
+            "X-Generated-Only-Attestation",
+            "X-Upload-Direction",
+            "X-Upload-Captured-At",
+            "X-Upload-Language",
+            "X-Upload-Staff-Extension",
+        ],
     )
 
     @app.middleware("http")
@@ -128,4 +139,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         )
 
     app.include_router(review_router)
+    app.include_router(upload_router)
     return app

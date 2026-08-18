@@ -19,6 +19,8 @@ x-python-service: &python-service
     ANALYZER_ADAPTER: fixture
     NOTIFICATION_ADAPTER: noop
     MEDIA_TEMP_ROOT: /tmp/colacci-law-slice3a/objects
+    MANUAL_UPLOAD_ROOT: /tmp/colacci-law-slice4-local/objects
+    MANUAL_UPLOAD_MANIFEST_PATH: /tmp/colacci-law-slice4-local/synthetic-manifest.json
     MEDIA_MAX_BYTES: "20971520"
     MEDIA_MAX_DURATION_SECONDS: "60"
     LIVE_TRANSCRIPTION_ENABLED: "false"
@@ -49,6 +51,7 @@ x-python-service: &python-service
     PYTHONPATH: /workspace
   volumes:
     - .:/workspace:ro
+    - ${SLICE4_RUNTIME_ROOT:-/tmp/colacci-law-slice4-local}:/tmp/colacci-law-slice4-local
   networks:
     - app
   restart: unless-stopped
@@ -161,9 +164,11 @@ services:
     environment:
       BASE_URL: http://web:5173
       EVIDENCE_DIR: /evidence
+      PLAYWRIGHT_GREP: ${PLAYWRIGHT_GREP:-}
     command: ["npm", "run", "test:e2e"]
     volumes:
-      - ${SLICE2_EVIDENCE_DIR:-/tmp/colacci-law-slice2-evidence}:/evidence
+      - ${SLICE4_EVIDENCE_DIR:-/tmp/colacci-law-slice2-evidence}:/evidence
+      - ${SLICE4_RUNTIME_ROOT:-/tmp/colacci-law-slice4-local}/generated:/synthetic-input:ro
     depends_on:
       api:
         condition: service_healthy
