@@ -1,0 +1,8 @@
+{
+  "error": {
+    "code": "provider_unavailable",
+    "message": "invented provider failure",
+    "type": "server_error"
+  },
+  "status_code": 503
+}

@@ -141,6 +141,11 @@ class FixtureTranscriber:
             "call_id": call_id,
             "language": transcript["language"],
             "diarization_status": transcript["diarization_status"],
+            "original_language_text": " ".join(cast(str, item["text"]) for item in segments),
+            "timestamp_availability": "available",
+            "provider_response_version": "fixture-response-v1",
+            "media_hash_reference": None,
+            "validation_state": "accepted",
             "segments": segments,
             "provenance": provenance.model_dump(mode="json"),
         }
@@ -159,16 +164,21 @@ class FixtureAnalyzer:
     @staticmethod
     def _evidence(segment_ids: list[str], transcript: Transcript) -> tuple[EvidenceReference, ...]:
         by_id = {segment.segment_id: segment for segment in transcript.segments}
-        return tuple(
-            EvidenceReference(
-                segment_id=by_id[segment_id].segment_id,
-                start_seconds=by_id[segment_id].start_seconds,
-                end_seconds=by_id[segment_id].end_seconds,
-                speaker=by_id[segment_id].speaker,
-                excerpt=by_id[segment_id].text,
+        result: list[EvidenceReference] = []
+        for segment_id in segment_ids:
+            segment = by_id[segment_id]
+            if segment.start_seconds is None or segment.end_seconds is None:
+                raise ValueError("fixture evidence requires timestamps")
+            result.append(
+                EvidenceReference(
+                    segment_id=segment.segment_id,
+                    start_seconds=segment.start_seconds,
+                    end_seconds=segment.end_seconds,
+                    speaker=segment.speaker,
+                    excerpt=segment.text,
+                )
             )
-            for segment_id in segment_ids
-        )
+        return tuple(result)
 
     def _text_fact(self, raw: dict[str, Any], transcript: Transcript) -> TextFact:
         return TextFact(

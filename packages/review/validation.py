@@ -11,7 +11,9 @@ from packages.contracts.review import (
     Finding,
     Priority,
     StructuredAnalysis,
+    TimestampAvailability,
     Transcript,
+    TranscriptValidationState,
     ValueState,
 )
 
@@ -61,6 +63,8 @@ def validate_evidence(
         raise ReviewValidationError("evidence_outside_call_duration")
     if reference.start_seconds >= reference.end_seconds:
         raise ReviewValidationError("evidence_timestamp_order_invalid")
+    if segment.start_seconds is None or segment.end_seconds is None:
+        raise ReviewValidationError("evidence_timestamps_unavailable")
     if (
         reference.start_seconds < segment.start_seconds
         or reference.end_seconds > segment.end_seconds
@@ -79,6 +83,10 @@ def validate_analysis(
     *,
     caller_identity_metadata_verified: bool = False,
 ) -> None:
+    if transcript.timestamp_availability is TimestampAvailability.UNAVAILABLE:
+        raise ReviewValidationError("transcript_timestamps_unavailable")
+    if transcript.validation_state is not TranscriptValidationState.ACCEPTED:
+        raise ReviewValidationError("transcript_requires_human_review")
     for reference in _evidence_from_facts(analysis.facts):
         validate_evidence(reference, transcript, duration_seconds)
     findings = tuple(_findings(analysis))
@@ -124,3 +132,15 @@ def acceptance_state_for(
             return AnalysisAcceptanceState.NEEDS_REVIEW
         return AnalysisAcceptanceState.REJECTED
     return AnalysisAcceptanceState.ACCEPTED
+
+
+def transcript_validation_state(transcript: Transcript) -> TranscriptValidationState:
+    """Name the safe downstream state before any facts or findings are produced."""
+
+    if transcript.validation_state is not TranscriptValidationState.ACCEPTED:
+        return transcript.validation_state
+    if transcript.timestamp_availability is TimestampAvailability.UNAVAILABLE:
+        return TranscriptValidationState.REQUIRES_HUMAN_REVIEW
+    if not transcript.segments:
+        return TranscriptValidationState.REJECTED
+    return TranscriptValidationState.ACCEPTED

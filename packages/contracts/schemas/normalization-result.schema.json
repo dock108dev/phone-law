@@ -1,0 +1,88 @@
+{
+  "$defs": {
+    "SupportedMediaFormat": {
+      "enum": [
+        "mp3",
+        "mp4",
+        "mpeg",
+        "mpga",
+        "m4a",
+        "wav",
+        "webm"
+      ],
+      "title": "SupportedMediaFormat",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "byte_size": {
+      "exclusiveMinimum": 0,
+      "title": "Byte Size",
+      "type": "integer"
+    },
+    "channel_count": {
+      "maximum": 8,
+      "minimum": 1,
+      "title": "Channel Count",
+      "type": "integer"
+    },
+    "content_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "title": "Content Sha256",
+      "type": "string"
+    },
+    "duration_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "media_format": {
+      "$ref": "#/$defs/SupportedMediaFormat"
+    },
+    "normalized": {
+      "title": "Normalized",
+      "type": "boolean"
+    },
+    "normalized_object_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Normalized Object Id",
+      "type": "string"
+    },
+    "sample_rate_hz": {
+      "exclusiveMinimum": 0,
+      "title": "Sample Rate Hz",
+      "type": "integer"
+    },
+    "schema_version": {
+      "const": "media-contracts-v1",
+      "default": "media-contracts-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "source_object_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Source Object Id",
+      "type": "string"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "source_object_id",
+    "normalized_object_id",
+    "normalized",
+    "media_format",
+    "byte_size",
+    "duration_seconds",
+    "sample_rate_hz",
+    "channel_count",
+    "content_sha256"
+  ],
+  "title": "NormalizationResult",
+  "type": "object"
+}

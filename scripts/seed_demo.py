@@ -123,7 +123,7 @@ def main() -> None:
         output = {
             "synthetic": True,
             "network_used": False,
-            "migration_revision": "0003_synthetic_review_experience",
+            "migration_revision": "0004_offline_transcription_readiness",
             "business_date": str(business_date),
             "report_id": report.report_id,
             "report_version": report.version,

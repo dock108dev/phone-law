@@ -119,6 +119,17 @@ class DiarizationStatus(StrEnum):
     UNAVAILABLE = "unavailable"
 
 
+class TimestampAvailability(StrEnum):
+    AVAILABLE = "available"
+    UNAVAILABLE = "unavailable"
+
+
+class TranscriptValidationState(StrEnum):
+    ACCEPTED = "accepted"
+    REQUIRES_HUMAN_REVIEW = "requires_human_review"
+    REJECTED = "rejected"
+
+
 class FailureClass(StrEnum):
     INVALID_MEDIA = "invalid_media"
     TRANSCRIBER_UNAVAILABLE = "transcriber_unavailable"
@@ -186,6 +197,7 @@ class SpeakerIdentity(StrictModel):
     speaker: Speaker
     asserted_label: NonEmptyText | None = None
     verification_state: Literal[ValueState.UNKNOWN, ValueState.UNVERIFIED]
+    raw_provider_speaker_label: OpaqueId | None = None
 
 
 class EvidenceReference(StrictModel):
@@ -206,13 +218,19 @@ class TranscriptSegment(StrictModel):
     segment_id: OpaqueId
     speaker: Speaker
     identity: SpeakerIdentity
-    start_seconds: Annotated[float, Field(ge=0)]
-    end_seconds: Annotated[float, Field(gt=0)]
+    start_seconds: Annotated[float, Field(ge=0)] | None
+    end_seconds: Annotated[float, Field(gt=0)] | None
     text: NonEmptyText
 
     @model_validator(mode="after")
     def segment_is_ordered(self) -> TranscriptSegment:
-        if self.start_seconds >= self.end_seconds:
+        if (self.start_seconds is None) != (self.end_seconds is None):
+            raise ValueError("segment timestamps must be both present or both unavailable")
+        if (
+            self.start_seconds is not None
+            and self.end_seconds is not None
+            and self.start_seconds >= self.end_seconds
+        ):
             raise ValueError("segment start must precede end")
         if self.identity.speaker is not self.speaker:
             raise ValueError("speaker identity must match segment speaker")
@@ -241,6 +259,13 @@ class Transcript(StrictModel):
     call_id: OpaqueId
     language: Literal["en", "es"]
     diarization_status: DiarizationStatus
+    original_language_text: NonEmptyText | None = None
+    timestamp_availability: TimestampAvailability = TimestampAvailability.AVAILABLE
+    provider_response_version: OpaqueId = "legacy-review-contract-v1"
+    media_hash_reference: (
+        Annotated[str, StringConstraints(pattern=r"^sha256:[a-f0-9]{12}$")] | None
+    ) = None
+    validation_state: TranscriptValidationState = TranscriptValidationState.ACCEPTED
     segments: tuple[TranscriptSegment, ...]
     provenance: Provenance
 
@@ -253,6 +278,27 @@ class Transcript(StrictModel):
         if len(identifiers) != len(set(identifiers)):
             raise ValueError("transcript segment identifiers must be unique")
         return segments
+
+    @model_validator(mode="after")
+    def timestamps_match_availability(self) -> Transcript:
+        has_timestamps = all(
+            item.start_seconds is not None and item.end_seconds is not None
+            for item in self.segments
+        )
+        if self.timestamp_availability is TimestampAvailability.AVAILABLE and (
+            not self.segments or not has_timestamps
+        ):
+            raise ValueError("available timestamps require complete segment timestamps")
+        if self.timestamp_availability is TimestampAvailability.UNAVAILABLE and any(
+            item.start_seconds is not None or item.end_seconds is not None for item in self.segments
+        ):
+            raise ValueError("unavailable timestamps cannot carry segment timestamps")
+        if (
+            self.timestamp_availability is TimestampAvailability.UNAVAILABLE
+            and self.validation_state is TranscriptValidationState.ACCEPTED
+        ):
+            raise ValueError("timestamp-free transcripts require visible human review")
+        return self
 
 
 class TextFact(StrictModel):

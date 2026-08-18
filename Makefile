@@ -5,10 +5,10 @@ COMPOSE := docker compose
 PY_RUN := $(COMPOSE) run --rm --no-deps api
 WEB_RUN := $(COMPOSE) run --rm --no-deps web
 
-.PHONY: help bootstrap seed-demo dev stop clean lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
+.PHONY: help bootstrap seed-demo dev stop clean generate-test-audio test-audio test-transcription-contract lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
 
 help:
-	@echo "Stable commands: bootstrap seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
+	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -26,6 +26,15 @@ stop:
 
 clean:
 	./scripts/clean-local.sh
+
+generate-test-audio:
+	python3 scripts/generate_test_audio.py
+
+test-audio: generate-test-audio
+	$(COMPOSE) run --rm --no-deps --user root -v /tmp/colacci-law-slice3a:/tmp/colacci-law-slice3a api python scripts/test_audio_boundary.py
+
+test-transcription-contract: generate-test-audio
+	$(COMPOSE) run --rm --no-deps --user root -v /tmp/colacci-law-slice3a:/tmp/colacci-law-slice3a api python scripts/test_transcription_contract.py
 
 lint:
 	$(PY_RUN) ruff format --check apps packages scripts tests
@@ -52,7 +61,7 @@ test-integration:
 test-fixtures:
 	$(COMPOSE) up -d --wait db
 	$(COMPOSE) exec -T db psql -v ON_ERROR_STOP=1 -U colacci_demo -d postgres -f /docker-entrypoint-initdb.d/001-init-databases.sql
-	docker run --rm --network colacci-law_fixture -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-fixtures:/tmp/colacci-law-fixtures -w /workspace -e APP_PROFILE=test -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test -e PYTHONPATH=/workspace $$(docker compose images -q api) python scripts/evaluate_fixtures.py
+	docker run --rm --network colacci-law_fixture -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-fixtures:/tmp/colacci-law-fixtures -w /workspace -e APP_PROFILE=test -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test -e PYTHONPATH=/workspace colacci-law-api:latest python scripts/evaluate_fixtures.py
 
 test-e2e:
 	./scripts/test_e2e.sh

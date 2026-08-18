@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
+from pathlib import Path
 from urllib.parse import urlsplit
 
 from pydantic import Field, SecretStr, model_validator
@@ -63,6 +64,16 @@ class Settings(BaseSettings):
     analyzer_adapter: str = "fixture"
     notification_adapter: str = "noop"
 
+    media_temp_root: Path = Path("/tmp/colacci-law-slice3a/objects")  # nosec B108
+    media_max_bytes: int = 20 * 1024 * 1024
+    media_max_duration_seconds: float = 60.0
+    live_transcription_enabled: bool = False
+    live_transcription_authorized: bool = False
+    transcription_approval_reference: str = ""
+    transcription_model_id: str = "gpt-4o-transcribe-diarize"
+    transcription_fallback_model_id: str = "gpt-transcribe"
+    transcription_timeout_seconds: float = 30.0
+
     audio_retention_days: int = 0
     transcript_retention_days: int = 0
     analysis_retention_days: int = 0
@@ -94,8 +105,26 @@ class Settings(BaseSettings):
             if self.real_call_processing_authorized:
                 issues.add("real_call_processing_authorized")
 
+        if self.media_max_bytes <= 0 or self.media_max_bytes > 25 * 1024 * 1024:
+            issues.add("media_max_bytes")
+        if self.media_max_duration_seconds <= 30 or self.media_max_duration_seconds > 3600:
+            issues.add("media_max_duration_seconds")
+        if self.transcription_timeout_seconds <= 0 or self.transcription_timeout_seconds > 120:
+            issues.add("transcription_timeout_seconds")
+
+        if self.live_transcription_enabled or self.live_transcription_authorized:
+            issues.add("live_transcription_slice3b_unimplemented")
+        if self.transcription_approval_reference.strip():
+            issues.add("transcription_approval_reference")
+
         if self.app_profile in {AppProfile.STAGING, AppProfile.PRODUCTION}:
             self._collect_deployment_issues(issues)
+
+        resolved_media_root = self.media_temp_root.resolve(strict=False)
+        if self.synthetic_mode and not str(resolved_media_root).startswith(  # nosec B108
+            "/tmp/colacci-law-"
+        ):
+            issues.add("media_temp_root")
 
         if self.allow_real_call_data:
             if self.app_profile not in {AppProfile.STAGING, AppProfile.PRODUCTION}:

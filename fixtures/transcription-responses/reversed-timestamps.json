@@ -1,0 +1,14 @@
+{
+  "duration": 4.0,
+  "language": "en",
+  "response_version": "invented-invalid-v1",
+  "segments": [
+    {
+      "end": 1.0,
+      "speaker": "speaker_0",
+      "start": 2.0,
+      "text": "The invented endpoint precedes its start."
+    }
+  ],
+  "text": "The invented endpoint precedes its start."
+}

@@ -1,0 +1,8 @@
+{
+  "error": {
+    "code": "invalid_authentication",
+    "message": "invented authentication failure",
+    "type": "authentication_error"
+  },
+  "status_code": 401
+}

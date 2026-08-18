@@ -1,0 +1,25 @@
+{
+  "duration": 5.0,
+  "language": "es",
+  "response_version": "invented-diarized-v1",
+  "segments": [
+    {
+      "end": 2.2,
+      "speaker": "speaker_0",
+      "start": 0.0,
+      "text": "Quisiera confirmar la lista inventada de documentos."
+    },
+    {
+      "end": 4.8,
+      "speaker": "speaker_1",
+      "start": 2.2,
+      "text": "Una persona revisará todos los detalles sintéticos."
+    }
+  ],
+  "text": "Quisiera confirmar la lista inventada de documentos. Una persona revisará todos los detalles sintéticos.",
+  "usage": {
+    "input_tokens": 37,
+    "output_tokens": 24,
+    "seconds": 5.0
+  }
+}

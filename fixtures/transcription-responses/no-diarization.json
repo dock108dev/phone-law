@@ -1,0 +1,8 @@
+{
+  "diarization": "unavailable",
+  "duration": 4.0,
+  "language": "en",
+  "model": "gpt-transcribe",
+  "response_version": "invented-fallback-v1",
+  "text": "This invented fallback preserves text but supplies no speaker or timestamp evidence."
+}

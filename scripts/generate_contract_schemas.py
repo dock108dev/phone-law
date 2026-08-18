@@ -8,6 +8,19 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from packages.contracts.media import (
+    MediaDeletionEvent,
+    MediaInput,
+    MediaInspectionResult,
+    MediaLifecycleEvent,
+    NormalizationResult,
+    ProviderSpeakerLabel,
+    TemporaryObjectReference,
+    TranscriptionErrorClassification,
+    TranscriptionRequestMetadata,
+    TranscriptionResponseMetadata,
+    TranscriptionUsageMetadata,
+)
 from packages.contracts.report import AuditEvent, DailyReport, ReviewEvent
 from packages.contracts.review import (
     ExtractedFacts,
@@ -33,6 +46,17 @@ MODELS: dict[str, type[BaseModel]] = {
     "daily-report.schema.json": DailyReport,
     "review-event.schema.json": ReviewEvent,
     "audit-event.schema.json": AuditEvent,
+    "media-input.schema.json": MediaInput,
+    "media-inspection-result.schema.json": MediaInspectionResult,
+    "normalization-result.schema.json": NormalizationResult,
+    "temporary-object-reference.schema.json": TemporaryObjectReference,
+    "media-lifecycle-event.schema.json": MediaLifecycleEvent,
+    "media-deletion-event.schema.json": MediaDeletionEvent,
+    "provider-speaker-label.schema.json": ProviderSpeakerLabel,
+    "transcription-usage-metadata.schema.json": TranscriptionUsageMetadata,
+    "transcription-request-metadata.schema.json": TranscriptionRequestMetadata,
+    "transcription-response-metadata.schema.json": TranscriptionResponseMetadata,
+    "transcription-error-classification.schema.json": TranscriptionErrorClassification,
 }
 
 

@@ -1,0 +1,63 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "deletion_confirmed": {
+      "title": "Deletion Confirmed",
+      "type": "boolean"
+    },
+    "error_class": {
+      "anyOf": [
+        {
+          "const": "MEDIA_DELETION_FAILED",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Class"
+    },
+    "event_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "object_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Object Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "media-contracts-v1",
+      "default": "media-contracts-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "state": {
+      "const": "DELETED",
+      "title": "State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "event_id",
+    "artifact_id",
+    "object_id",
+    "state",
+    "deletion_confirmed",
+    "occurred_at"
+  ],
+  "title": "MediaDeletionEvent",
+  "type": "object"
+}

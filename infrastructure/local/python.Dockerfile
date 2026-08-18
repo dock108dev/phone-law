@@ -6,6 +6,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /workspace
 
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg=7:5.1.9-0+deb12u1 \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN python -m pip install --no-cache-dir --upgrade pip==25.2
 COPY requirements.lock /workspace/requirements.lock
 RUN python -m pip install --no-cache-dir --require-hashes -r /workspace/requirements.lock

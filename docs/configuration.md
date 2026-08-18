@@ -31,3 +31,14 @@ separate stop condition.
 
 Configuration values are never dumped or included in an exception log. Only the content-free
 `unsafe_configuration` code is emitted when process startup is rejected.
+
+## Slice 3A live-use hard stop
+
+- `LIVE_TRANSCRIPTION_ENABLED=false`
+- `LIVE_TRANSCRIPTION_AUTHORIZED=false`
+- `TRANSCRIPTION_APPROVAL_REFERENCE=`
+
+Any live flag or approval reference is rejected because Slice 3B is not implemented. An ambient
+API key is not authority. Generated media is confined beneath an explicit `/tmp/colacci-law-*`
+root, the application cap defaults to 20 MB and can never exceed the current documented 25 MB
+provider ceiling, and the conservative synthetic duration cap is 60 seconds.

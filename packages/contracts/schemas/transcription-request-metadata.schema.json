@@ -1,0 +1,96 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "adapter_version": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Adapter Version",
+      "type": "string"
+    },
+    "artifact_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "attempt_number": {
+      "maximum": 3,
+      "minimum": 1,
+      "title": "Attempt Number",
+      "type": "integer"
+    },
+    "byte_size": {
+      "exclusiveMinimum": 0,
+      "title": "Byte Size",
+      "type": "integer"
+    },
+    "call_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Call Id",
+      "type": "string"
+    },
+    "chunking_strategy": {
+      "anyOf": [
+        {
+          "const": "auto",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Chunking Strategy"
+    },
+    "duration_seconds": {
+      "exclusiveMinimum": 0,
+      "title": "Duration Seconds",
+      "type": "number"
+    },
+    "fallback_model_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Fallback Model Id",
+      "type": "string"
+    },
+    "media_hash_reference": {
+      "pattern": "^sha256:[a-f0-9]{12}$",
+      "title": "Media Hash Reference",
+      "type": "string"
+    },
+    "model_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Model Id",
+      "type": "string"
+    },
+    "response_format": {
+      "const": "diarized_json",
+      "title": "Response Format",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "media-contracts-v1",
+      "default": "media-contracts-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "timeout_seconds": {
+      "exclusiveMinimum": 0,
+      "maximum": 120,
+      "title": "Timeout Seconds",
+      "type": "number"
+    }
+  },
+  "required": [
+    "call_id",
+    "attempt_number",
+    "artifact_id",
+    "media_hash_reference",
+    "adapter_version",
+    "model_id",
+    "fallback_model_id",
+    "response_format",
+    "chunking_strategy",
+    "timeout_seconds",
+    "byte_size",
+    "duration_seconds"
+  ],
+  "title": "TranscriptionRequestMetadata",
+  "type": "object"
+}

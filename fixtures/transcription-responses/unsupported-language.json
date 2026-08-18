@@ -1,0 +1,14 @@
+{
+  "duration": 3.0,
+  "language": "fr",
+  "response_version": "invented-invalid-v1",
+  "segments": [
+    {
+      "end": 2.8,
+      "speaker": "speaker_0",
+      "start": 0.0,
+      "text": "Cette langue se trouve hors de la limite de cette tranche."
+    }
+  ],
+  "text": "Cette langue se trouve hors de la limite de cette tranche."
+}

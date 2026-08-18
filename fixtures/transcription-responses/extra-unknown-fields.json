@@ -1,0 +1,18 @@
+{
+  "duration": 3.0,
+  "future_provider_field": {
+    "must_not_persist": true
+  },
+  "language": "en",
+  "response_version": "invented-diarized-v1",
+  "segments": [
+    {
+      "end": 2.8,
+      "future_segment_field": "drop-me",
+      "speaker": "speaker_7",
+      "start": 0.0,
+      "text": "This invented result includes an unknown field that is deliberately discarded."
+    }
+  ],
+  "text": "This invented result includes an unknown field that is deliberately discarded."
+}

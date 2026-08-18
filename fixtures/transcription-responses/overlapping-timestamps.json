@@ -1,0 +1,20 @@
+{
+  "duration": 4.0,
+  "language": "en",
+  "response_version": "invented-invalid-v1",
+  "segments": [
+    {
+      "end": 2.5,
+      "speaker": "speaker_0",
+      "start": 0.0,
+      "text": "The first invented segment ends after two seconds."
+    },
+    {
+      "end": 3.8,
+      "speaker": "speaker_1",
+      "start": 2.0,
+      "text": "The second invented segment overlaps it."
+    }
+  ],
+  "text": "The first invented segment ends after two seconds. The second invented segment overlaps it."
+}

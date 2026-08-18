@@ -1,0 +1,27 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "identity_verified": {
+      "const": false,
+      "default": false,
+      "title": "Identity Verified",
+      "type": "boolean"
+    },
+    "mapped_participant": {
+      "const": "unknown_participant",
+      "default": "unknown_participant",
+      "title": "Mapped Participant",
+      "type": "string"
+    },
+    "raw_label": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Raw Label",
+      "type": "string"
+    }
+  },
+  "required": [
+    "raw_label"
+  ],
+  "title": "ProviderSpeakerLabel",
+  "type": "object"
+}

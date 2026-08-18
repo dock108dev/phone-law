@@ -101,6 +101,55 @@ playbook_versions = sa.Table(
     sa.Column("retired_at", sa.DateTime(timezone=True), nullable=True),
 )
 
+media_artifacts = sa.Table(
+    "media_artifacts",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("call_id", sa.String(32), sa.ForeignKey("calls.id"), nullable=True),
+    sa.Column("is_synthetic", sa.Boolean, nullable=False),
+    sa.Column("content_hash_reference", sa.String(19), nullable=False),
+    sa.Column("media_format", sa.String(16), nullable=False),
+    sa.Column("byte_size", sa.BigInteger, nullable=False),
+    sa.Column("duration_seconds", sa.Float, nullable=False),
+    sa.Column("channel_count", sa.Integer, nullable=False),
+    sa.Column("sample_rate_hz", sa.Integer, nullable=False),
+    sa.Column("lifecycle_state", sa.String(32), nullable=False),
+    sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+    sa.Column("deleted_at", sa.DateTime(timezone=True), nullable=True),
+)
+
+media_lifecycle_events = sa.Table(
+    "media_lifecycle_events",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("artifact_id", sa.String(32), sa.ForeignKey("media_artifacts.id"), nullable=False),
+    sa.Column("state", sa.String(32), nullable=False),
+    sa.Column("deletion_confirmed", sa.Boolean, nullable=True),
+    sa.Column("error_class", sa.String(64), nullable=True),
+    sa.Column("occurred_at", sa.DateTime(timezone=True), nullable=False),
+)
+
+transcription_provider_attempts = sa.Table(
+    "transcription_provider_attempts",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("artifact_id", sa.String(32), sa.ForeignKey("media_artifacts.id"), nullable=False),
+    sa.Column("call_id", sa.String(32), sa.ForeignKey("calls.id"), nullable=True),
+    sa.Column("attempt_number", sa.Integer, nullable=False),
+    sa.Column("adapter_version", sa.String(128), nullable=False),
+    sa.Column("model_id", sa.String(128), nullable=False),
+    sa.Column("provider_response_version", sa.String(128), nullable=True),
+    sa.Column("timestamp_availability", sa.String(32), nullable=True),
+    sa.Column("diarization_availability", sa.String(32), nullable=True),
+    sa.Column("safe_error_class", sa.String(64), nullable=True),
+    sa.Column("retryable", sa.Boolean, nullable=False),
+    sa.Column("duration_ms", sa.Float, nullable=False),
+    sa.Column("input_tokens", sa.Integer, nullable=True),
+    sa.Column("output_tokens", sa.Integer, nullable=True),
+    sa.Column("usage_duration_seconds", sa.Float, nullable=True),
+    sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+)
+
 daily_reports = sa.Table(
     "daily_reports",
     metadata,

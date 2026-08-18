@@ -139,6 +139,19 @@
           "default": null,
           "title": "Asserted Label"
         },
+        "raw_provider_speaker_label": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Provider Speaker Label"
+        },
         "speaker": {
           "$ref": "#/$defs/Speaker"
         },
@@ -158,13 +171,28 @@
       "title": "SpeakerIdentity",
       "type": "object"
     },
+    "TimestampAvailability": {
+      "enum": [
+        "available",
+        "unavailable"
+      ],
+      "title": "TimestampAvailability",
+      "type": "string"
+    },
     "TranscriptSegment": {
       "additionalProperties": false,
       "properties": {
         "end_seconds": {
-          "exclusiveMinimum": 0,
-          "title": "End Seconds",
-          "type": "number"
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "End Seconds"
         },
         "identity": {
           "$ref": "#/$defs/SpeakerIdentity"
@@ -178,9 +206,16 @@
           "$ref": "#/$defs/Speaker"
         },
         "start_seconds": {
-          "minimum": 0,
-          "title": "Start Seconds",
-          "type": "number"
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Start Seconds"
         },
         "text": {
           "minLength": 1,
@@ -198,6 +233,15 @@
       ],
       "title": "TranscriptSegment",
       "type": "object"
+    },
+    "TranscriptValidationState": {
+      "enum": [
+        "accepted",
+        "requires_human_review",
+        "rejected"
+      ],
+      "title": "TranscriptValidationState",
+      "type": "string"
     }
   },
   "additionalProperties": false,
@@ -218,8 +262,40 @@
       "title": "Language",
       "type": "string"
     },
+    "media_hash_reference": {
+      "anyOf": [
+        {
+          "pattern": "^sha256:[a-f0-9]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Media Hash Reference"
+    },
+    "original_language_text": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Original Language Text"
+    },
     "provenance": {
       "$ref": "#/$defs/Provenance"
+    },
+    "provider_response_version": {
+      "default": "legacy-review-contract-v1",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Provider Response Version",
+      "type": "string"
     },
     "segments": {
       "items": {
@@ -228,10 +304,18 @@
       "title": "Segments",
       "type": "array"
     },
+    "timestamp_availability": {
+      "$ref": "#/$defs/TimestampAvailability",
+      "default": "available"
+    },
     "transcript_id": {
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
       "title": "Transcript Id",
       "type": "string"
+    },
+    "validation_state": {
+      "$ref": "#/$defs/TranscriptValidationState",
+      "default": "accepted"
     }
   },
   "required": [

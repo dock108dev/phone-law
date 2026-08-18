@@ -1,0 +1,65 @@
+{
+  "$defs": {
+    "MediaErrorClass": {
+      "enum": [
+        "EMPTY_MEDIA",
+        "UNSUPPORTED_MEDIA",
+        "CORRUPT_MEDIA",
+        "OVERSIZED_MEDIA",
+        "OVERLONG_MEDIA",
+        "NORMALIZATION_FAILED",
+        "TRANSCRIPTION_TIMEOUT",
+        "TRANSCRIPTION_RATE_LIMITED",
+        "TRANSCRIPTION_AUTH_FAILED",
+        "TRANSCRIPTION_PROVIDER_FAILED",
+        "TRANSCRIPTION_RESPONSE_INVALID",
+        "MEDIA_DELETION_FAILED"
+      ],
+      "title": "MediaErrorClass",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "attempt_number": {
+      "maximum": 3,
+      "minimum": 1,
+      "title": "Attempt Number",
+      "type": "integer"
+    },
+    "error_class": {
+      "$ref": "#/$defs/MediaErrorClass"
+    },
+    "retry_after_seconds": {
+      "anyOf": [
+        {
+          "maximum": 30,
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Retry After Seconds"
+    },
+    "retryable": {
+      "title": "Retryable",
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "media-contracts-v1",
+      "default": "media-contracts-v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "error_class",
+    "retryable",
+    "attempt_number"
+  ],
+  "title": "TranscriptionErrorClassification",
+  "type": "object"
+}
