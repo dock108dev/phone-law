@@ -24,7 +24,7 @@ x-python-service: &python-service
     AUDIT_RETENTION_DAYS: "0"
     RETENTION_POLICY_APPROVED: "false"
     DEBUG: "false"
-    CORS_ORIGINS: '["http://localhost:15173"]'
+    CORS_ORIGINS: '${CORS_ORIGINS:-["http://localhost:15173"]}'
     FIRM_TIMEZONE: America/New_York
     LOG_LEVEL: INFO
     RUFF_CACHE_DIR: /tmp/ruff-cache
@@ -114,6 +114,7 @@ services:
     environment:
       VITE_APP_PROFILE: demo
       VITE_ALLOW_REAL_CALL_DATA: "false"
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:18000}
     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
     volumes:
       - ./apps/web/src:/workspace/apps/web/src:ro
@@ -135,6 +136,25 @@ services:
     networks:
       - app
     restart: unless-stopped
+
+  e2e:
+    build:
+      context: .
+      dockerfile: infrastructure/local/playwright.Dockerfile
+    profiles: ["e2e"]
+    environment:
+      BASE_URL: http://web:5173
+      EVIDENCE_DIR: /evidence
+    command: ["npm", "run", "test:e2e"]
+    volumes:
+      - ${SLICE2_EVIDENCE_DIR:-/tmp/colacci-law-slice2-evidence}:/evidence
+    depends_on:
+      api:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+    networks:
+      - app
 
 networks:
   app:

@@ -109,6 +109,8 @@ class AdvisoryStatus(StrEnum):
 
 class PlaybookStatus(StrEnum):
     DRAFT = "draft"
+    PUBLISHED = "published"
+    RETIRED = "retired"
 
 
 class DiarizationStatus(StrEnum):
@@ -430,7 +432,7 @@ class PlaybookVersion(StrictModel):
     version: OpaqueId
     label: NonEmptyText
     synthetic: Literal[True]
-    status: Literal[PlaybookStatus.DRAFT]
+    status: PlaybookStatus
     allowed_responsible_roles: tuple[ResponsibleRole, ...]
     category_definitions: tuple[PlaybookRule, ...]
     priority_rules: tuple[PlaybookRule, ...]

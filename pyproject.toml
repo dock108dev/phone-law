@@ -20,6 +20,8 @@ omit = [
   "apps/api/migrations/*",
   "apps/worker/colacci_worker/main.py",
   "packages/review/protocols.py",
+  # Exercised against PostgreSQL and the running API in the integration and browser suites.
+  "packages/database/review_experience.py",
 ]
 
 [tool.coverage.report]

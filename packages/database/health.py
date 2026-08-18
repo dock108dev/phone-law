@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from sqlalchemy import Engine, create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
 
-EXPECTED_ALEMBIC_REVISION = "0002_synthetic_review_contracts"
+EXPECTED_ALEMBIC_REVISION = "0003_synthetic_review_experience"
 
 
 @dataclass(frozen=True)

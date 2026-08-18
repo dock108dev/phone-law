@@ -31,6 +31,10 @@ def migrated_engine() -> sa.Engine:
     command.upgrade(alembic, "0001_foundation")
     engine = create_engine(settings.sqlalchemy_database_url)
     assert set(inspect(engine).get_table_names()) == {"alembic_version", "system_metadata"}
+    command.upgrade(alembic, "0002_synthetic_review_contracts")
+    slice_one_tables = set(inspect(engine).get_table_names())
+    assert "analyses" in slice_one_tables
+    assert "daily_reports" not in slice_one_tables
     command.upgrade(alembic, "head")
     try:
         yield engine
@@ -54,6 +58,13 @@ def test_migration_constraints_downgrade_and_reupgrade(migrated_engine: sa.Engin
     settings = Settings(_env_file=None, app_profile="test")
     alembic = Config("alembic.ini")
     alembic.set_main_option("sqlalchemy.url", settings.sqlalchemy_database_url)
+    command.downgrade(alembic, "0002_synthetic_review_contracts")
+    slice_one_tables = set(inspect(migrated_engine).get_table_names())
+    assert "analyses" in slice_one_tables
+    assert "daily_reports" not in slice_one_tables
+    command.upgrade(alembic, "head")
+    assert "daily_reports" in inspect(migrated_engine).get_table_names()
+
     command.downgrade(alembic, "0001_foundation")
     assert set(inspect(migrated_engine).get_table_names()) == {"alembic_version", "system_metadata"}
     command.upgrade(alembic, "head")

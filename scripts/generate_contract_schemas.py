@@ -8,6 +8,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from packages.contracts.report import AuditEvent, DailyReport, ReviewEvent
 from packages.contracts.review import (
     ExtractedFacts,
     IngestionEvent,
@@ -29,6 +30,9 @@ MODELS: dict[str, type[BaseModel]] = {
     "sanitized-processing-failure.schema.json": SanitizedProcessingFailure,
     "structured-analysis.schema.json": StructuredAnalysis,
     "transcript.schema.json": Transcript,
+    "daily-report.schema.json": DailyReport,
+    "review-event.schema.json": ReviewEvent,
+    "audit-event.schema.json": AuditEvent,
 }
 
 

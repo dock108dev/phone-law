@@ -1,0 +1,624 @@
+{
+  "$defs": {
+    "AnalysisCategory": {
+      "enum": [
+        "new_intake",
+        "existing_client_follow_up",
+        "administrative",
+        "dissatisfaction_escalation",
+        "routine_no_action",
+        "unknown"
+      ],
+      "title": "AnalysisCategory",
+      "type": "string"
+    },
+    "CallSource": {
+      "enum": [
+        "fixture",
+        "manual_upload",
+        "broadvoice"
+      ],
+      "title": "CallSource",
+      "type": "string"
+    },
+    "Confidence": {
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "excerpt": {
+          "minLength": 1,
+          "title": "Excerpt",
+          "type": "string"
+        },
+        "segment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "speaker": {
+          "$ref": "#/$defs/Speaker"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "segment_id",
+        "start_seconds",
+        "end_seconds",
+        "speaker",
+        "excerpt"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "FailedCallSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Call Id",
+          "type": "string"
+        },
+        "diagnostic_code": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Diagnostic Code",
+          "type": "string"
+        },
+        "failed_stage": {
+          "minLength": 1,
+          "title": "Failed Stage",
+          "type": "string"
+        },
+        "retryable": {
+          "title": "Retryable",
+          "type": "boolean"
+        },
+        "synthetic_reference": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Synthetic Reference",
+          "type": "string"
+        },
+        "terminal_state": {
+          "$ref": "#/$defs/ProcessingState"
+        }
+      },
+      "required": [
+        "call_id",
+        "synthetic_reference",
+        "failed_stage",
+        "diagnostic_code",
+        "retryable",
+        "terminal_state"
+      ],
+      "title": "FailedCallSummary",
+      "type": "object"
+    },
+    "LateCallMarker": {
+      "additionalProperties": false,
+      "properties": {
+        "call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Call Id",
+          "type": "string"
+        },
+        "cutoff_at": {
+          "format": "date-time",
+          "title": "Cutoff At",
+          "type": "string"
+        },
+        "received_at": {
+          "format": "date-time",
+          "title": "Received At",
+          "type": "string"
+        },
+        "synthetic_reference": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Synthetic Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "call_id",
+        "synthetic_reference",
+        "received_at",
+        "cutoff_at"
+      ],
+      "title": "LateCallMarker",
+      "type": "object"
+    },
+    "ProcessingState": {
+      "enum": [
+        "RECEIVED",
+        "VALIDATED",
+        "QUEUED",
+        "MEDIA_READY",
+        "TRANSCRIBING",
+        "TRANSCRIBED",
+        "EXTRACTING_FACTS",
+        "APPLYING_PLAYBOOK",
+        "ANALYZED",
+        "AUDIO_INVALID",
+        "TRANSCRIPTION_FAILED",
+        "OUTPUT_VALIDATION_FAILED",
+        "ANALYSIS_FAILED"
+      ],
+      "title": "ProcessingState",
+      "type": "string"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "analysis_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Adapter",
+          "type": "string"
+        },
+        "analysis_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Model Version",
+          "type": "string"
+        },
+        "call_source": {
+          "$ref": "#/$defs/CallSource"
+        },
+        "environment": {
+          "enum": [
+            "fixture",
+            "demonstration",
+            "staging",
+            "real_client"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "playbook_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Playbook Version",
+          "type": "string"
+        },
+        "processing_attempt_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Processing Attempt Id",
+          "type": "string"
+        },
+        "prompt_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "review-contracts-v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Call Id",
+          "type": "string"
+        },
+        "source_event_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Event Id",
+          "type": "string"
+        },
+        "transcript_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Adapter",
+          "type": "string"
+        },
+        "transcript_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Model Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "call_source",
+        "source_event_id",
+        "source_call_id",
+        "transcript_adapter",
+        "transcript_model_version",
+        "analysis_adapter",
+        "analysis_model_version",
+        "prompt_version",
+        "playbook_version",
+        "adapter_version",
+        "generated_at",
+        "processing_attempt_id",
+        "environment"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "ReportCompleteness": {
+      "additionalProperties": false,
+      "properties": {
+        "explanation": {
+          "minLength": 1,
+          "title": "Explanation",
+          "type": "string"
+        },
+        "reconciliation": {
+          "$ref": "#/$defs/ReportReconciliation"
+        },
+        "status": {
+          "$ref": "#/$defs/ReportStatus"
+        }
+      },
+      "required": [
+        "status",
+        "explanation",
+        "reconciliation"
+      ],
+      "title": "ReportCompleteness",
+      "type": "object"
+    },
+    "ReportItem": {
+      "additionalProperties": false,
+      "properties": {
+        "analysis_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Analysis Id"
+        },
+        "call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Call Id",
+          "type": "string"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AnalysisCategory"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Confidence"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "failure": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FailedCallSummary"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "item_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Item Id",
+          "type": "string"
+        },
+        "priority": {
+          "title": "Priority",
+          "type": "string"
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Provenance"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "responsible_role": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ResponsibleRole"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "section": {
+          "$ref": "#/$defs/ReportSectionKind"
+        },
+        "suggested_timing": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suggested Timing"
+        },
+        "summary": {
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "synthetic_reference": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Synthetic Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "call_id",
+        "synthetic_reference",
+        "section",
+        "summary",
+        "priority"
+      ],
+      "title": "ReportItem",
+      "type": "object"
+    },
+    "ReportReconciliation": {
+      "additionalProperties": false,
+      "properties": {
+        "analyzed": {
+          "minimum": 0,
+          "title": "Analyzed",
+          "type": "integer"
+        },
+        "duplicate_deliveries": {
+          "minimum": 0,
+          "title": "Duplicate Deliveries",
+          "type": "integer"
+        },
+        "expected": {
+          "minimum": 0,
+          "title": "Expected",
+          "type": "integer"
+        },
+        "failed": {
+          "minimum": 0,
+          "title": "Failed",
+          "type": "integer"
+        },
+        "late": {
+          "minimum": 0,
+          "title": "Late",
+          "type": "integer"
+        },
+        "missing": {
+          "minimum": 0,
+          "title": "Missing",
+          "type": "integer"
+        },
+        "received": {
+          "minimum": 0,
+          "title": "Received",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "expected",
+        "received",
+        "duplicate_deliveries",
+        "analyzed",
+        "failed",
+        "missing",
+        "late"
+      ],
+      "title": "ReportReconciliation",
+      "type": "object"
+    },
+    "ReportSection": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ReportItem"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "kind": {
+          "$ref": "#/$defs/ReportSectionKind"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "title",
+        "description",
+        "items"
+      ],
+      "title": "ReportSection",
+      "type": "object"
+    },
+    "ReportSectionKind": {
+      "enum": [
+        "immediate_attention",
+        "potential_new_matters",
+        "time_sensitive_dates",
+        "dissatisfaction_escalation",
+        "staff_commitments",
+        "administrative_tasks",
+        "routine_no_action",
+        "processing_failures"
+      ],
+      "title": "ReportSectionKind",
+      "type": "string"
+    },
+    "ReportStatus": {
+      "enum": [
+        "complete",
+        "partial",
+        "failed"
+      ],
+      "title": "ReportStatus",
+      "type": "string"
+    },
+    "ResponsibleRole": {
+      "enum": [
+        "intake_team",
+        "case_team",
+        "records_coordinator",
+        "supervising_attorney",
+        "spanish_speaking_intake",
+        "unassigned"
+      ],
+      "title": "ResponsibleRole",
+      "type": "string"
+    },
+    "Speaker": {
+      "enum": [
+        "staff",
+        "outside_caller",
+        "unknown_participant"
+      ],
+      "title": "Speaker",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "advisory_notice": {
+      "minLength": 1,
+      "title": "Advisory Notice",
+      "type": "string"
+    },
+    "business_date": {
+      "format": "date",
+      "title": "Business Date",
+      "type": "string"
+    },
+    "completeness": {
+      "$ref": "#/$defs/ReportCompleteness"
+    },
+    "cutoff_at": {
+      "format": "date-time",
+      "title": "Cutoff At",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "late_calls": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/LateCallMarker"
+      },
+      "title": "Late Calls",
+      "type": "array"
+    },
+    "report_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Report Id",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "daily-report-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "sections": {
+      "items": {
+        "$ref": "#/$defs/ReportSection"
+      },
+      "title": "Sections",
+      "type": "array"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "timezone": {
+      "const": "America/New_York",
+      "title": "Timezone",
+      "type": "string"
+    },
+    "version": {
+      "minimum": 1,
+      "title": "Version",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "report_id",
+    "business_date",
+    "timezone",
+    "cutoff_at",
+    "version",
+    "generated_at",
+    "synthetic",
+    "advisory_notice",
+    "completeness",
+    "sections"
+  ],
+  "title": "DailyReport",
+  "type": "object"
+}

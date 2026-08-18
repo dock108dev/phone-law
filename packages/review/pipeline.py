@@ -66,6 +66,22 @@ class FixturePipeline:
                 analysis_count=summary.analysis_count,
             )
 
+        return self._run_attempts(event, ingestion.call_id, ingestion.disposition)
+
+    def retry(self, event: IngestionEvent, call_id: str) -> FixtureOutcome:
+        """Run an explicitly authorized new attempt for an existing synthetic call."""
+
+        summary = self.repository.call_summary(call_id)
+        if summary.fixture_id != event.fixture_id:
+            raise ValueError("fixture retry target does not match the existing call")
+        return self._run_attempts(event, call_id, IngestionDisposition.ACCEPTED)
+
+    def _run_attempts(
+        self,
+        event: IngestionEvent,
+        call_id: str,
+        disposition: IngestionDisposition,
+    ) -> FixtureOutcome:
         while True:
             attempt_id = opaque_id()
             provenance = Provenance(
@@ -84,22 +100,16 @@ class FixturePipeline:
                 processing_attempt_id=attempt_id,
                 environment="fixture",
             )
-            attempt = self.repository.start_attempt(ingestion.call_id, provenance)
-            self.repository.advance(
-                ingestion.call_id, attempt.attempt_id, ProcessingState.VALIDATED
-            )
-            self.repository.advance(ingestion.call_id, attempt.attempt_id, ProcessingState.QUEUED)
-            self.repository.advance(
-                ingestion.call_id, attempt.attempt_id, ProcessingState.MEDIA_READY
-            )
-            self.repository.advance(
-                ingestion.call_id, attempt.attempt_id, ProcessingState.TRANSCRIBING
-            )
+            attempt = self.repository.start_attempt(call_id, provenance)
+            self.repository.advance(call_id, attempt.attempt_id, ProcessingState.VALIDATED)
+            self.repository.advance(call_id, attempt.attempt_id, ProcessingState.QUEUED)
+            self.repository.advance(call_id, attempt.attempt_id, ProcessingState.MEDIA_READY)
+            self.repository.advance(call_id, attempt.attempt_id, ProcessingState.TRANSCRIBING)
             try:
                 transcript = self.transcriber.transcribe(
                     event.call,
                     fixture_id=event.fixture_id,
-                    call_id=ingestion.call_id,
+                    call_id=call_id,
                     attempt_number=attempt.attempt_number,
                     provenance=provenance,
                 )
@@ -110,28 +120,24 @@ class FixturePipeline:
                     diagnostic_code=exc.diagnostic_code,
                     retryable=exc.retryable,
                 )
-                self.repository.fail(ingestion.call_id, attempt.attempt_id, failure)
+                self.repository.fail(call_id, attempt.attempt_id, failure)
                 if exc.retryable:
                     continue
                 break
 
             self.repository.store_transcript(transcript, attempt.attempt_id)
-            self.repository.advance(
-                ingestion.call_id, attempt.attempt_id, ProcessingState.TRANSCRIBED
-            )
-            self.repository.advance(
-                ingestion.call_id, attempt.attempt_id, ProcessingState.EXTRACTING_FACTS
-            )
+            self.repository.advance(call_id, attempt.attempt_id, ProcessingState.TRANSCRIBED)
+            self.repository.advance(call_id, attempt.attempt_id, ProcessingState.EXTRACTING_FACTS)
             try:
                 facts = self.analyzer.extract_facts(event.fixture_id, transcript)
                 self.repository.advance(
-                    ingestion.call_id,
+                    call_id,
                     attempt.attempt_id,
                     ProcessingState.APPLYING_PLAYBOOK,
                 )
                 analysis = self.analyzer.apply_playbook(
                     event.fixture_id,
-                    call_id=ingestion.call_id,
+                    call_id=call_id,
                     facts=facts,
                     transcript=transcript,
                     provenance=provenance,
@@ -152,16 +158,16 @@ class FixturePipeline:
                     diagnostic_code="structured_output_rejected",
                     retryable=False,
                 )
-                self.repository.fail(ingestion.call_id, attempt.attempt_id, failure)
+                self.repository.fail(call_id, attempt.attempt_id, failure)
                 break
-            self.repository.advance(ingestion.call_id, attempt.attempt_id, ProcessingState.ANALYZED)
+            self.repository.advance(call_id, attempt.attempt_id, ProcessingState.ANALYZED)
             break
 
-        summary = self.repository.call_summary(ingestion.call_id)
+        summary = self.repository.call_summary(call_id)
         return FixtureOutcome(
             fixture_id=event.fixture_id,
-            call_id=ingestion.call_id,
-            disposition=ingestion.disposition,
+            call_id=call_id,
+            disposition=disposition,
             terminal_state=summary.state,
             attempt_count=summary.attempt_count,
             transcript_count=summary.transcript_count,

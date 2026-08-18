@@ -31,10 +31,14 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
         expected_tables = {
             "alembic_version",
             "analyses",
+            "audit_events",
             "calls",
+            "daily_report_items",
+            "daily_reports",
             "ingestion_events",
             "playbook_versions",
             "processing_attempts",
+            "review_events",
             "system_metadata",
             "transcripts",
         }
@@ -47,7 +51,7 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
                 text("SELECT value FROM system_metadata WHERE key = 'schema_purpose'")
             ).scalar_one()
         assert revision == EXPECTED_ALEMBIC_REVISION
-        assert purpose == "synthetic_review_contracts"
+        assert purpose == "synthetic_review_experience"
     finally:
         engine.dispose()
 

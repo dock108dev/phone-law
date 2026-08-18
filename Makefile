@@ -5,13 +5,18 @@ COMPOSE := docker compose
 PY_RUN := $(COMPOSE) run --rm --no-deps api
 WEB_RUN := $(COMPOSE) run --rm --no-deps web
 
-.PHONY: help bootstrap dev stop clean lint typecheck test test-integration test-fixtures smoke audit secret-scan logs
+.PHONY: help bootstrap seed-demo dev stop clean lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
 
 help:
-	@echo "Stable commands: bootstrap dev lint typecheck test test-integration test-fixtures smoke"
+	@echo "Stable commands: bootstrap seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
 
 bootstrap:
 	./scripts/bootstrap.sh
+
+seed-demo:
+	$(COMPOSE) up -d --wait db
+	$(COMPOSE) run --rm api alembic upgrade head
+	$(COMPOSE) run --rm api python scripts/seed_demo.py
 
 dev:
 	./scripts/dev.sh
@@ -48,6 +53,9 @@ test-fixtures:
 	$(COMPOSE) up -d --wait db
 	$(COMPOSE) exec -T db psql -v ON_ERROR_STOP=1 -U colacci_demo -d postgres -f /docker-entrypoint-initdb.d/001-init-databases.sql
 	docker run --rm --network colacci-law_fixture -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-fixtures:/tmp/colacci-law-fixtures -w /workspace -e APP_PROFILE=test -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test -e PYTHONPATH=/workspace $$(docker compose images -q api) python scripts/evaluate_fixtures.py
+
+test-e2e:
+	./scripts/test_e2e.sh
 
 smoke:
 	$(COMPOSE) run --rm api python scripts/smoke.py

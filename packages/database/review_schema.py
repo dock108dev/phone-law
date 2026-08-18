@@ -97,4 +97,60 @@ playbook_versions = sa.Table(
     sa.Column("is_synthetic", sa.Boolean, nullable=False),
     sa.Column("structured_payload", JSONB, nullable=False),
     sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+    sa.Column("published_at", sa.DateTime(timezone=True), nullable=True),
+    sa.Column("retired_at", sa.DateTime(timezone=True), nullable=True),
+)
+
+daily_reports = sa.Table(
+    "daily_reports",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("business_date", sa.Date, nullable=False),
+    sa.Column("version", sa.Integer, nullable=False),
+    sa.Column("status", sa.String(32), nullable=False),
+    sa.Column("input_fingerprint", sa.String(64), nullable=False),
+    sa.Column("cutoff_at", sa.DateTime(timezone=True), nullable=False),
+    sa.Column("snapshot_payload", JSONB, nullable=False),
+    sa.Column("generated_at", sa.DateTime(timezone=True), nullable=False),
+    sa.UniqueConstraint("business_date", "version", name="uq_daily_reports_date_version"),
+    sa.UniqueConstraint("business_date", "input_fingerprint", name="uq_daily_reports_inputs"),
+)
+
+daily_report_items = sa.Table(
+    "daily_report_items",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("report_id", sa.String(32), sa.ForeignKey("daily_reports.id"), nullable=False),
+    sa.Column("call_id", sa.String(32), sa.ForeignKey("calls.id"), nullable=False),
+    sa.Column("analysis_id", sa.String(32), sa.ForeignKey("analyses.id"), nullable=True),
+    sa.Column("section", sa.String(64), nullable=False),
+    sa.Column("position", sa.Integer, nullable=False),
+    sa.Column("item_payload", JSONB, nullable=False),
+    sa.UniqueConstraint("report_id", "section", "position", name="uq_report_items_position"),
+)
+
+review_events = sa.Table(
+    "review_events",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("analysis_id", sa.String(32), sa.ForeignKey("analyses.id"), nullable=False),
+    sa.Column("finding_id", sa.String(128), nullable=True),
+    sa.Column("label", sa.String(32), nullable=False),
+    sa.Column("note", sa.Text, nullable=True),
+    sa.Column("principal_id", sa.String(64), nullable=False),
+    sa.Column("role", sa.String(32), nullable=False),
+    sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+)
+
+audit_events = sa.Table(
+    "audit_events",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("principal_id", sa.String(64), nullable=False),
+    sa.Column("role", sa.String(32), nullable=False),
+    sa.Column("action", sa.String(128), nullable=False),
+    sa.Column("target_type", sa.String(64), nullable=False),
+    sa.Column("target_id", sa.String(128), nullable=False),
+    sa.Column("result", sa.String(64), nullable=False),
+    sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
 )

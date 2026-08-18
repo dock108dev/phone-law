@@ -32,6 +32,15 @@
       "title": "PlaybookRule",
       "type": "object"
     },
+    "PlaybookStatus": {
+      "enum": [
+        "draft",
+        "published",
+        "retired"
+      ],
+      "title": "PlaybookStatus",
+      "type": "string"
+    },
     "ResponsibleRole": {
       "enum": [
         "intake_team",
@@ -136,9 +145,7 @@
       "type": "array"
     },
     "status": {
-      "const": "draft",
-      "title": "Status",
-      "type": "string"
+      "$ref": "#/$defs/PlaybookStatus"
     },
     "synthetic": {
       "const": true,
