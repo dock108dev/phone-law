@@ -247,3 +247,92 @@ export type UploadCapabilities = {
   can_cancel: boolean;
   can_publish_playbook: boolean;
 };
+
+export type LocalRetention = {
+  generated_media_days: number;
+  invented_transcript_days: number;
+  accepted_analysis_days: number;
+  daily_report_days: number;
+  processing_attempt_days: number;
+  manual_upload_receipt_days: number;
+  reviewer_feedback_days: number;
+  playbook_version_days: number;
+  audit_metadata_days: number;
+};
+
+export type LocalConfiguration = {
+  schema_version: "local-firm-configuration-v1";
+  firm_timezone: "America/New_York";
+  daily_report_cutoff: string;
+  eligible_call_directions: string[];
+  eligible_call_categories: string[];
+  staff_extension_mappings: { extension: string; synthetic_label: string }[];
+  report_roles: ("reviewer" | "administrator" | "operations")[];
+  synthetic_playbook_version: string;
+  retention: LocalRetention;
+  deletion_behavior: "scheduled_content_destruction_with_tombstone";
+  notification_preference: "local_preview_noop";
+};
+
+export type ConfigurationVersion = {
+  configuration_id: string;
+  version: number;
+  configuration: LocalConfiguration;
+  principal: { principal_id: DemoPrincipal; role: string };
+  content_hash_reference: string;
+  created_at: string;
+};
+
+export type ConfigurationHistory = {
+  current_version: number;
+  versions: ConfigurationVersion[];
+};
+
+export type OperationsOverview = {
+  environment: "Local development";
+  data_label: "Synthetic demo data";
+  configuration_version: number;
+  processing_volume: { state: string; count: number }[];
+  success_count: number;
+  failure_count: number;
+  retry_count: number;
+  reconciliation: {
+    expected: number;
+    received: number;
+    analyzed: number;
+    failed: number;
+    missing: number;
+    exact: boolean;
+  };
+  pending_deletions: number;
+  failed_deletions: number;
+  retention_policy_status: string;
+  backup_restore_status: string;
+  last_successful_maintenance_at: string | null;
+  failure_explanations: string[];
+  permitted_actions: string[];
+  external_requests: 0;
+};
+
+export type DeletionJob = {
+  job_id: string;
+  resource_type: string;
+  resource_id: string;
+  configuration_version: number;
+  state: "SCHEDULED" | "DELETING" | "RETRY_SCHEDULED" | "DELETED" | "DELETION_FAILED" | "RETAINED_EXCEPTION";
+  attempt_count: number;
+  diagnostic_code: string | null;
+  scheduled_at: string;
+  next_attempt_at: string | null;
+  completed_at: string | null;
+};
+
+export type AuditEvent = {
+  event_id: string;
+  principal: { principal_id: DemoPrincipal; role: string };
+  action: string;
+  target_type: string;
+  target_id: string;
+  result: string;
+  created_at: string;
+};

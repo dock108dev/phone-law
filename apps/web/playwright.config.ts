@@ -15,6 +15,10 @@ export default defineConfig({
       testMatch: "manual-upload.spec.ts",
       dependencies: ["review-flow"],
     },
+    {
+      name: "local-operations",
+      testMatch: "local-operations.spec.ts",
+    },
   ],
   use: {
     baseURL: process.env.BASE_URL ?? "http://web:5173",

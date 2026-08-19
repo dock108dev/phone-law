@@ -25,7 +25,11 @@ from packages.contracts.manual_upload import (
 )
 from packages.contracts.report import DemoPrincipal, DemoPrincipalId, DemoRole
 from packages.contracts.review import Direction
-from packages.database.review_schema import manual_upload_receipts, manual_upload_state_events
+from packages.database.review_schema import (
+    manual_upload_receipts,
+    manual_upload_state_events,
+    retention_tombstones,
+)
 
 MANUAL_UPLOAD_ADAPTER_VERSION = "manual-upload-local-v1"
 FIRM_TIMEZONE = ZoneInfo("America/New_York")
@@ -182,7 +186,17 @@ class ManualUploadRepository:
     def _one(self, condition: sa.ColumnElement[bool]) -> StoredUpload | None:
         with self.engine.connect() as connection:
             row = (
-                connection.execute(sa.select(manual_upload_receipts).where(condition))
+                connection.execute(
+                    sa.select(manual_upload_receipts).where(
+                        condition,
+                        ~sa.exists(
+                            sa.select(retention_tombstones.c.id).where(
+                                retention_tombstones.c.resource_type == "manual_upload_receipt",
+                                retention_tombstones.c.resource_id == manual_upload_receipts.c.id,
+                            )
+                        ),
+                    )
+                )
                 .mappings()
                 .one_or_none()
             )
@@ -195,7 +209,16 @@ class ManualUploadRepository:
         with self.engine.connect() as connection:
             rows = (
                 connection.execute(
-                    sa.select(manual_upload_receipts).order_by(
+                    sa.select(manual_upload_receipts)
+                    .where(
+                        ~sa.exists(
+                            sa.select(retention_tombstones.c.id).where(
+                                retention_tombstones.c.resource_type == "manual_upload_receipt",
+                                retention_tombstones.c.resource_id == manual_upload_receipts.c.id,
+                            )
+                        )
+                    )
+                    .order_by(
                         manual_upload_receipts.c.created_at.desc(),
                         manual_upload_receipts.c.id,
                     )

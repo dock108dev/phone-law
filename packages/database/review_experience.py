@@ -48,6 +48,7 @@ from packages.database.review_schema import (
     ingestion_events,
     playbook_versions,
     processing_attempts,
+    retention_tombstones,
     review_events,
     transcripts,
 )
@@ -208,6 +209,12 @@ class ReviewExperienceRepository:
                 sa.select(daily_reports.c.snapshot_payload).where(
                     daily_reports.c.business_date == business_date,
                     daily_reports.c.input_fingerprint == fingerprint,
+                    ~sa.exists(
+                        sa.select(retention_tombstones.c.id).where(
+                            retention_tombstones.c.resource_type == "daily_report",
+                            retention_tombstones.c.resource_id == daily_reports.c.id,
+                        )
+                    ),
                 )
             ).scalar_one_or_none()
             if existing is not None:
@@ -268,6 +275,14 @@ class ReviewExperienceRepository:
             values = (
                 connection.execute(
                     sa.select(daily_reports.c.business_date)
+                    .where(
+                        ~sa.exists(
+                            sa.select(retention_tombstones.c.id).where(
+                                retention_tombstones.c.resource_type == "daily_report",
+                                retention_tombstones.c.resource_id == daily_reports.c.id,
+                            )
+                        )
+                    )
                     .distinct()
                     .order_by(daily_reports.c.business_date.desc())
                 )
@@ -296,7 +311,15 @@ class ReviewExperienceRepository:
         with self.engine.connect() as connection:
             payload = connection.execute(
                 sa.select(daily_reports.c.snapshot_payload)
-                .where(daily_reports.c.business_date == business_date)
+                .where(
+                    daily_reports.c.business_date == business_date,
+                    ~sa.exists(
+                        sa.select(retention_tombstones.c.id).where(
+                            retention_tombstones.c.resource_type == "daily_report",
+                            retention_tombstones.c.resource_id == daily_reports.c.id,
+                        )
+                    ),
+                )
                 .order_by(daily_reports.c.version.desc())
                 .limit(1)
             ).scalar_one_or_none()
@@ -308,6 +331,14 @@ class ReviewExperienceRepository:
                 connection.execute(
                     sa.select(review_events)
                     .where(review_events.c.analysis_id == analysis_id)
+                    .where(
+                        ~sa.exists(
+                            sa.select(retention_tombstones.c.id).where(
+                                retention_tombstones.c.resource_type == "reviewer_feedback",
+                                retention_tombstones.c.resource_id == review_events.c.id,
+                            )
+                        )
+                    )
                     .order_by(review_events.c.created_at, review_events.c.id)
                 )
                 .mappings()
@@ -342,7 +373,22 @@ class ReviewExperienceRepository:
                     )
                     .join(transcripts, transcripts.c.call_id == calls.c.id)
                     .join(analyses, analyses.c.call_id == calls.c.id)
-                    .where(calls.c.id == call_id, calls.c.is_synthetic.is_(True))
+                    .where(
+                        calls.c.id == call_id,
+                        calls.c.is_synthetic.is_(True),
+                        ~sa.exists(
+                            sa.select(retention_tombstones.c.id).where(
+                                retention_tombstones.c.resource_type == "invented_transcript",
+                                retention_tombstones.c.resource_id == transcripts.c.id,
+                            )
+                        ),
+                        ~sa.exists(
+                            sa.select(retention_tombstones.c.id).where(
+                                retention_tombstones.c.resource_type == "accepted_analysis",
+                                retention_tombstones.c.resource_id == analyses.c.id,
+                            )
+                        ),
+                    )
                 )
                 .mappings()
                 .one_or_none()
@@ -601,7 +647,16 @@ class ReviewExperienceRepository:
         with self.engine.connect() as connection:
             rows = (
                 connection.execute(
-                    sa.select(playbook_versions).order_by(playbook_versions.c.created_at)
+                    sa.select(playbook_versions)
+                    .where(
+                        ~sa.exists(
+                            sa.select(retention_tombstones.c.id).where(
+                                retention_tombstones.c.resource_type == "playbook_version",
+                                retention_tombstones.c.resource_id == playbook_versions.c.id,
+                            )
+                        )
+                    )
+                    .order_by(playbook_versions.c.created_at)
                 )
                 .mappings()
                 .all()

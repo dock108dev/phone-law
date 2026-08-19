@@ -71,5 +71,14 @@ reviewer for the review step.
 
 If a receipt reaches `deletion_failed`, stop. Do not retry by manually manipulating the object or
 database. Preserve only the content-free receipt/evidence, run the focused test to diagnose the
-local boundary, and do not treat the environment as a retention implementation. Slice 5 has not
-started.
+local boundary. Use the Slice 5A Operations page for policy-driven synthetic retention only; it is
+not an approved production retention policy.
+
+## Slice 5A local operations
+
+Run `make test-local-operations` before using the Operations page. The focused proof is
+network-isolated, uses an injected clock, covers every demo role and adversarial session case,
+executes deletion success/retry/terminal/restart cases, runs the disposable restore drill, checks
+responsive accessibility, inspects content-free logs, and removes its stack and runtime. Private
+evidence remains under `/tmp/colacci-law-slice5a/evidence`. Follow the complete
+[operator and incident runbook](../local-operations.md).

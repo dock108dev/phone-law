@@ -250,3 +250,84 @@ manual_upload_state_events = sa.Table(
     sa.Column("diagnostic_code", sa.String(64), nullable=True),
     sa.Column("occurred_at", sa.DateTime(timezone=True), nullable=False),
 )
+
+firm_configuration_versions = sa.Table(
+    "firm_configuration_versions",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("version", sa.Integer, nullable=False, unique=True),
+    sa.Column("schema_version", sa.String(64), nullable=False),
+    sa.Column("configuration_payload", JSONB, nullable=False),
+    sa.Column("content_hash", sa.String(64), nullable=False, unique=True),
+    sa.Column("principal_id", sa.String(64), nullable=False),
+    sa.Column("role", sa.String(32), nullable=False),
+    sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+)
+
+retention_jobs = sa.Table(
+    "retention_jobs",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("resource_type", sa.String(64), nullable=False),
+    sa.Column("resource_id", sa.String(128), nullable=False),
+    sa.Column("configuration_version", sa.Integer, nullable=False),
+    sa.Column("state", sa.String(32), nullable=False),
+    sa.Column("attempt_count", sa.Integer, nullable=False),
+    sa.Column("diagnostic_code", sa.String(64), nullable=True),
+    sa.Column("scheduled_at", sa.DateTime(timezone=True), nullable=False),
+    sa.Column("next_attempt_at", sa.DateTime(timezone=True), nullable=True),
+    sa.Column("completed_at", sa.DateTime(timezone=True), nullable=True),
+    sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
+    sa.UniqueConstraint("resource_type", "resource_id", name="uq_retention_job_resource"),
+)
+
+retention_tombstones = sa.Table(
+    "retention_tombstones",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("resource_type", sa.String(64), nullable=False),
+    sa.Column("resource_id", sa.String(128), nullable=False),
+    sa.Column("configuration_version", sa.Integer, nullable=False),
+    sa.Column("result", sa.String(32), nullable=False),
+    sa.Column("exception_code", sa.String(64), nullable=True),
+    sa.Column("destroyed_at", sa.DateTime(timezone=True), nullable=False),
+    sa.UniqueConstraint("resource_type", "resource_id", name="uq_tombstone_resource"),
+)
+
+maintenance_runs = sa.Table(
+    "maintenance_runs",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("kind", sa.String(64), nullable=False),
+    sa.Column("status", sa.String(32), nullable=False),
+    sa.Column("safe_counts", JSONB, nullable=False),
+    sa.Column("principal_id", sa.String(64), nullable=False),
+    sa.Column("role", sa.String(32), nullable=False),
+    sa.Column("started_at", sa.DateTime(timezone=True), nullable=False),
+    sa.Column("completed_at", sa.DateTime(timezone=True), nullable=False),
+)
+
+backup_restore_drills = sa.Table(
+    "backup_restore_drills",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("status", sa.String(32), nullable=False),
+    sa.Column("safe_counts", JSONB, nullable=False),
+    sa.Column("principal_id", sa.String(64), nullable=False),
+    sa.Column("role", sa.String(32), nullable=False),
+    sa.Column("completed_at", sa.DateTime(timezone=True), nullable=False),
+)
+
+notification_previews = sa.Table(
+    "notification_previews",
+    metadata,
+    sa.Column("id", sa.String(32), primary_key=True),
+    sa.Column("label", sa.String(64), nullable=False),
+    sa.Column("message_code", sa.String(64), nullable=False),
+    sa.Column("safe_count", sa.Integer, nullable=False),
+    sa.Column("internal_reference", sa.String(128), nullable=False),
+    sa.Column("external_attempts", sa.Integer, nullable=False),
+    sa.Column("principal_id", sa.String(64), nullable=False),
+    sa.Column("role", sa.String(32), nullable=False),
+    sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
+)

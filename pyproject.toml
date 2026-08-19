@@ -1,7 +1,7 @@
 [project]
 name = "colacci-law-foundation"
 version = "0.1.0"
-description = "Synthetic-only Slice 4 local manual upload for Colacci Law Call Review"
+description = "Synthetic-only Slice 5A local operations for Colacci Law Call Review"
 requires-python = "==3.13.5"
 
 [tool.pytest.ini_options]
@@ -22,6 +22,9 @@ omit = [
   "packages/review/protocols.py",
   # Exercised against PostgreSQL and the running API in the integration and browser suites.
   "packages/database/review_experience.py",
+  # Exercised against PostgreSQL and the three-role browser operations center.
+  "packages/database/local_operations.py",
+  "apps/api/colacci_api/operations_routes.py",
   # Exercised against PostgreSQL and the bounded HTTP/browser upload harnesses.
   "apps/api/colacci_api/upload_routes.py",
   "packages/database/manual_uploads.py",
@@ -60,6 +63,8 @@ ignore = ["S101"]
 "scripts/cleanup_manual_upload_assets.py" = ["S108"]
 "scripts/collect_manual_upload_evidence.py" = ["S108"]
 "scripts/collect_manual_upload_validation_evidence.py" = ["S108"]
+"scripts/collect_local_operations_evidence.py" = ["S108"]
+"scripts/finalize_local_operations_evidence.py" = ["S108"]
 "scripts/test_audio_boundary.py" = ["S108"]
 "scripts/test_transcription_contract.py" = ["S108"]
 "scripts/test_transcription_live.py" = ["S108"]

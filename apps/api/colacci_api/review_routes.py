@@ -154,6 +154,13 @@ def failure_queue(
     principal: Principal,
 ) -> FailureQueue:
     if principal.role not in {DemoRole.ADMINISTRATOR, DemoRole.OPERATIONS}:
+        _repository(request).record_audit(
+            principal=principal,
+            action="failure_queue_view_denied",
+            target_type="failure_queue",
+            target_id="synthetic-failures",
+            result="forbidden",
+        )
         raise _error(
             request,
             status.HTTP_403_FORBIDDEN,
@@ -260,6 +267,13 @@ def audit_history(
     principal: Principal,
 ) -> tuple[AuditEvent, ...]:
     if principal.role not in {DemoRole.ADMINISTRATOR, DemoRole.OPERATIONS}:
+        _repository(request).record_audit(
+            principal=principal,
+            action="audit_history_view_denied",
+            target_type="audit_history",
+            target_id="content-free-events",
+            result="forbidden",
+        )
         raise _error(
             request,
             status.HTTP_403_FORBIDDEN,

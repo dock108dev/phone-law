@@ -25,6 +25,19 @@ seconds. `staging` and `production` cannot activate this local bridge. Live-tran
 real-data flags, remote storage, real notification, and non-fake authentication remain rejected in
 the local profiles.
 
+## Slice 5A versioned local firm configuration
+
+The operational policy is persisted separately from process environment settings as immutable
+`local-firm-configuration-v1` rows. The exact contract includes the local timezone and report
+cutoff, eligible synthetic directions/categories, invented staff-extension mappings, demo report
+roles, synthetic playbook identifier, nine synthetic retention durations, scheduled destruction
+with a tombstone, and `local_preview_noop`. Unknown fields and production-shaped values are
+rejected. Only the server-resolved demo administrator may publish the next version. Demo
+operations may review configuration history but cannot publish.
+
+`America/New_York` is the explicit local default only. The retention values are accelerated
+synthetic defaults only. Neither represents client approval. See [the operator guide](local-operations.md).
+
 ## Slice 3B live-test profile
 
 `live_test` is a fail-closed, generated-media-only verification profile. It requires the

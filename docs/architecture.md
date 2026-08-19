@@ -1,5 +1,14 @@
 # Architecture and repository layout
 
+## Slice 5A local operations control plane
+
+The API now has a content-free local operations router backed by immutable configuration versions,
+restart-safe retention jobs, append-only tombstones, maintenance evidence, disposable restore
+drills, and notification previews with zero external attempts. The browser exposes the same safe
+controls to demo administrators and operations users and returns a sanitized denial to reviewers.
+See [the Slice 5A architecture and operator guide](local-operations.md) and
+[ADR 0010](decisions/0010-local-retention-and-tombstones.md).
+
 ## Slice 4 local manual-upload bridge
 
 The normal local demo now exposes one authenticated, single-item submission boundary:
@@ -75,7 +84,7 @@ Health probe -> Python worker --+--> PostgreSQL 17.6
 The API and worker load the same fail-closed settings, operational logger, health contract, and
 database readiness code from `packages/`. Both expose liveness without touching the database.
 Readiness requires a connection and exact Alembic revision
-`0005_manual_upload_local`. The web container serves a content-free health artifact and
+`0006_local_operations`. The web container serves a content-free health artifact and
 a persistent synthetic-data banner on every review route.
 
 There is no real-data upload, external source, identity integration, notification, live
@@ -105,6 +114,9 @@ The database contains only typed synthetic review records and the non-sensitive 
   existing downstream review contracts
 - Manual upload: one bounded authenticated request, generated fingerprint allowlist, opaque local
   object, content-free receipt, explicit terminal state, retry/cancel/delete, and no external queue
+- Local operations: versioned synthetic configuration, server-resolved demo authorization,
+  injected-clock retention, bounded deletion, content-free tombstones, safe reconciliation,
+  disposable restore drill, and no-op notification preview
 - Daily report: deterministic America/New_York cutoff, explicit reconciliation, immutable versions
 - Human review: append-only labels/notes paired transactionally with content-free audit events
 - Playbooks: immutable structured payload; draft-to-published lifecycle metadata only

@@ -46,17 +46,23 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
             "alembic_version",
             "analyses",
             "audit_events",
+            "backup_restore_drills",
             "calls",
             "daily_report_items",
             "daily_reports",
             "ingestion_events",
+            "firm_configuration_versions",
+            "maintenance_runs",
             "media_artifacts",
             "media_lifecycle_events",
             "manual_upload_receipts",
             "manual_upload_state_events",
+            "notification_previews",
             "playbook_versions",
             "processing_attempts",
             "review_events",
+            "retention_jobs",
+            "retention_tombstones",
             "system_metadata",
             "transcripts",
             "transcription_provider_attempts",
@@ -70,7 +76,7 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
                 text("SELECT value FROM system_metadata WHERE key = 'schema_purpose'")
             ).scalar_one()
         assert revision == EXPECTED_ALEMBIC_REVISION
-        assert purpose == "manual_upload_local"
+        assert purpose == "local_operations"
 
         repository = TranscriptionMetadataRepository(engine)
         inspection_result = MediaInspectionResult(
@@ -131,6 +137,12 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
         assert not {
             "manual_upload_receipts",
             "manual_upload_state_events",
+            "firm_configuration_versions",
+            "retention_jobs",
+            "retention_tombstones",
+            "maintenance_runs",
+            "backup_restore_drills",
+            "notification_previews",
         }.intersection(inspect(engine).get_table_names())
         with engine.connect() as connection:
             assert (

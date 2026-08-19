@@ -1,12 +1,15 @@
-# Colacci Law Call Review — Slice 4 Local
+# Colacci Law Call Review — Slice 5A Local
 
 This repository contains the synthetic-only daily review experience and its bounded local
 development bridges. It turns deterministic fixtures into an immutable daily report,
 evidence-linked call analysis, append-only human feedback, a content-free failure queue, and an
 immutable playbook publication lifecycle. Slice 4 adds an authenticated, single-item local bridge
-for allowlisted generated non-human audio and the accepted invented transcript-only artifact. It
-contains no real recording, unapproved live AI request, Broadvoice contract, notification,
-production authentication, retention implementation, or cloud infrastructure.
+for allowlisted generated non-human audio and the accepted invented transcript-only artifact.
+Slice 5A adds visible versioned local configuration, complete demo-role security, retention and
+deletion with content-free tombstones, safe operational reconciliation, a disposable restore drill,
+and a notification preview that sends nothing. It contains no real recording, unapproved live AI
+request, Broadvoice contract, external notification, production authentication, approved production
+retention, or cloud infrastructure.
 
 The sole roadmap and next-steps source is
 `/Users/michaelfuscoletti/Desktop/colacci_law_next_steps.md`. Do not add a repository-level
@@ -66,7 +69,7 @@ make dev
 ## Stable command surface
 
 ```bash
-make bootstrap          # build pinned images, start PostgreSQL, apply migration 0005
+make bootstrap          # build pinned images, start PostgreSQL, apply migration 0006
 make seed-demo          # idempotently install all fixtures and the immutable daily report
 make dev                # start database, migrate, and start API, worker, and web
 make lint               # formatting, lint, code security, pins, and secret scan
@@ -78,6 +81,7 @@ make test-e2e           # disposable seeded browser flow, accessibility, screens
 make smoke              # API, worker, web, review shell, database, and migration readiness
 make transcription-cli-preflight # inspect the installed CLI without credentials or a request
 make test-transcription-cli-offline # network-blocked CLI contracts and transcript-only full loop
+make test-local-operations # private zero-network Slice 5A proof, browser flows, and cleanup evidence
 make test-manual-upload # network-isolated upload boundary, lifecycle, browser, and evidence proof
 ```
 
@@ -156,4 +160,5 @@ responsive layout, accessibility, content-free logs, and zero provider requests.
 
 See [architecture](docs/architecture.md), [technology choices](docs/technology.md),
 [configuration rules](docs/configuration.md), [adapter boundaries](docs/adapters.md), and the
-[security documentation](docs/security/README.md).
+[security documentation](docs/security/README.md). Slice 5A operators should start with the
+[local operations guide](docs/local-operations.md).

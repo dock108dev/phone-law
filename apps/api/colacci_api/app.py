@@ -10,6 +10,7 @@ from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from apps.api.colacci_api.operations_routes import router as operations_router
 from apps.api.colacci_api.review_routes import router as review_router
 from apps.api.colacci_api.upload_routes import router as upload_router
 from packages.config import Settings
@@ -59,6 +60,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "Content-Type",
             "X-Correlation-ID",
             "X-Demo-Principal",
+            "X-Demo-Role",
+            "X-Demo-Session",
             "X-Client-Submission-ID",
             "X-Generated-Only-Attestation",
             "X-Upload-Direction",
@@ -140,4 +143,5 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(review_router)
     app.include_router(upload_router)
+    app.include_router(operations_router)
     return app
