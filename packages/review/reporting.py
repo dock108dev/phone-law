@@ -208,7 +208,12 @@ def aggregate_daily_report(
         missing=len(expected - received_ids),
         late=len(late),
     )
-    if len(analyzed) == reconciliation.expected and not (failed or late or reconciliation.missing):
+    if reconciliation.expected == 0:
+        status = ReportStatus.ZERO_ACTIVITY
+        explanation = "No eligible synthetic calls were expected or received on this date."
+    elif len(analyzed) == reconciliation.expected and not (
+        failed or late or reconciliation.missing
+    ):
         status = ReportStatus.COMPLETE
         explanation = "Every expected eligible synthetic call was received and analyzed by cutoff."
     elif analyzed:

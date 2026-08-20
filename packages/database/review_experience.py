@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from calendar import month_name, monthrange
 from datetime import UTC, date, datetime
 from typing import cast
 from uuid import uuid4
@@ -23,12 +24,16 @@ from packages.contracts.report import (
     FailedCallSummary,
     FailureQueue,
     FailureQueueItem,
+    MonthDayState,
+    MonthDaySummary,
+    MonthHistory,
     PlaybookActionResult,
     PlaybookDraftCreate,
     PlaybookDraftResult,
     PlaybookLifecycleState,
     PlaybookSummary,
     ProcessingAttemptSummary,
+    ReportStatus,
     ReviewEvent,
     ReviewEventCreate,
     ReviewLabel,
@@ -55,6 +60,7 @@ from packages.database.review_schema import (
     review_events,
     transcripts,
 )
+from packages.review.demo_month import DemoMonthManifest
 from packages.review.reporting import ReportCallInput, aggregate_daily_report
 
 
@@ -327,6 +333,68 @@ class ReviewExperienceRepository:
                 .limit(1)
             ).scalar_one_or_none()
         return _validated(DailyReport, payload) if payload else None
+
+    def month_history(self, year: int, month: int) -> MonthHistory:
+        _, final_day = monthrange(year, month)
+        reports: list[DailyReport] = []
+        for day_number in range(1, final_day + 1):
+            report = self.report(date(year, month, day_number))
+            if report is None:
+                raise LookupError("synthetic_month_not_found")
+            reports.append(report)
+        previous_year, previous_month = (year - 1, 12) if month == 1 else (year, month - 1)
+        next_year, next_month = (year + 1, 1) if month == 12 else (year, month + 1)
+        days: list[MonthDaySummary] = []
+        demo_manifest = DemoMonthManifest() if (year, month) == (2026, 7) else None
+        for report in reports:
+            counts = report.completeness.reconciliation
+            if report.completeness.status is ReportStatus.ZERO_ACTIVITY:
+                state = MonthDayState.ZERO_ACTIVITY
+            elif counts.missing:
+                state = MonthDayState.MISSING
+            elif counts.failed:
+                state = MonthDayState.FAILED
+            elif counts.late:
+                state = MonthDayState.PARTIAL
+            else:
+                state = MonthDayState.COMPLETE
+            days.append(
+                MonthDaySummary(
+                    business_date=report.business_date,
+                    weekday=report.business_date.weekday() < 5,
+                    state=state,
+                    report_status=report.completeness.status,
+                    expected=counts.expected,
+                    received=counts.received,
+                    analyzed=counts.analyzed,
+                    failed=counts.failed,
+                    missing=counts.missing,
+                    late=counts.late,
+                    duplicate_deliveries=counts.duplicate_deliveries,
+                    scenarios=(
+                        tuple(
+                            dict.fromkeys(
+                                str(scenario)
+                                for entry in demo_manifest.expected_entries(report.business_date)
+                                for scenario in entry["scenarios"]
+                            )
+                        )
+                        if demo_manifest is not None
+                        else ()
+                    ),
+                    report_path=f"/reports/{report.business_date}?month={year:04d}-{month:02d}",
+                )
+            )
+        return MonthHistory(
+            schema_version="month-history-v1",
+            year=year,
+            month=month,
+            label=f"{month_name[month]} {year}",
+            synthetic=True,
+            previous_month_path=f"/months/{previous_year:04d}-{previous_month:02d}",
+            next_month_path=f"/months/{next_year:04d}-{next_month:02d}",
+            days=tuple(days),
+        )
 
     def review_history(self, analysis_id: str) -> tuple[ReviewEvent, ...]:
         with self.engine.connect() as connection:

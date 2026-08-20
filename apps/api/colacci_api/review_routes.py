@@ -15,6 +15,7 @@ from packages.contracts.report import (
     DemoPrincipal,
     DemoRole,
     FailureQueue,
+    MonthHistory,
     PlaybookActionResult,
     PlaybookDraftCreate,
     PlaybookDraftResult,
@@ -53,6 +54,16 @@ def _error(request: Request, code: int, message: str) -> HTTPException:
 @router.get("/reports/dates", response_model=ReportDateList)
 def report_dates(request: Request, _: Principal) -> ReportDateList:
     return ReportDateList(dates=_repository(request).report_dates())
+
+
+@router.get("/reports/months/{year}-{month}", response_model=MonthHistory)
+def month_history(year: int, month: int, request: Request, _: Principal) -> MonthHistory:
+    if year < 2000 or year > 2100 or month < 1 or month > 12:
+        raise _error(request, status.HTTP_404_NOT_FOUND, "synthetic_month_not_found")
+    try:
+        return _repository(request).month_history(year, month)
+    except LookupError as exc:
+        raise _error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
 
 
 @router.get("/reports/{business_date}", response_model=DailyReport)

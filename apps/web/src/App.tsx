@@ -14,6 +14,7 @@ import type {
   AuditEvent,
   ConfigurationHistory,
   DailyReport,
+  MonthHistory,
   DeletionJob,
   DemoPrincipal,
   Evidence,
@@ -100,7 +101,7 @@ function Header({
         <span><b>Colacci Law</b><small>Synthetic call review</small></span>
       </a>
       <nav aria-label="Primary navigation">
-        <a className={`nav-link ${path === "/" || path.startsWith("/reports/") ? "active" : ""}`} href="/">Daily report</a>
+        <a className={`nav-link ${path === "/" || path.startsWith("/months/") || path.startsWith("/reports/") ? "active" : ""}`} href="/">Month history</a>
         <a className={`nav-link ${path === "/uploads" ? "active" : ""}`} href="/uploads">Manual upload</a>
         <a className={`nav-link ${path === "/failures" ? "active" : ""}`} href="/failures">Failures</a>
         <a className={`nav-link ${path === "/playbooks" ? "active" : ""}`} href="/playbooks">Playbook</a>
@@ -177,6 +178,65 @@ function EvidenceLink({ callId, evidence }: { callId: string; evidence: Evidence
   );
 }
 
+function MonthPage({ principal, monthKey = "2026-07" }: { principal: DemoPrincipal; monthKey?: string }): ReactNode {
+  const [history, setHistory] = useState<MonthHistory | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setError(null);
+    apiRequest<MonthHistory>(`/api/reports/months/${monthKey}`, principal)
+      .then((result) => { if (active) setHistory(result); })
+      .catch((reason: unknown) => { if (active) setError(reason instanceof Error ? reason.message : "Unknown request error"); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [monthKey, principal]);
+  if (loading || error || !history) {
+    return <RequestState loading={loading} error={error} empty={!loading && !error ? "Run make seed-demo-month to create the month." : undefined} />;
+  }
+  const totals = history.days.reduce(
+    (result, item) => ({
+      expected: result.expected + item.expected,
+      analyzed: result.analyzed + item.analyzed,
+      failed: result.failed + item.failed,
+      missing: result.missing + item.missing,
+      late: result.late + item.late,
+    }),
+    { expected: 0, analyzed: 0, failed: 0, missing: 0, late: 0 },
+  );
+  const leadingBlanks = new Date(`${history.year.toString()}-${history.month.toString().padStart(2, "0")}-01T12:00:00Z`).getUTCDay();
+  return (
+    <>
+      <section className="month-heading" aria-labelledby="month-title">
+        <div><div className="eyebrow">Full-month synthetic call history</div><h1 id="month-title">{history.label}</h1><p>Every calendar date is visible. Open any day to inspect its complete eight-section report and evidence.</p></div>
+        <nav className="month-controls" aria-label="Month controls">
+          <a href={history.previous_month_path} aria-label="Previous month">← Previous</a>
+          <a href={history.next_month_path} aria-label="Next month">Next →</a>
+        </nav>
+      </section>
+      <section className="month-totals" aria-label="July monthly reconciliation">
+        <Metric label="Expected" value={totals.expected} /><Metric label="Analyzed" value={totals.analyzed} /><Metric label="Failed" value={totals.failed} /><Metric label="Missing" value={totals.missing} /><Metric label="Late" value={totals.late} />
+      </section>
+      <div className="month-legend" aria-label="Date state legend">
+        {["complete", "partial", "failed", "missing", "zero_activity"].map((state) => <span className={`day-state state-${state}`} key={state}>{humanize(state)}</span>)}
+      </div>
+      <section className="calendar" aria-label={`${history.label} daily report history`}>
+        <div className="calendar-weekdays" aria-hidden="true">{["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => <span key={day}>{day}</span>)}</div>
+        <div className="calendar-grid">
+          {Array.from({ length: leadingBlanks }, (_, index) => <span className="calendar-blank" key={`blank-${index.toString()}`} />)}
+          {history.days.map((day) => (
+            <a className={`calendar-day state-${day.state}`} href={day.report_path} key={day.business_date} aria-label={`${day.business_date}, ${humanize(day.state)}, expected ${day.expected.toString()}, analyzed ${day.analyzed.toString()}, failed ${day.failed.toString()}, missing ${day.missing.toString()}, late ${day.late.toString()}`}>
+              <span className="calendar-date">{Number(day.business_date.slice(-2))}</span><span className="day-state">{humanize(day.state)}</span>
+              {day.state === "zero_activity" ? <small>No eligible calls</small> : <><dl><dt>Expected</dt><dd>{day.expected}</dd><dt>Analyzed</dt><dd>{day.analyzed}</dd><dt>Failed</dt><dd>{day.failed}</dd><dt>Missing</dt><dd>{day.missing}</dd><dt>Late</dt><dd>{day.late}</dd></dl>{day.scenarios.some((scenario) => ["duplicate_delivery", "retryable_transcription_failure", "cancellation", "retention_eligibility", "successful_deletion", "retryable_deletion_failure", "terminal_deletion_failed"].includes(scenario)) && <small className="scenario-note">{day.scenarios.filter((scenario) => ["duplicate_delivery", "retryable_transcription_failure", "cancellation", "retention_eligibility", "successful_deletion", "retryable_deletion_failure", "terminal_deletion_failed"].includes(scenario)).map(humanize).join(" · ")}</small>}</>}
+            </a>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
+
 function ReportPage({ principal, initialDate = "" }: { principal: DemoPrincipal; initialDate?: string }): ReactNode {
   const [dates, setDates] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState(initialDate);
@@ -214,6 +274,7 @@ function ReportPage({ principal, initialDate = "" }: { principal: DemoPrincipal;
   const counts = report.completeness.reconciliation;
   return (
     <>
+      {initialDate.startsWith("2026-07") && <a className="back-link" href="/months/2026-07">← Back to July 2026 month history</a>}
       <section className="report-hero" aria-labelledby="report-title">
         <div>
           <div className="eyebrow">Daily synthetic call review</div>
@@ -231,7 +292,7 @@ function ReportPage({ principal, initialDate = "" }: { principal: DemoPrincipal;
       <section className={`completeness ${report.completeness.status}`} aria-labelledby="completeness-title">
         <div>
           <span className="status-badge">{humanize(report.completeness.status)} report</span>
-          <h2 id="completeness-title">Coverage is {report.completeness.status}.</h2>
+          <h2 id="completeness-title">Coverage is {report.completeness.status === "zero_activity" ? "zero activity" : report.completeness.status}.</h2>
           <p>{report.completeness.explanation}</p>
           <small>Cutoff: 6:00 PM America/New_York · Duplicate deliveries excluded from call totals.</small>
         </div>
@@ -272,7 +333,7 @@ function ReportPage({ principal, initialDate = "" }: { principal: DemoPrincipal;
                 {section.items.map((item) => (
                   <article className="report-item" key={item.item_id}>
                     <div className="item-topline">
-                      <a className="call-reference" href={item.analysis_id ? `/calls/${item.call_id}` : "/failures"}>{item.synthetic_reference}</a>
+                      <a className="call-reference" href={item.analysis_id ? `/calls/${item.call_id}?month=${report.business_date.slice(0, 7)}` : "/failures"}>{item.synthetic_reference}</a>
                       <span className={`priority priority-${item.priority}`}>Priority: {humanize(item.priority)}</span>
                     </div>
                     <h3>{item.summary}</h3>
@@ -447,7 +508,7 @@ function CallPage({ callId, principal }: { callId: string; principal: DemoPrinci
   if (loading || error || !detail) return <RequestState loading={loading} error={error} />;
   return (
     <>
-      <a className="back-link" href="/">← Back to daily report</a>
+      <a className="back-link" href={`/reports/${detail.occurred_at.slice(0, 10)}?month=${detail.occurred_at.slice(0, 7)}`}>← Back to daily report</a>
       <section className="call-heading">
         <div>
           <div className="eyebrow">Synthetic call analysis</div>
@@ -1038,13 +1099,15 @@ export function App({ path = window.location.pathname }: { path?: string }): Rea
   const callMatch = path.match(/^\/calls\/([A-Za-z0-9._:-]+)$/);
   const callId = callMatch?.[1];
   const reportMatch = path.match(/^\/reports\/(\d{4}-\d{2}-\d{2})$/);
+  const monthMatch = path.match(/^\/months\/(\d{4}-\d{2})$/);
   if (callId) page = <CallPage callId={callId} principal={principal} />;
   else if (reportMatch?.[1]) page = <ReportPage principal={principal} initialDate={reportMatch[1]} />;
+  else if (monthMatch?.[1]) page = <MonthPage principal={principal} monthKey={monthMatch[1]} />;
   else if (path === "/uploads") page = <UploadPage principal={principal} />;
   else if (path === "/failures") page = <FailurePage principal={principal} />;
   else if (path === "/playbooks") page = <PlaybookPage principal={principal} />;
   else if (path === "/operations") page = <OperationsPage principal={principal} />;
   else if (path === "/health") page = <HealthPage />;
-  else page = <ReportPage principal={principal} />;
+  else page = <MonthPage principal={principal} />;
   return <Shell principal={principal} setPrincipal={setPrincipal} path={path}>{page}</Shell>;
 }

@@ -566,7 +566,8 @@
       "enum": [
         "complete",
         "partial",
-        "failed"
+        "failed",
+        "zero_activity"
       ],
       "title": "ReportStatus",
       "type": "string"

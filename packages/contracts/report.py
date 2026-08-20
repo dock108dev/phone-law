@@ -44,6 +44,7 @@ class ReportStatus(StrEnum):
     COMPLETE = "complete"
     PARTIAL = "partial"
     FAILED = "failed"
+    ZERO_ACTIVITY = "zero_activity"
 
 
 class ReportSectionKind(StrEnum):
@@ -103,8 +104,8 @@ class ReportReconciliation(StrictModel):
     def counts_reconcile(self) -> ReportReconciliation:
         if self.received > self.expected:
             raise ValueError("received unique calls cannot exceed expected eligible calls")
-        if self.analyzed + self.failed > self.received:
-            raise ValueError("analyzed and failed calls cannot exceed received calls")
+        if self.analyzed + self.failed != self.received:
+            raise ValueError("received calls must reconcile to analyzed and failed calls")
         if self.missing != self.expected - self.received:
             raise ValueError("missing count must reconcile expected and received calls")
         return self
@@ -176,6 +177,52 @@ class DailyReport(StrictModel):
         actual = tuple(section.kind for section in self.sections)
         if actual != expected:
             raise ValueError("daily report sections must use the required deterministic order")
+        return self
+
+
+class MonthDayState(StrEnum):
+    COMPLETE = "complete"
+    PARTIAL = "partial"
+    FAILED = "failed"
+    MISSING = "missing"
+    ZERO_ACTIVITY = "zero_activity"
+
+
+class MonthDaySummary(StrictModel):
+    business_date: date
+    weekday: bool
+    state: MonthDayState
+    report_status: ReportStatus
+    expected: Annotated[int, Field(ge=0)]
+    received: Annotated[int, Field(ge=0)]
+    analyzed: Annotated[int, Field(ge=0)]
+    failed: Annotated[int, Field(ge=0)]
+    missing: Annotated[int, Field(ge=0)]
+    late: Annotated[int, Field(ge=0)]
+    duplicate_deliveries: Annotated[int, Field(ge=0)]
+    scenarios: tuple[OpaqueId, ...]
+    report_path: NonEmptyText
+
+
+class MonthHistory(StrictModel):
+    schema_version: Literal["month-history-v1"]
+    year: Annotated[int, Field(ge=2000, le=2100)]
+    month: Annotated[int, Field(ge=1, le=12)]
+    label: NonEmptyText
+    synthetic: Literal[True]
+    previous_month_path: NonEmptyText
+    next_month_path: NonEmptyText
+    days: tuple[MonthDaySummary, ...]
+
+    @model_validator(mode="after")
+    def complete_calendar_month(self) -> MonthHistory:
+        if len(self.days) not in {28, 29, 30, 31}:
+            raise ValueError("month history must contain every calendar date")
+        if any(
+            item.business_date.year != self.year or item.business_date.month != self.month
+            for item in self.days
+        ):
+            raise ValueError("month history dates must match its year and month")
         return self
 
 

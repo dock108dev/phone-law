@@ -5,12 +5,12 @@ import { App } from "./App";
 import { loadWebConfiguration } from "./config";
 
 describe("Slice 2 web shell", () => {
-  it("renders the persistent synthetic boundary and report-first loading state", () => {
+  it("renders the persistent synthetic boundary and month-history loading state", () => {
     const html = renderToStaticMarkup(<App path="/" />);
     expect(html).toContain("Synthetic demo data");
     expect(html).toContain("No live services connected");
     expect(html).toContain("Loading synthetic review data");
-    expect(html).toContain("Daily report");
+    expect(html).toContain("Month history");
   });
 
   it("renders the content-free health page", () => {

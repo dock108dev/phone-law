@@ -4,6 +4,9 @@ const acceptanceProjects: Project[] = process.env.INCLUDE_LOCAL_ACCEPTANCE === "
   { name: "local-acceptance", testMatch: "local-acceptance.spec.ts" },
   { name: "local-acceptance-restart", testMatch: "local-acceptance-restart.spec.ts" },
 ] : [];
+const demoMonthProjects: Project[] = process.env.INCLUDE_DEMO_MONTH === "1" ? [
+  { name: "demo-month", testMatch: "demo-month.spec.ts" },
+] : [];
 
 export default defineConfig({
   testDir: "./tests",
@@ -26,6 +29,7 @@ export default defineConfig({
       testMatch: "local-operations.spec.ts",
     },
     ...acceptanceProjects,
+    ...demoMonthProjects,
   ],
   use: {
     baseURL: process.env.BASE_URL ?? "http://web:5173",

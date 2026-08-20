@@ -37,7 +37,7 @@ export type DailyReport = {
   version: number;
   advisory_notice: string;
   completeness: {
-    status: "complete" | "partial" | "failed";
+    status: "complete" | "partial" | "failed" | "zero_activity";
     explanation: string;
     reconciliation: {
       expected: number;
@@ -59,6 +59,31 @@ export type DailyReport = {
     call_id: string;
     synthetic_reference: string;
     received_at: string;
+  }[];
+};
+
+export type MonthHistory = {
+  schema_version: "month-history-v1";
+  year: number;
+  month: number;
+  label: string;
+  synthetic: true;
+  previous_month_path: string;
+  next_month_path: string;
+  days: {
+    business_date: string;
+    weekday: boolean;
+    state: "complete" | "partial" | "failed" | "missing" | "zero_activity";
+    report_status: "complete" | "partial" | "failed" | "zero_activity";
+    expected: number;
+    received: number;
+    analyzed: number;
+    failed: number;
+    missing: number;
+    late: number;
+    duplicate_deliveries: number;
+    scenarios: string[];
+    report_path: string;
   }[];
 };
 

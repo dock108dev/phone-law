@@ -165,6 +165,7 @@ services:
       BASE_URL: http://web:5173
       EVIDENCE_DIR: /evidence
       PLAYWRIGHT_GREP: ${PLAYWRIGHT_GREP:-}
+      INCLUDE_DEMO_MONTH: ${INCLUDE_DEMO_MONTH:-0}
     command: ["npm", "run", "test:e2e"]
     volumes:
       - ${SLICE4_EVIDENCE_DIR:-/tmp/colacci-law-slice2-evidence}:/evidence

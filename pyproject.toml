@@ -72,6 +72,8 @@ ignore = ["S101"]
 "scripts/test_transcription_contract.py" = ["S108"]
 "scripts/test_transcription_live.py" = ["S108"]
 "scripts/transcription_live_preflight.py" = ["S108"]
+"scripts/test_demo_month.py" = ["S108"]
+"scripts/finalize_demo_month_evidence.py" = ["S108"]
 
 [tool.mypy]
 python_version = "3.13"
