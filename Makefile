@@ -5,10 +5,10 @@ COMPOSE := docker compose
 PY_RUN := $(COMPOSE) run --rm --no-deps api
 WEB_RUN := $(COMPOSE) run --rm --no-deps web
 
-.PHONY: help bootstrap seed-demo seed-demo-month dev stop clean generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations test-local-acceptance test-demo-month test-ui-redesign lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
+.PHONY: help bootstrap seed-demo seed-demo-month dev stop clean generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations test-local-acceptance test-demo-month test-demo-release test-ui-redesign lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
 
 help:
-	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations test-local-acceptance seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
+	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations test-local-acceptance test-demo-release seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -25,6 +25,9 @@ seed-demo-month:
 
 test-demo-month:
 	./scripts/test_demo_month.sh
+
+test-demo-release:
+	SLICE6C_EVIDENCE_DIR=/tmp/colacci-law-slice6e/evidence ./scripts/test_demo_month.sh
 
 test-ui-redesign:
 	./scripts/test_ui_redesign.sh
