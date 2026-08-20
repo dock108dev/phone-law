@@ -42,7 +42,8 @@ test("Slice 6A reviewer, administrator, and operations acceptance journey", asyn
   await page.goto("/reports/2026-08-17");
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
   await expect(page.getByRole("heading", { name: "Coverage is partial." })).toBeVisible();
-  for (const [label, value] of [["Expected", "11"], ["Received", "11"], ["Analyzed", "10"], ["Failed", "1"], ["Missing", "0"], ["Late", "0"]]) {
+  const reconciliationCounts: [string, string][] = [["Expected", "11"], ["Received", "11"], ["Analyzed", "10"], ["Failed", "1"], ["Missing", "0"], ["Late", "0"]];
+  for (const [label, value] of reconciliationCounts) {
     await expect(page.locator(".metric").filter({ hasText: new RegExp(`^${label}${value}$`) })).toBeVisible();
   }
   for (const section of ["Immediate attention", "Potential new matters", "Time-sensitive dates", "Dissatisfaction and escalation", "Staff commitments", "Administrative tasks", "Routine / no action", "Processing failures"]) {
