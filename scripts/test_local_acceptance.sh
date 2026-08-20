@@ -24,8 +24,9 @@ if [[ "$(git merge-base HEAD 22710801be61a3f97825fbc36fb3d0e0e92f8dbc)" != "2271
   echo "local acceptance source commit is not an ancestor" >&2
   exit 1
 fi
-if [[ "$(git branch --show-current)" != "codex/slice-6a-local-acceptance" ]]; then
-  echo "local acceptance must run on codex/slice-6a-local-acceptance" >&2
+current_branch="$(git branch --show-current)"
+if [[ "$current_branch" != "codex/slice-6a-local-acceptance" && "$current_branch" != "codex/slice-3b-final-preflight" ]]; then
+  echo "local acceptance must run on an accepted local-product descendant branch" >&2
   exit 1
 fi
 
