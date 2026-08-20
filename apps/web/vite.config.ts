@@ -9,6 +9,12 @@ export default defineConfig({
   server: {
     allowedHosts: ["web", "localhost"],
     strictPort: true,
+    proxy: {
+      "/api": {
+        target: process.env.VITE_API_PROXY_TARGET ?? "http://api:8000",
+        changeOrigin: false,
+      },
+    },
   },
   preview: {
     allowedHosts: ["web", "localhost"],

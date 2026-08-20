@@ -133,7 +133,8 @@ services:
     environment:
       VITE_APP_PROFILE: demo
       VITE_ALLOW_REAL_CALL_DATA: "false"
-      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:18000}
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-}
+      VITE_API_PROXY_TARGET: http://api:8000
     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
     volumes:
       - ./apps/web/src:/workspace/apps/web/src:ro
@@ -166,6 +167,7 @@ services:
       EVIDENCE_DIR: /evidence
       PLAYWRIGHT_GREP: ${PLAYWRIGHT_GREP:-}
       INCLUDE_DEMO_MONTH: ${INCLUDE_DEMO_MONTH:-0}
+      INCLUDE_UI_REDESIGN: ${INCLUDE_UI_REDESIGN:-0}
     command: ["npm", "run", "test:e2e"]
     volumes:
       - ${SLICE4_EVIDENCE_DIR:-/tmp/colacci-law-slice2-evidence}:/evidence

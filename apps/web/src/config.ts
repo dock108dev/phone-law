@@ -15,10 +15,10 @@ export function loadWebConfiguration(
   const allowRealCallData = source.VITE_ALLOW_REAL_CALL_DATA ?? "false";
 
   if (profile !== "test" && profile !== "demo") {
-    throw new Error("The Slice 2 review app supports only test or demo profiles.");
+    throw new Error("The local review workspace supports only test or demo profiles.");
   }
   if (allowRealCallData !== "false") {
-    throw new Error("The Slice 2 review app refuses real call data.");
+    throw new Error("The local review workspace refuses real call data.");
   }
 
   return { profile, allowRealCallData: false };

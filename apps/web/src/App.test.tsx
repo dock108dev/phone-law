@@ -4,12 +4,12 @@ import { describe, expect, it } from "vitest";
 import { App } from "./App";
 import { loadWebConfiguration } from "./config";
 
-describe("Slice 2 web shell", () => {
+describe("Colacci Law workspace shell", () => {
   it("renders the persistent synthetic boundary and month-history loading state", () => {
     const html = renderToStaticMarkup(<App path="/" />);
-    expect(html).toContain("Synthetic demo data");
-    expect(html).toContain("No live services connected");
-    expect(html).toContain("Loading synthetic review data");
+    expect(html).toContain("Local / synthetic");
+    expect(html).toContain("No client data or live services");
+    expect(html).toContain("Loading month history");
     expect(html).toContain("Month history");
   });
 

@@ -22,8 +22,8 @@ test("local operations administrator, operations, reviewer denial, responsivenes
 
   await page.goto("/operations");
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-admin");
-  await expect(page.getByRole("heading", { name: "Local controls and recovery." })).toBeVisible();
-  await expect(page.getByText("Synthetic demo data", { exact: true }).last()).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Local controls and recovery" })).toBeVisible();
+  await expect(page.getByText("Local / synthetic", { exact: true }).last()).toBeVisible();
   await expect(page.getByText("Local development", { exact: true })).toBeVisible();
   await expect(page.getByText("Zero external requests", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Operational reconciliation" })).toBeVisible();

@@ -76,10 +76,9 @@ function currentPrincipal(): DemoPrincipal {
 
 function SyntheticBanner(): ReactNode {
   return (
-    <div className="synthetic-banner" role="status">
+    <div className="environment-indicator" role="status">
       <span className="banner-dot" aria-hidden="true" />
-      <strong>Synthetic demo data</strong>
-      <span>No live services connected. No client calls, audio, or identities are present.</span>
+      <span><strong>Local / synthetic</strong><small>No client data or live services</small></span>
     </div>
   );
 }
@@ -94,11 +93,13 @@ function Header({
   path: string;
 }): ReactNode {
   const selectedRole = principals.find((item) => item.id === principal)?.role ?? "Reviewer";
+  const workArea = path === "/uploads" ? "Manual upload" : path === "/failures" ? "Failure queue" : path === "/playbooks" ? "Playbook" : path === "/operations" ? "Operations" : path.startsWith("/calls/") ? "Call review" : path.startsWith("/reports/") ? "Daily report" : "Month history";
+  const reportDate = path.match(/^\/reports\/(\d{4}-\d{2}-\d{2})$/)?.[1];
   return (
     <header className="site-header">
       <a className="brand" href="/" aria-label="Colacci Law Call Review home">
         <span className="brand-mark" aria-hidden="true">CL</span>
-        <span><b>Colacci Law</b><small>Synthetic call review</small></span>
+        <span><b>Colacci Law</b><small>{workArea}{reportDate ? ` · ${reportDate}` : ""}</small></span>
       </a>
       <nav aria-label="Primary navigation">
         <a className={`nav-link ${path === "/" || path.startsWith("/months/") || path.startsWith("/reports/") ? "active" : ""}`} href="/">Month history</a>
@@ -107,8 +108,9 @@ function Header({
         <a className={`nav-link ${path === "/playbooks" ? "active" : ""}`} href="/playbooks">Playbook</a>
         <a className={`nav-link ${path === "/operations" ? "active" : ""}`} href="/operations">Operations</a>
       </nav>
+      <SyntheticBanner />
       <label className="identity-control">
-        <span>Demo identity</span>
+        <span>Current role</span>
         <select
           aria-label="Demo identity and role"
           value={principal}
@@ -140,13 +142,8 @@ function Shell({
   return (
     <>
       <a className="skip-link" href="#main-content">Skip to main content</a>
-      <SyntheticBanner />
       <Header principal={principal} setPrincipal={setPrincipal} path={path} />
       <main id="main-content" tabIndex={-1}>{children}</main>
-      <footer>
-        <span>Slice 5A · Local security and operations</span>
-        <span>Advisory workflow · Human review required</span>
-      </footer>
     </>
   );
 }
@@ -155,13 +152,15 @@ function RequestState({
   loading,
   error,
   empty,
+  area = "workspace",
 }: {
   loading: boolean;
   error: string | null;
   empty?: string;
+  area?: string;
 }): ReactNode {
-  if (loading) return <div className="state-panel" role="status">Loading synthetic review data…</div>;
-  if (error) return <div className="state-panel error-state" role="alert"><b>Unable to load this view.</b><span>{error}</span></div>;
+  if (loading) return <div className="state-panel" role="status"><span className="loading-mark" aria-hidden="true" /><b>Loading {area}</b><span>Retrieving local records.</span></div>;
+  if (error) return <div className="state-panel error-state" role="alert"><b>The {area} could not be loaded.</b><span>{error}</span><button className="secondary-button" type="button" onClick={() => { window.location.reload(); }}>Reload {area}</button></div>;
   if (empty) return <div className="state-panel"><b>Nothing to review.</b><span>{empty}</span></div>;
   return null;
 }
@@ -193,7 +192,7 @@ function MonthPage({ principal, monthKey = "2026-07" }: { principal: DemoPrincip
     return () => { active = false; };
   }, [monthKey, principal]);
   if (loading || error || !history) {
-    return <RequestState loading={loading} error={error} empty={!loading && !error ? "Run make seed-demo-month to create the month." : undefined} />;
+    return <RequestState loading={loading} error={error} area="month history" empty={!loading && !error ? "Run make seed-demo-month to create the month." : undefined} />;
   }
   const totals = history.days.reduce(
     (result, item) => ({
@@ -249,27 +248,32 @@ function ReportPage({ principal, initialDate = "" }: { principal: DemoPrincipal;
     setLoading(true);
     setError(null);
     apiRequest<{ dates: string[] }>("/api/reports/dates", principal)
-      .then(async (result) => {
+      .then((result) => {
         if (!active) return;
         setDates(result.dates);
-        const date = selectedDate || result.dates[0];
-        if (!date) {
-          setReport(null);
-          return;
-        }
-        setSelectedDate(date);
-        const value = await apiRequest<DailyReport>(`/api/reports/${date}`, principal);
-        setReport(value);
+        setSelectedDate((current) => current || result.dates[0] || "");
       })
       .catch((reason: unknown) => {
         if (active) setError(reason instanceof Error ? reason.message : "Unknown request error");
       })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
+  }, [principal]);
+
+  useEffect(() => {
+    if (!selectedDate) return;
+    let active = true;
+    setLoading(true);
+    setError(null);
+    apiRequest<DailyReport>(`/api/reports/${selectedDate}`, principal)
+      .then((value) => { if (active) setReport(value); })
+      .catch((reason: unknown) => { if (active) setError(reason instanceof Error ? reason.message : "The daily report request failed."); })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
   }, [principal, selectedDate]);
 
   if (loading || error || !report) {
-    return <RequestState loading={loading} error={error} empty={!loading && !error ? "Run make seed-demo to create the report." : undefined} />;
+    return <RequestState loading={loading} error={error} area="daily report" empty={!loading && !error ? "No report exists for this work date." : undefined} />;
   }
   const counts = report.completeness.reconciliation;
   return (
@@ -277,8 +281,8 @@ function ReportPage({ principal, initialDate = "" }: { principal: DemoPrincipal;
       {initialDate.startsWith("2026-07") && <a className="back-link" href="/months/2026-07">← Back to July 2026 month history</a>}
       <section className="report-hero" aria-labelledby="report-title">
         <div>
-          <div className="eyebrow">Daily synthetic call review</div>
-          <h1 id="report-title">Review the calls that need a human decision.</h1>
+          <div className="eyebrow">Daily report</div>
+          <h1 id="report-title">Call review · {report.business_date}</h1>
           <p>{report.advisory_notice}</p>
         </div>
         <label className="date-control">
@@ -320,7 +324,6 @@ function ReportPage({ principal, initialDate = "" }: { principal: DemoPrincipal;
           <section className={`report-section ${index === 0 ? "attention-section" : ""}`} key={section.kind} aria-labelledby={`section-${section.kind}`}>
             <div className="section-heading">
               <div>
-                <span className="section-index">{String(index + 1).padStart(2, "0")}</span>
                 <h2 id={`section-${section.kind}`}>{section.title}</h2>
                 <p>{section.description}</p>
               </div>
@@ -505,13 +508,13 @@ function CallPage({ callId, principal }: { callId: string; principal: DemoPrinci
     }
   }, [detail]);
 
-  if (loading || error || !detail) return <RequestState loading={loading} error={error} />;
+  if (loading || error || !detail) return <RequestState loading={loading} error={error} area="call review" />;
   return (
     <>
       <a className="back-link" href={`/reports/${detail.occurred_at.slice(0, 10)}?month=${detail.occurred_at.slice(0, 7)}`}>← Back to daily report</a>
       <section className="call-heading">
         <div>
-          <div className="eyebrow">Synthetic call analysis</div>
+          <div className="eyebrow">Call review</div>
           <h1>{detail.synthetic_reference}</h1>
           <p>{detail.summary}</p>
         </div>
@@ -603,7 +606,7 @@ function FailurePage({ principal }: { principal: DemoPrincipal }): ReactNode {
     setLoading(true); setError(null);
     load().catch((reason: unknown) => { setError(reason instanceof Error ? reason.message : "Unknown request error"); }).finally(() => { setLoading(false); });
   }, [principal]);
-  if (loading || error || !queue) return <RequestState loading={loading} error={error} />;
+  if (loading || error || !queue) return <RequestState loading={loading} error={error} area="failure queue" />;
   return <><section className="page-title"><div className="eyebrow">Content-free operations</div><h1>Synthetic failure queue</h1><p>Safe identifiers and diagnostics only. No transcript, summary, payload, URL, credential, or stack trace appears here.</p></section><section className="queue-section"><div className="section-heading"><h2>Current failures</h2><span className="count-badge">{queue.current.length}</span></div>{queue.current.map((item) => <FailureCard item={item} principal={principal} reload={load} key={item.call_id} />)}</section><section className="queue-section"><div className="section-heading"><h2>Resolved history</h2><span className="count-badge">{queue.resolved.length}</span></div>{queue.resolved.map((item) => <FailureCard item={item} principal={principal} reload={load} key={item.call_id} />)}</section></>;
 }
 
@@ -638,11 +641,11 @@ function PlaybookPage({ principal }: { principal: DemoPrincipal }): ReactNode {
       setMessage(reason instanceof ApiRequestError ? reason.message : "Draft creation could not be completed.");
     }
   }
-  if (loading || error) return <RequestState loading={loading} error={error} />;
+  if (loading || error) return <RequestState loading={loading} error={error} area="playbook" />;
   return <>
     <section className="page-title">
       <div className="eyebrow">Versioned synthetic rules</div>
-      <h1>Review playbook lifecycle</h1>
+        <h1>Playbook lifecycle</h1>
       <p>Create a bounded synthetic draft from an existing version, then publish it immutably. Earlier analyses are never reprocessed or rewritten.</p>
     </section>
     <p className="authorization-message" role="status" tabIndex={-1}>{message}</p>
@@ -987,7 +990,7 @@ function OperationsPage({ principal }: { principal: DemoPrincipal }): ReactNode 
     );
   }
 
-  if (loading) return <RequestState loading error={null} />;
+  if (loading) return <RequestState loading error={null} area="operations workspace" />;
   if (denied) {
     return (
       <section className="authorization-denial operations-denial" role="alert">
@@ -996,13 +999,13 @@ function OperationsPage({ principal }: { principal: DemoPrincipal }): ReactNode 
       </section>
     );
   }
-  if (!overview || !history || !draft) return <RequestState loading={false} error={message || "Operations data is unavailable."} />;
+  if (!overview || !history || !draft) return <RequestState loading={false} error={message || "Operations data is unavailable."} area="operations workspace" />;
 
   return (
     <>
       <section className="page-title operations-title">
-        <div className="eyebrow">Content-free operations center</div>
-        <h1>Local controls and recovery.</h1>
+        <div className="eyebrow">Operations</div>
+        <h1>Local controls and recovery</h1>
         <p>Configuration, reconciliation, retention, deletion, and recovery controls for invented data only.</p>
         <div className="operations-boundary" role="note"><b>{overview.data_label}</b><span>{overview.environment}</span><span>Zero external requests</span></div>
       </section>

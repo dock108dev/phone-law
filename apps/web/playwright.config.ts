@@ -7,6 +7,9 @@ const acceptanceProjects: Project[] = process.env.INCLUDE_LOCAL_ACCEPTANCE === "
 const demoMonthProjects: Project[] = process.env.INCLUDE_DEMO_MONTH === "1" ? [
   { name: "demo-month", testMatch: "demo-month.spec.ts" },
 ] : [];
+const uiRedesignProjects: Project[] = process.env.INCLUDE_UI_REDESIGN === "1" ? [
+  { name: "ui-redesign", testMatch: "ui-redesign.spec.ts" },
+] : [];
 
 export default defineConfig({
   testDir: "./tests",
@@ -30,6 +33,7 @@ export default defineConfig({
     },
     ...acceptanceProjects,
     ...demoMonthProjects,
+    ...uiRedesignProjects,
   ],
   use: {
     baseURL: process.env.BASE_URL ?? "http://web:5173",
