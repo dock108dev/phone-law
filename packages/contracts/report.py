@@ -307,6 +307,17 @@ class PlaybookActionResult(StrictModel):
     result: Literal["published"]
 
 
+class PlaybookDraftCreate(StrictModel):
+    version: Annotated[str, StringConstraints(pattern=r"^synthetic-[a-z0-9._-]{3,64}$")]
+    label: NonEmptyText
+    source_version: Annotated[str, StringConstraints(pattern=r"^synthetic-[a-z0-9._-]{3,64}$")]
+
+
+class PlaybookDraftResult(StrictModel):
+    playbook: PlaybookSummary
+    result: Literal["created"]
+
+
 class ReportDateList(StrictModel):
     dates: tuple[date, ...]
 

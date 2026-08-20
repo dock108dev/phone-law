@@ -179,6 +179,12 @@ export type Playbook = {
   published_at: string | null;
 };
 
+export type PlaybookDraftCreate = {
+  version: string;
+  label: string;
+  source_version: string;
+};
+
 export type UploadState =
   | "received"
   | "validating"
@@ -293,6 +299,11 @@ export type OperationsOverview = {
   data_label: "Synthetic demo data";
   configuration_version: number;
   processing_volume: { state: string; count: number }[];
+  processing_latency: {
+    completed_attempts: number;
+    average_milliseconds: number;
+    maximum_milliseconds: number;
+  };
   success_count: number;
   failure_count: number;
   retry_count: number;

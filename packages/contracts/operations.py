@@ -223,11 +223,18 @@ class SafeStateCount(StrictModel):
     count: Annotated[int, Field(ge=0)]
 
 
+class SafeLatencyMetrics(StrictModel):
+    completed_attempts: Annotated[int, Field(ge=0)]
+    average_milliseconds: Annotated[int, Field(ge=0)]
+    maximum_milliseconds: Annotated[int, Field(ge=0)]
+
+
 class OperationsOverview(StrictModel):
     environment: Literal["Local development"]
     data_label: Literal["Synthetic demo data"]
     configuration_version: Annotated[int, Field(ge=1)]
     processing_volume: tuple[SafeStateCount, ...]
+    processing_latency: SafeLatencyMetrics
     success_count: Annotated[int, Field(ge=0)]
     failure_count: Annotated[int, Field(ge=0)]
     retry_count: Annotated[int, Field(ge=0)]

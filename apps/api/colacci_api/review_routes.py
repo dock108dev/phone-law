@@ -16,6 +16,8 @@ from packages.contracts.report import (
     DemoRole,
     FailureQueue,
     PlaybookActionResult,
+    PlaybookDraftCreate,
+    PlaybookDraftResult,
     PlaybookSummary,
     ReportDateList,
     RetryResult,
@@ -231,6 +233,34 @@ def retry_failure(
 @router.get("/playbooks", response_model=tuple[PlaybookSummary, ...])
 def playbooks(request: Request, _: Principal) -> tuple[PlaybookSummary, ...]:
     return _repository(request).playbooks()
+
+
+@router.post("/playbooks/drafts", response_model=PlaybookDraftResult, status_code=201)
+def create_playbook_draft(
+    draft: PlaybookDraftCreate,
+    request: Request,
+    principal: Principal,
+) -> PlaybookDraftResult:
+    repository = _repository(request)
+    if principal.role is not DemoRole.ADMINISTRATOR:
+        repository.record_audit(
+            principal=principal,
+            action="playbook_draft_create_denied",
+            target_type="playbook",
+            target_id="synthetic-draft",
+            result="forbidden",
+        )
+        raise _error(
+            request,
+            status.HTTP_403_FORBIDDEN,
+            "Only the demo administrator can create a synthetic playbook draft.",
+        )
+    try:
+        return repository.create_playbook_draft(request=draft, principal=principal)
+    except LookupError as exc:
+        raise _error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
+    except ValueError as exc:
+        raise _error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
 
 
 @router.post("/playbooks/{version}/publish", response_model=PlaybookActionResult)

@@ -1,7 +1,13 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig, type Project } from "@playwright/test";
+
+const acceptanceProjects: Project[] = process.env.INCLUDE_LOCAL_ACCEPTANCE === "1" ? [
+  { name: "local-acceptance", testMatch: "local-acceptance.spec.ts" },
+  { name: "local-acceptance-restart", testMatch: "local-acceptance-restart.spec.ts" },
+] : [];
 
 export default defineConfig({
   testDir: "./tests",
+  outputDir: "/tmp/colacci-law-playwright-results",
   fullyParallel: false,
   forbidOnly: true,
   retries: 0,
@@ -19,6 +25,7 @@ export default defineConfig({
       name: "local-operations",
       testMatch: "local-operations.spec.ts",
     },
+    ...acceptanceProjects,
   ],
   use: {
     baseURL: process.env.BASE_URL ?? "http://web:5173",

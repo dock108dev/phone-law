@@ -34,7 +34,12 @@ from packages.database.review_schema import (
 )
 from packages.media.store import LocalSyntheticObjectStore
 
-EVIDENCE_ROOT = Path("/tmp/colacci-law-slice5a/evidence")  # nosec B108
+EVIDENCE_ROOT = Path(  # nosec B108
+    os.environ.get(
+        "COLACCI_EVIDENCE_ROOT",
+        "/tmp/colacci-law-slice5a/evidence",  # nosec B108
+    )
+)
 ADMIN = DemoPrincipal(
     principal_id=DemoPrincipalId.ADMIN,
     role=DemoRole.ADMINISTRATOR,
@@ -279,7 +284,7 @@ def main() -> None:
     _write(
         "validation-results.json",
         {
-            "slice": "5A",
+            "slice": os.environ.get("COLACCI_ACCEPTANCE_SLICE", "5A"),
             "synthetic_only": True,
             "focused_python": "passed",
             "focused_browser": "passed",

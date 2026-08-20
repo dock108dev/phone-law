@@ -24,6 +24,8 @@ from packages.contracts.report import (
     FailureQueue,
     FailureQueueItem,
     PlaybookActionResult,
+    PlaybookDraftCreate,
+    PlaybookDraftResult,
     PlaybookLifecycleState,
     PlaybookSummary,
     ProcessingAttemptSummary,
@@ -34,6 +36,7 @@ from packages.contracts.report import (
 from packages.contracts.review import (
     Finding,
     NormalizedCall,
+    PlaybookStatus,
     PlaybookVersion,
     ProcessingState,
     StructuredAnalysis,
@@ -718,6 +721,74 @@ class ReviewExperienceRepository:
             updated["status"] = PlaybookLifecycleState.PUBLISHED.value
             updated["published_at"] = now
         return PlaybookActionResult(playbook=self._playbook_summary(updated), result="published")
+
+    def create_playbook_draft(
+        self, *, request: PlaybookDraftCreate, principal: DemoPrincipal
+    ) -> PlaybookDraftResult:
+        now = datetime.now(UTC)
+        with self.engine.begin() as connection:
+            source = (
+                connection.execute(
+                    sa.select(playbook_versions).where(
+                        playbook_versions.c.version == request.source_version,
+                        ~sa.exists(
+                            sa.select(retention_tombstones.c.id).where(
+                                retention_tombstones.c.resource_type == "playbook_version",
+                                retention_tombstones.c.resource_id == playbook_versions.c.id,
+                            )
+                        ),
+                    )
+                )
+                .mappings()
+                .one_or_none()
+            )
+            if source is None:
+                raise LookupError("source_playbook_not_found")
+            if connection.execute(
+                sa.select(playbook_versions.c.id).where(
+                    playbook_versions.c.version == request.version
+                )
+            ).scalar_one_or_none():
+                raise ValueError("playbook_version_exists")
+            cloned = _validated(PlaybookVersion, source["structured_payload"]).model_copy(
+                update={
+                    "playbook_id": hashlib.sha256(
+                        f"local-acceptance|{request.version}".encode()
+                    ).hexdigest()[:32],
+                    "version": request.version,
+                    "label": request.label,
+                    "status": PlaybookStatus.DRAFT,
+                }
+            )
+            connection.execute(
+                playbook_versions.insert().values(
+                    id=cloned.playbook_id,
+                    version=cloned.version,
+                    status=PlaybookLifecycleState.DRAFT.value,
+                    is_synthetic=True,
+                    structured_payload=cloned.model_dump(mode="json"),
+                    created_at=now,
+                    published_at=None,
+                    retired_at=None,
+                )
+            )
+            self._insert_audit(
+                connection,
+                principal=principal,
+                action="playbook_draft_created",
+                target_type="playbook",
+                target_id=cloned.playbook_id,
+                result="created",
+                created_at=now,
+            )
+            row = (
+                connection.execute(
+                    sa.select(playbook_versions).where(playbook_versions.c.id == cloned.playbook_id)
+                )
+                .mappings()
+                .one()
+            )
+        return PlaybookDraftResult(playbook=self._playbook_summary(row), result="created")
 
     def retry_target(self, call_id: str) -> tuple[str, bool, ProcessingState] | None:
         with self.engine.connect() as connection:

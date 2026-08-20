@@ -20,6 +20,7 @@ from packages.contracts.report import (
     DemoPrincipal,
     DemoPrincipalId,
     DemoRole,
+    PlaybookDraftCreate,
     ReviewEventCreate,
     ReviewLabel,
 )
@@ -206,8 +207,20 @@ def test_report_review_failure_and_playbook_persistence(
     ]
     assert [item.synthetic_reference for item in queue.resolved] == ["CL-FX-010"]
     provenance_before = detail.provenance.playbook_version
+    draft = experience.create_playbook_draft(
+        request=PlaybookDraftCreate(
+            version="synthetic-acceptance-v2",
+            label="Synthetic acceptance candidate",
+            source_version="synthetic-draft-v1",
+        ),
+        principal=principal.model_copy(
+            update={"principal_id": DemoPrincipalId.ADMIN, "role": DemoRole.ADMINISTRATOR}
+        ),
+    )
+    assert draft.playbook.lifecycle.value == "draft"
+    assert draft.playbook.version == "synthetic-acceptance-v2"
     published = experience.publish_playbook(
-        version="synthetic-draft-v1",
+        version="synthetic-acceptance-v2",
         principal=principal.model_copy(
             update={"principal_id": DemoPrincipalId.ADMIN, "role": DemoRole.ADMINISTRATOR}
         ),
@@ -265,6 +278,16 @@ def test_demo_api_role_matrix_and_safe_errors(
             headers={"X-Demo-Principal": "demo-reviewer"},
         )
         assert denied_publish.status_code == 403
+        denied_draft = client.post(
+            "/api/playbooks/drafts",
+            headers={"X-Demo-Principal": "demo-reviewer"},
+            json={
+                "version": "synthetic-reviewer-v2",
+                "label": "Synthetic reviewer draft",
+                "source_version": "synthetic-draft-v1",
+            },
+        )
+        assert denied_draft.status_code == 403
         assert "correlation_id" in denied_publish.json()["detail"]
         unknown = client.get("/api/reports/dates", headers={"X-Demo-Principal": "arbitrary"})
         assert unknown.status_code == 401

@@ -180,6 +180,10 @@ button:disabled { cursor: not-allowed; opacity: .56; }
 .playbook-card h2 { margin: 7px 0 0; }
 .playbook-card h3 { margin: 22px 0 9px; font-size: 14px; }
 .playbook-card li { margin-bottom: 7px; color: #59635e; font-size: 12px; line-height: 1.5; }
+.playbook-draft-form { margin-bottom: 18px; }
+.playbook-draft-form fieldset { display: grid; gap: 12px; margin: 18px 0; padding: 0; border: 0; }
+.playbook-draft-form label { display: grid; gap: 6px; color: #37423d; font-size: 13px; }
+.playbook-draft-form input, .playbook-draft-form select { min-height: 42px; border: 1px solid #b7b0a4; border-radius: 8px; padding: 8px 10px; background: #fff; color: #17211d; }
 .tag-list { display: flex; flex-wrap: wrap; gap: 7px; }
 .tag-list span { padding: 6px 8px; border-radius: 6px; color: #38584a; background: #e4eee8; font-size: 10px; font-weight: 800; }
 

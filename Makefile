@@ -5,10 +5,10 @@ COMPOSE := docker compose
 PY_RUN := $(COMPOSE) run --rm --no-deps api
 WEB_RUN := $(COMPOSE) run --rm --no-deps web
 
-.PHONY: help bootstrap seed-demo dev stop clean generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
+.PHONY: help bootstrap seed-demo dev stop clean generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations test-local-acceptance lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
 
 help:
-	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
+	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations test-local-acceptance seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -53,6 +53,9 @@ test-manual-upload:
 
 test-local-operations:
 	./scripts/test_local_operations.sh
+
+test-local-acceptance:
+	./scripts/test_local_acceptance.sh
 
 transcription-live-preflight:
 	PYTHONPATH=. COLACCI_SYNTHETIC_ROOT=/tmp/colacci-law-slice3b python3 scripts/generate_test_audio.py

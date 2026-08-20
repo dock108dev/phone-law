@@ -1,0 +1,5 @@
+services:
+  e2e:
+    volumes:
+      - ./apps/web/tests:/workspace/apps/web/tests:ro
+      - ./apps/web/playwright.config.ts:/workspace/apps/web/playwright.config.ts:ro

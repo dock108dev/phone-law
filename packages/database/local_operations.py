@@ -35,6 +35,7 @@ from packages.contracts.operations import (
     ReconciliationMetrics,
     RetentionResource,
     RetentionRunResult,
+    SafeLatencyMetrics,
     SafeStateCount,
 )
 from packages.contracts.report import DemoPrincipal, DemoPrincipalId, DemoRole
@@ -783,6 +784,12 @@ class LocalOperationsRepository:
                     .where(processing_attempts.c.attempt_number > 1)
                 ).scalar_one()
             )
+            latency_rows = connection.execute(
+                sa.select(
+                    processing_attempts.c.started_at,
+                    processing_attempts.c.completed_at,
+                ).where(processing_attempts.c.completed_at.is_not(None))
+            ).all()
             latest_report = connection.execute(
                 sa.select(daily_reports.c.snapshot_payload)
                 .where(
@@ -843,6 +850,18 @@ class LocalOperationsRepository:
                 .limit(1)
             ).scalar_one_or_none()
         reconciliation = self._safe_reconciliation(latest_report)
+        latency_values = [
+            max(
+                0,
+                int(
+                    (
+                        cast(datetime, row.completed_at) - cast(datetime, row.started_at)
+                    ).total_seconds()
+                    * 1000
+                ),
+            )
+            for row in latency_rows
+        ]
         permitted = (
             (
                 "view_configuration",
@@ -873,6 +892,13 @@ class LocalOperationsRepository:
                     count=int(row._mapping["count"]),
                 )
                 for row in state_rows
+            ),
+            processing_latency=SafeLatencyMetrics(
+                completed_attempts=len(latency_values),
+                average_milliseconds=(
+                    sum(latency_values) // len(latency_values) if latency_values else 0
+                ),
+                maximum_milliseconds=max(latency_values, default=0),
             ),
             success_count=success_count,
             failure_count=failure_count,
