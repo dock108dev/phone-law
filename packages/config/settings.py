@@ -87,7 +87,12 @@ class Settings(BaseSettings):
     transcription_live_execution_confirmed: bool = False
     openai_api_key: SecretStr | None = Field(default=None, repr=False)
     openai_project_id: SecretStr | None = Field(default=None, repr=False)
+    firm_owned_openai_project_named: bool = False
+    openai_project_ownership_approved: bool = False
     openai_project_data_controls_approved: bool = False
+    openai_provider_terms_approved: bool = False
+    generated_audio_test_approved: bool = False
+    transcription_live_execution_authorization_id: str = ""
     openai_base_url: str = "https://api.openai.com/v1"
 
     audio_retention_days: int = 0
@@ -226,8 +231,22 @@ class Settings(BaseSettings):
             issues.add("openai_api_key")
         if self.openai_project_id is None or not self.openai_project_id.get_secret_value().strip():
             issues.add("openai_project_id")
+        if not self.firm_owned_openai_project_named:
+            issues.add("firm_owned_openai_project_named")
+        if not self.openai_project_ownership_approved:
+            issues.add("openai_project_ownership_approved")
         if not self.openai_project_data_controls_approved:
             issues.add("openai_project_data_controls_approved")
+        if not self.openai_provider_terms_approved:
+            issues.add("openai_provider_terms_approved")
+        if not self.generated_audio_test_approved:
+            issues.add("generated_audio_test_approved")
+        if self.transcription_live_execution_confirmed and (
+            len(self.transcription_live_execution_authorization_id.strip()) < 8
+            or self.transcription_live_execution_authorization_id
+            == "OWNER-CHAT-2026-08-19-SLICE-3B-REENTRY-PREFLIGHT-ONLY"
+        ):
+            issues.add("transcription_live_execution_authorization_id")
         if not _safe_openai_base_url(self.openai_base_url):
             issues.add("openai_base_url")
         if self.call_source_adapter != "generated_synthetic":

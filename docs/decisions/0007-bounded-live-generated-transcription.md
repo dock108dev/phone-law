@@ -1,8 +1,8 @@
 # ADR 0007: bounded live generated-audio transcription
 
-- Status: implemented, live verification blocked pending approved project credentials
-- Authorization: `OWNER-CHAT-2026-08-17-SLICE-3B`
-- Documentation refreshed: 2026-08-17 22:05:28 EDT
+- Status: implemented; final re-entry preflight blocked before client construction
+- Preflight authorization: `OWNER-CHAT-2026-08-19-SLICE-3B-REENTRY-PREFLIGHT-ONLY`
+- Documentation refreshed: 2026-08-19 22:09:45 EDT
 
 ## Decision
 
@@ -38,11 +38,24 @@ or application-state retention, and as Zero Data Retention eligible. Zero Data R
 and Modified Abuse Monitoring are account/project controls that require approval; public
 documentation does not prove the firm account's configuration.
 
-At implementation time the approved ephemeral `OPENAI_API_KEY` and
-`OPENAI_PROJECT_ID` and the explicit account data-control approval attestation were
-absent. No account-specific data-control or project-access
-claim can therefore be established, and the required preflight must block with zero
-provider requests and zero cost.
+The 2026-08-19 official refresh confirms that `diarized_json` returns speaker, start,
+and end segments and that `chunking_strategy=auto` is required for this model when an
+input exceeds 30 seconds. The API guide continues to list a 25 MB file limit and
+`mp3`, `mp4`, `mpeg`, `mpga`, `m4a`, `wav`, and `webm` inputs. The model page lists
+$2.50 per million audio input tokens and $10.00 per million output tokens; it does not
+publish a separate per-minute estimate for the diarization model. Free tier is not
+supported, while tier-specific rate limits are public but actual firm account access
+remains unverified.
+
+The final re-entry preflight requires a named firm-owned project, approved account and
+project ownership, presence of an ephemeral project-scoped credential and project
+identifier, confirmed project data controls, approved provider terms and intended
+generated-audio test, and a new live-execution authorization identifier. Sensitive
+runtime values are never read, validated, printed, hashed, or retained; only variable
+presence is observed. The preflight authorization is not live-execution authority.
+When any input is absent, the preflight blocks with zero client construction, requests,
+retries, uploads, or cost and removes every generated or disposable artifact while
+retaining only the sanitized report.
 
 ## Persistence and evidence
 
