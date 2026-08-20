@@ -90,6 +90,7 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
   expect(callAccessibility.violations, JSON.stringify(callAccessibility.violations, null, 2)).toEqual([]);
 
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-operations");
+  await page.waitForLoadState("networkidle");
   await page.goto("/failures");
   await expect(page.getByRole("heading", { name: "Synthetic failure queue" })).toBeVisible();
   const permanentFailure = page.locator(".failure-card").filter({ hasText: "CL-FX-011" });
