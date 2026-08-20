@@ -25,7 +25,7 @@ if [[ "$(git merge-base HEAD 22710801be61a3f97825fbc36fb3d0e0e92f8dbc)" != "2271
   exit 1
 fi
 current_branch="$(git branch --show-current)"
-if [[ "$current_branch" != "codex/slice-6a-local-acceptance" && "$current_branch" != "codex/slice-3b-final-preflight" && "$current_branch" != "codex/slice-6c-demo-month" ]]; then
+if [[ "$current_branch" != "codex/slice-6a-local-acceptance" && "$current_branch" != "codex/slice-3b-final-preflight" && "$current_branch" != "codex/slice-6c-demo-month" && "$current_branch" != "codex/slice-6d-firm-ui" ]]; then
   echo "local acceptance must run on an accepted local-product descendant branch" >&2
   exit 1
 fi
