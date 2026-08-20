@@ -26,7 +26,7 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
   await expect(page.getByText("Failed").locator("..").getByText("1")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Immediate attention" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Processing failures" })).toBeVisible();
-  expect(await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor)).toBe("rgb(243, 240, 233)");
+  expect(await page.evaluate(() => getComputedStyle(document.documentElement).backgroundColor)).toBe("rgb(245, 247, 249)");
   for (const section of [
     "Immediate attention",
     "Potential new matters",
