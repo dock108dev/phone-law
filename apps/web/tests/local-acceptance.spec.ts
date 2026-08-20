@@ -49,7 +49,7 @@ test("Slice 6A reviewer, administrator, and operations acceptance journey", asyn
   for (const section of ["Immediate attention", "Potential new matters", "Time-sensitive dates", "Dissatisfaction and escalation", "Staff commitments", "Administrative tasks", "Routine / no action", "Processing failures"]) {
     await expect(page.getByRole("heading", { name: section })).toBeVisible();
   }
-  await expect(page.getByText("Synthetic demo data", { exact: true }).last()).toBeVisible();
+  await expect(page.getByText("Local / synthetic", { exact: true }).last()).toBeVisible();
   await assertAccessible(page, "review report");
   for (const viewport of [{ width: 1440, height: 1000 }, { width: 1280, height: 800 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);
