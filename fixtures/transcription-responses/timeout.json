@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "timeout",
+    "message": "invented timeout",
+    "type": "transport_timeout"
+  }
+}

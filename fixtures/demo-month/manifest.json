@@ -1,0 +1,53 @@
+{
+  "manifest_version": "demo-month-2026-07-v1",
+  "generator_version": "full-month-transcript-only-v1",
+  "seed": 60819,
+  "authorization": "OWNER-CHAT-2026-08-19-SLICE-6C-DEMO-MONTH",
+  "business_month": "2026-07",
+  "timezone": "America/New_York",
+  "cutoff_local_time": "18:00",
+  "weekday_volumes": [18, 21, 24, 20, 19, 23, 25, 17, 22, 26, 19, 21, 24, 18, 27, 20, 22, 25, 19, 23, 24, 20, 23],
+  "totals": {
+    "expected": 500,
+    "received": 498,
+    "analyzed": 490,
+    "failed": 8,
+    "missing": 2,
+    "late": 6,
+    "duplicate_deliveries": 10
+  },
+  "categories": {
+    "new_intake": 150,
+    "existing_client_follow_up": 170,
+    "administrative": 90,
+    "routine_no_action": 70,
+    "dissatisfaction_escalation": 20
+  },
+  "languages": {"en": 420, "es": 80},
+  "scenario_contract": [
+    "evidence_backed_immediate_attention",
+    "routine_call",
+    "new_consultation",
+    "existing_client_follow_up",
+    "administrative_request",
+    "dissatisfaction_escalation",
+    "staff_commitment",
+    "confirmed_date_reference",
+    "relative_unverified_date_reference",
+    "spanish_intake_and_follow_up",
+    "ambiguous_speakers",
+    "unidentified_third_participant",
+    "incomplete_transcript",
+    "low_confidence_analysis",
+    "duplicate_delivery",
+    "retryable_transcription_failure",
+    "permanent_media_failure",
+    "cancellation",
+    "late_delivery",
+    "missing_expected_call",
+    "retention_eligibility",
+    "successful_deletion",
+    "retryable_deletion_failure",
+    "terminal_deletion_failed"
+  ]
+}

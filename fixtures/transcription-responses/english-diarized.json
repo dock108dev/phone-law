@@ -1,0 +1,25 @@
+{
+  "duration": 6.0,
+  "language": "en",
+  "response_version": "invented-diarized-v1",
+  "segments": [
+    {
+      "end": 2.5,
+      "speaker": "speaker_0",
+      "start": 0.0,
+      "text": "I am checking whether the invented packet is ready for review."
+    },
+    {
+      "end": 5.8,
+      "speaker": "speaker_1",
+      "start": 2.5,
+      "text": "A human reviewer still needs to confirm every synthetic detail."
+    }
+  ],
+  "text": "I am checking whether the invented packet is ready for review. A human reviewer still needs to confirm every synthetic detail.",
+  "usage": {
+    "input_tokens": 41,
+    "output_tokens": 29,
+    "seconds": 6.0
+  }
+}

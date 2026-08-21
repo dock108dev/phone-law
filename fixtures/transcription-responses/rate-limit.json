@@ -1,0 +1,9 @@
+{
+  "error": {
+    "code": "rate_limit_exceeded",
+    "message": "invented rate limit",
+    "type": "rate_limit_error"
+  },
+  "retry_after_seconds": 2,
+  "status_code": 429
+}

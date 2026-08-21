@@ -18,13 +18,31 @@ x-python-service: &python-service
     TRANSCRIBER_ADAPTER: fixture
     ANALYZER_ADAPTER: fixture
     NOTIFICATION_ADAPTER: noop
+    MEDIA_TEMP_ROOT: /tmp/colacci-law-slice3a/objects
+    MANUAL_UPLOAD_ROOT: /tmp/colacci-law-slice4-local/objects
+    MANUAL_UPLOAD_MANIFEST_PATH: /tmp/colacci-law-slice4-local/synthetic-manifest.json
+    MEDIA_MAX_BYTES: "20971520"
+    MEDIA_MAX_DURATION_SECONDS: "60"
+    LIVE_TRANSCRIPTION_ENABLED: "false"
+    LIVE_TRANSCRIPTION_AUTHORIZED: "false"
+    TRANSCRIPTION_APPROVAL_REFERENCE: ""
+    TRANSCRIPTION_MODEL_ID: gpt-4o-transcribe-diarize
+    TRANSCRIPTION_FALLBACK_MODEL_ID: gpt-transcribe
+    TRANSCRIPTION_TIMEOUT_SECONDS: "30"
+    TRANSCRIPTION_MAX_REQUESTS: "0"
+    TRANSCRIPTION_MAX_TOTAL_AUDIO_SECONDS: "0"
+    TRANSCRIPTION_MAX_TOTAL_BYTES: "0"
+    TRANSCRIPTION_TEST_BUDGET_USD: "0.00"
+    TRANSCRIPTION_LIVE_EXECUTION_CONFIRMED: "false"
+    OPENAI_BASE_URL: https://api.openai.com/v1
+    OPENAI_PROJECT_DATA_CONTROLS_APPROVED: "false"
     AUDIO_RETENTION_DAYS: "0"
     TRANSCRIPT_RETENTION_DAYS: "0"
     ANALYSIS_RETENTION_DAYS: "0"
     AUDIT_RETENTION_DAYS: "0"
     RETENTION_POLICY_APPROVED: "false"
     DEBUG: "false"
-    CORS_ORIGINS: '["http://localhost:15173"]'
+    CORS_ORIGINS: '${CORS_ORIGINS:-["http://localhost:15173"]}'
     FIRM_TIMEZONE: America/New_York
     LOG_LEVEL: INFO
     RUFF_CACHE_DIR: /tmp/ruff-cache
@@ -33,6 +51,7 @@ x-python-service: &python-service
     PYTHONPATH: /workspace
   volumes:
     - .:/workspace:ro
+    - ${SLICE4_RUNTIME_ROOT:-/tmp/colacci-law-slice4-local}:/tmp/colacci-law-slice4-local
   networks:
     - app
   restart: unless-stopped
@@ -56,6 +75,7 @@ services:
       retries: 30
     networks:
       - app
+      - fixture
     restart: unless-stopped
 
   api:
@@ -113,6 +133,8 @@ services:
     environment:
       VITE_APP_PROFILE: demo
       VITE_ALLOW_REAL_CALL_DATA: "false"
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-}
+      VITE_API_PROXY_TARGET: http://api:8000
     command: ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
     volumes:
       - ./apps/web/src:/workspace/apps/web/src:ro
@@ -135,9 +157,35 @@ services:
       - app
     restart: unless-stopped
 
+  e2e:
+    build:
+      context: .
+      dockerfile: infrastructure/local/playwright.Dockerfile
+    profiles: ["e2e"]
+    environment:
+      BASE_URL: http://web:5173
+      EVIDENCE_DIR: /evidence
+      PLAYWRIGHT_GREP: ${PLAYWRIGHT_GREP:-}
+      INCLUDE_DEMO_MONTH: ${INCLUDE_DEMO_MONTH:-0}
+      INCLUDE_UI_REDESIGN: ${INCLUDE_UI_REDESIGN:-0}
+    command: ["npm", "run", "test:e2e"]
+    volumes:
+      - ${SLICE4_EVIDENCE_DIR:-/tmp/colacci-law-slice2-evidence}:/evidence
+      - ${SLICE4_RUNTIME_ROOT:-/tmp/colacci-law-slice4-local}/generated:/synthetic-input:ro
+    depends_on:
+      api:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+    networks:
+      - app
+
 networks:
   app:
     driver: bridge
+  fixture:
+    driver: bridge
+    internal: true
 
 volumes:
   postgres-data:

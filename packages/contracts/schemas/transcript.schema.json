@@ -1,0 +1,466 @@
+{
+  "$defs": {
+    "CallSource": {
+      "enum": [
+        "fixture",
+        "transcript_only",
+        "manual_upload",
+        "broadvoice"
+      ],
+      "title": "CallSource",
+      "type": "string"
+    },
+    "DiarizationStatus": {
+      "enum": [
+        "available",
+        "partial",
+        "unavailable"
+      ],
+      "title": "DiarizationStatus",
+      "type": "string"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "analysis_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Adapter",
+          "type": "string"
+        },
+        "analysis_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Model Version",
+          "type": "string"
+        },
+        "authorization_reference": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Authorization Reference"
+        },
+        "call_source": {
+          "$ref": "#/$defs/CallSource"
+        },
+        "endpoint_class": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endpoint Class"
+        },
+        "environment": {
+          "enum": [
+            "fixture",
+            "demonstration",
+            "local_dev",
+            "live_test",
+            "staging",
+            "real_client"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "playbook_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Playbook Version",
+          "type": "string"
+        },
+        "processing_attempt_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Processing Attempt Id",
+          "type": "string"
+        },
+        "project_configuration": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Configuration"
+        },
+        "prompt_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "review-contracts-v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Call Id",
+          "type": "string"
+        },
+        "source_event_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Event Id",
+          "type": "string"
+        },
+        "transcript_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Adapter",
+          "type": "string"
+        },
+        "transcript_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Model Version",
+          "type": "string"
+        },
+        "transcription_transport": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TranscriptionTransportProvenance"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "schema_version",
+        "call_source",
+        "source_event_id",
+        "source_call_id",
+        "transcript_adapter",
+        "transcript_model_version",
+        "analysis_adapter",
+        "analysis_model_version",
+        "prompt_version",
+        "playbook_version",
+        "adapter_version",
+        "generated_at",
+        "processing_attempt_id",
+        "environment"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "Speaker": {
+      "enum": [
+        "staff",
+        "outside_caller",
+        "unknown_participant"
+      ],
+      "title": "Speaker",
+      "type": "string"
+    },
+    "SpeakerIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "asserted_label": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asserted Label"
+        },
+        "raw_provider_speaker_label": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Provider Speaker Label"
+        },
+        "speaker": {
+          "$ref": "#/$defs/Speaker"
+        },
+        "verification_state": {
+          "enum": [
+            "unknown",
+            "unverified"
+          ],
+          "title": "Verification State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "speaker",
+        "verification_state"
+      ],
+      "title": "SpeakerIdentity",
+      "type": "object"
+    },
+    "TimestampAvailability": {
+      "enum": [
+        "available",
+        "unavailable"
+      ],
+      "title": "TimestampAvailability",
+      "type": "string"
+    },
+    "TranscriptSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "end_seconds": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "End Seconds"
+        },
+        "identity": {
+          "$ref": "#/$defs/SpeakerIdentity"
+        },
+        "segment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "speaker": {
+          "$ref": "#/$defs/Speaker"
+        },
+        "start_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Start Seconds"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id",
+        "speaker",
+        "identity",
+        "start_seconds",
+        "end_seconds",
+        "text"
+      ],
+      "title": "TranscriptSegment",
+      "type": "object"
+    },
+    "TranscriptValidationState": {
+      "enum": [
+        "accepted",
+        "requires_human_review",
+        "rejected"
+      ],
+      "title": "TranscriptValidationState",
+      "type": "string"
+    },
+    "TranscriptionTransportProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_number": {
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Attempt Number",
+          "type": "integer"
+        },
+        "declared_contract_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Declared Contract Version",
+          "type": "string"
+        },
+        "generated_asset_fingerprint": {
+          "anyOf": [
+            {
+              "pattern": "^sha256:[a-f0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Generated Asset Fingerprint"
+        },
+        "model_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Model Id",
+          "type": "string"
+        },
+        "observed_cli_version": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "const": "unavailable",
+              "type": "string"
+            }
+          ],
+          "title": "Observed Cli Version"
+        },
+        "requested_response_format": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Requested Response Format",
+          "type": "string"
+        },
+        "result_kind": {
+          "enum": [
+            "deterministic_fixture",
+            "separately_authorized_live",
+            "transcript_only"
+          ],
+          "title": "Result Kind",
+          "type": "string"
+        },
+        "transport": {
+          "enum": [
+            "fixture",
+            "openai_cli_local",
+            "sdk",
+            "transcript_only"
+          ],
+          "title": "Transport",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transport",
+        "declared_contract_version",
+        "observed_cli_version",
+        "model_id",
+        "requested_response_format",
+        "attempt_number",
+        "result_kind"
+      ],
+      "title": "TranscriptionTransportProvenance",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "call_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Call Id",
+      "type": "string"
+    },
+    "diarization_status": {
+      "$ref": "#/$defs/DiarizationStatus"
+    },
+    "language": {
+      "enum": [
+        "en",
+        "es"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "media_hash_reference": {
+      "anyOf": [
+        {
+          "pattern": "^sha256:[a-f0-9]{12}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Media Hash Reference"
+    },
+    "original_language_text": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Original Language Text"
+    },
+    "provenance": {
+      "$ref": "#/$defs/Provenance"
+    },
+    "provider_response_version": {
+      "default": "legacy-review-contract-v1",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Provider Response Version",
+      "type": "string"
+    },
+    "segments": {
+      "items": {
+        "$ref": "#/$defs/TranscriptSegment"
+      },
+      "title": "Segments",
+      "type": "array"
+    },
+    "timestamp_availability": {
+      "$ref": "#/$defs/TimestampAvailability",
+      "default": "available"
+    },
+    "transcript_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Transcript Id",
+      "type": "string"
+    },
+    "validation_state": {
+      "$ref": "#/$defs/TranscriptValidationState",
+      "default": "accepted"
+    }
+  },
+  "required": [
+    "transcript_id",
+    "call_id",
+    "language",
+    "diarization_status",
+    "segments",
+    "provenance"
+  ],
+  "title": "Transcript",
+  "type": "object"
+}

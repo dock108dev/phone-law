@@ -1,3 +1,5 @@
 # Contract tests
 
-Slice 0 validates only the shared health contract. Adapter contract fixtures begin in Slice 1.
+Slice 1 contract coverage lives in `tests/unit/test_review_contracts.py`; it checks strict models,
+generated-schema synchronization, state transitions, evidence validation, fixture adapter
+behavior, language preservation, speaker ambiguity, and prohibited inferences.

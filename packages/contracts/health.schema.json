@@ -16,7 +16,7 @@
   "properties": {
     "status": { "enum": ["up", "ready", "not_ready"] },
     "service": { "enum": ["api", "worker"] },
-    "profile": { "enum": ["test", "demo", "staging", "production"] },
+    "profile": { "enum": ["test", "demo", "local_dev", "live_test", "staging", "production"] },
     "version": { "type": "string" },
     "synthetic_data": { "type": "boolean" },
     "database": { "enum": ["not_checked", "ready", "not_ready"] },

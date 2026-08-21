@@ -1,0 +1,98 @@
+{
+  "$defs": {
+    "DemoPrincipal": {
+      "additionalProperties": false,
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/DemoPrincipalId"
+        },
+        "role": {
+          "$ref": "#/$defs/DemoRole"
+        },
+        "synthetic": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "principal_id",
+        "role"
+      ],
+      "title": "DemoPrincipal",
+      "type": "object"
+    },
+    "DemoPrincipalId": {
+      "enum": [
+        "demo-reviewer",
+        "demo-admin",
+        "demo-operations"
+      ],
+      "title": "DemoPrincipalId",
+      "type": "string"
+    },
+    "DemoRole": {
+      "enum": [
+        "reviewer",
+        "administrator",
+        "operations"
+      ],
+      "title": "DemoRole",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "action": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Action",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "event_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "principal": {
+      "$ref": "#/$defs/DemoPrincipal"
+    },
+    "result": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Result",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "audit-event-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "target_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Target Id",
+      "type": "string"
+    },
+    "target_type": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Target Type",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "event_id",
+    "principal",
+    "action",
+    "target_type",
+    "target_id",
+    "result",
+    "created_at"
+  ],
+  "title": "AuditEvent",
+  "type": "object"
+}

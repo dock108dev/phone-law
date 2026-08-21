@@ -9,6 +9,20 @@ phone number, request/query bodies, authorization or cookie headers, secrets, da
 URLs, exception details, and provider payloads. Uvicorn, worker HTTP, and SQL access logs are
 disabled.
 
+The local CLI boundary additionally forbids a rendered command string, raw argument dump, raw
+stdout/stderr, absolute media path, complete child environment, credential value, project
+identifier value, provider response, or transcript content in logs and evidence. Sanitized
+provenance may contain only the transport name, declared contract, observed version or
+`unavailable`, model, response format, SHA-256 input fingerprint, bounded attempt number, and
+result kind. Preflight records only booleans, classifications, exact public version metadata, and
+the chosen fallback.
+
+Manual-upload request bodies, multipart headers, selected filenames, full content fingerprints,
+object IDs, local paths, transcript content, and raw exceptions are also excluded. Upload routes
+emit only the allowlisted HTTP envelope; application errors return a stable code and opaque
+correlation ID. The focused browser command scans API and worker logs after the complete upload
+lifecycle.
+
 `.env` files, private keys, credentials, and generated evidence are ignored. `.env.example`
 contains only a local non-deployable demo credential. `scripts/secret_scan.py` checks forbidden
 filenames and high-signal credential formats without printing matched values.

@@ -1,0 +1,57 @@
+{
+  "$defs": {
+    "MediaLifecycleState": {
+      "enum": [
+        "RECEIVED",
+        "INSPECTED",
+        "NORMALIZED",
+        "TRANSCRIBING",
+        "TRANSCRIBED",
+        "DELETED"
+      ],
+      "title": "MediaLifecycleState",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "event_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "media-contracts-v1",
+      "default": "media-contracts-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "state": {
+      "$ref": "#/$defs/MediaLifecycleState"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "event_id",
+    "artifact_id",
+    "state",
+    "occurred_at",
+    "synthetic"
+  ],
+  "title": "MediaLifecycleEvent",
+  "type": "object"
+}

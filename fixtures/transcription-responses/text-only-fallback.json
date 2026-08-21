@@ -1,0 +1,7 @@
+{
+  "diarization": "unavailable",
+  "language": "es",
+  "model": "gpt-transcribe",
+  "response_version": "invented-fallback-v1",
+  "text": "Esta respuesta sintética conserva el texto sin inventar marcas de tiempo."
+}

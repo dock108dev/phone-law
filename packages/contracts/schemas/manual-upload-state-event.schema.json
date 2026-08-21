@@ -1,0 +1,63 @@
+{
+  "$defs": {
+    "UploadState": {
+      "enum": [
+        "received",
+        "validating",
+        "ready",
+        "processing",
+        "analyzed",
+        "validation_failed",
+        "transcription_failed",
+        "analysis_failed",
+        "cancelled",
+        "deletion_failed"
+      ],
+      "title": "UploadState",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "attempt_number": {
+      "maximum": 3,
+      "minimum": 0,
+      "title": "Attempt Number",
+      "type": "integer"
+    },
+    "diagnostic_code": {
+      "anyOf": [
+        {
+          "pattern": "^[a-z][a-z0-9_]{2,63}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Diagnostic Code"
+    },
+    "event_id": {
+      "pattern": "^[a-f0-9]{32}$",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "state": {
+      "$ref": "#/$defs/UploadState"
+    }
+  },
+  "required": [
+    "event_id",
+    "state",
+    "attempt_number",
+    "occurred_at"
+  ],
+  "title": "UploadStateEvent",
+  "type": "object"
+}

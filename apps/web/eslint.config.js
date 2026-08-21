@@ -10,7 +10,9 @@ export default tseslint.config(
     languageOptions: {
       globals: globals.browser,
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: ["playwright.config.ts", "tests/*.ts"],
+        },
         tsconfigRootDir: import.meta.dirname,
       },
     },

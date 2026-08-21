@@ -1,0 +1,47 @@
+{
+  "$defs": {
+    "FailureClass": {
+      "enum": [
+        "invalid_media",
+        "transcriber_unavailable",
+        "invalid_structured_output",
+        "analyzer_unavailable"
+      ],
+      "title": "FailureClass",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "diagnostic_code": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Diagnostic Code",
+      "type": "string"
+    },
+    "failure_class": {
+      "$ref": "#/$defs/FailureClass"
+    },
+    "retryable": {
+      "title": "Retryable",
+      "type": "boolean"
+    },
+    "terminal_state": {
+      "enum": [
+        "AUDIO_INVALID",
+        "TRANSCRIPTION_FAILED",
+        "OUTPUT_VALIDATION_FAILED",
+        "ANALYSIS_FAILED"
+      ],
+      "title": "Terminal State",
+      "type": "string"
+    }
+  },
+  "required": [
+    "failure_class",
+    "terminal_state",
+    "diagnostic_code",
+    "retryable"
+  ],
+  "title": "SanitizedProcessingFailure",
+  "type": "object"
+}

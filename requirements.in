@@ -4,6 +4,7 @@ fastapi==0.141.1
 greenlet==3.5.5
 httpx==0.28.1
 mypy==1.17.1
+openai==3.2.0
 pip-audit==2.10.0
 psycopg[binary]==3.2.9
 pydantic-settings==2.10.1

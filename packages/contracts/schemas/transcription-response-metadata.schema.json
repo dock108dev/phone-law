@@ -1,0 +1,167 @@
+{
+  "$defs": {
+    "DiarizationAvailability": {
+      "enum": [
+        "available",
+        "unavailable"
+      ],
+      "title": "DiarizationAvailability",
+      "type": "string"
+    },
+    "ProviderSpeakerLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "identity_verified": {
+          "const": false,
+          "default": false,
+          "title": "Identity Verified",
+          "type": "boolean"
+        },
+        "mapped_participant": {
+          "const": "unknown_participant",
+          "default": "unknown_participant",
+          "title": "Mapped Participant",
+          "type": "string"
+        },
+        "raw_label": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Raw Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "raw_label"
+      ],
+      "title": "ProviderSpeakerLabel",
+      "type": "object"
+    },
+    "TimestampAvailability": {
+      "enum": [
+        "available",
+        "unavailable"
+      ],
+      "title": "TimestampAvailability",
+      "type": "string"
+    },
+    "TranscriptionUsageMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "duration_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration Seconds"
+        },
+        "input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Tokens"
+        },
+        "output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Tokens"
+        }
+      },
+      "title": "TranscriptionUsageMetadata",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "attempt_number": {
+      "maximum": 3,
+      "minimum": 1,
+      "title": "Attempt Number",
+      "type": "integer"
+    },
+    "call_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Call Id",
+      "type": "string"
+    },
+    "diarization_availability": {
+      "$ref": "#/$defs/DiarizationAvailability"
+    },
+    "language": {
+      "enum": [
+        "en",
+        "es"
+      ],
+      "title": "Language",
+      "type": "string"
+    },
+    "model_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Model Id",
+      "type": "string"
+    },
+    "provider_response_version": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Provider Response Version",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "media-contracts-v1",
+      "default": "media-contracts-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "speaker_labels": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/ProviderSpeakerLabel"
+      },
+      "title": "Speaker Labels",
+      "type": "array"
+    },
+    "timestamp_availability": {
+      "$ref": "#/$defs/TimestampAvailability"
+    },
+    "usage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TranscriptionUsageMetadata"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "call_id",
+    "attempt_number",
+    "model_id",
+    "provider_response_version",
+    "language",
+    "timestamp_availability",
+    "diarization_availability"
+  ],
+  "title": "TranscriptionResponseMetadata",
+  "type": "object"
+}

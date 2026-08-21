@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+import pytest
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.testclient import TestClient
 
 from apps.api.colacci_api import create_app
-from packages.config import Settings
+from apps.api.colacci_api.demo_auth import demo_principal
+from packages.config import AppProfile, Settings
+from packages.contracts.report import DemoPrincipalId, DemoRole
 
 
 def test_liveness_is_content_free_and_synthetic() -> None:
@@ -59,3 +63,27 @@ def test_request_logging_ignores_headers_query_and_invalid_correlation_id(caplog
     assert "never-log-this-token" not in captured
     assert "transcript" not in captured
     assert '"route":"/health/live"' in captured
+
+
+def test_demo_identity_is_allowlisted_and_synthetic_profiles_only() -> None:
+    app = FastAPI()
+    app.state.settings = Settings(_env_file=None)
+    request = Request(
+        {"type": "http", "method": "GET", "path": "/api/reports/dates", "headers": [], "app": app}
+    )
+    request.state.correlation_id = "demo-auth-test"
+    principal = demo_principal(request, "demo-admin")
+    assert principal.principal_id is DemoPrincipalId.ADMIN
+    assert principal.role is DemoRole.ADMINISTRATOR
+
+    with pytest.raises(HTTPException) as missing:
+        demo_principal(request, None)
+    assert missing.value.status_code == 401
+    with pytest.raises(HTTPException) as arbitrary:
+        demo_principal(request, "arbitrary-role")
+    assert arbitrary.value.status_code == 401
+
+    app.state.settings = app.state.settings.model_copy(update={"app_profile": AppProfile.STAGING})
+    with pytest.raises(HTTPException) as deployment:
+        demo_principal(request, "demo-admin")
+    assert deployment.value.status_code == 404

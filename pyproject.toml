@@ -1,7 +1,7 @@
 [project]
 name = "colacci-law-foundation"
 version = "0.1.0"
-description = "Synthetic-only Slice 0 foundation for Colacci Law Call Review"
+description = "Synthetic-only Slice 5A local operations for Colacci Law Call Review"
 requires-python = "==3.13.5"
 
 [tool.pytest.ini_options]
@@ -19,6 +19,21 @@ omit = [
   "apps/api/colacci_api/main.py",
   "apps/api/migrations/*",
   "apps/worker/colacci_worker/main.py",
+  "packages/review/protocols.py",
+  # Exercised against PostgreSQL and the running API in the integration and browser suites.
+  "packages/database/review_experience.py",
+  # Exercised against PostgreSQL and the three-role browser operations center.
+  "packages/database/local_operations.py",
+  "apps/api/colacci_api/operations_routes.py",
+  # Exercised against PostgreSQL and the bounded HTTP/browser upload harnesses.
+  "apps/api/colacci_api/upload_routes.py",
+  "packages/database/manual_uploads.py",
+  "packages/manual_upload/service.py",
+  # Exercised by the PostgreSQL integration suite and explicit Slice 3A harnesses.
+  "packages/database/transcription_metadata.py",
+  "packages/media/processing.py",
+  "packages/media/store.py",
+  "packages/transcription/openai_adapter.py",
 ]
 
 [tool.coverage.report]
@@ -36,9 +51,29 @@ select = ["E", "F", "I", "N", "S", "UP", "B", "A", "C4", "SIM", "RUF"]
 ignore = ["S101"]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["S105", "S106", "S107"]
+"tests/**/*.py" = ["S105", "S106", "S107", "S108"]
 "apps/api/migrations/**/*.py" = ["N999"]
-"packages/config/settings.py" = ["S104"]
+"packages/config/settings.py" = ["S104", "S108"]
+"packages/media/store.py" = ["S108"]
+"packages/manual_upload/manifest.py" = ["S108"]
+"packages/manual_upload/service.py" = ["S108"]
+"packages/transcription/live.py" = ["S108"]
+"scripts/generate_test_audio.py" = ["S108"]
+"scripts/generate_manual_upload_assets.py" = ["S108"]
+"scripts/cleanup_manual_upload_assets.py" = ["S108"]
+"scripts/collect_manual_upload_evidence.py" = ["S108"]
+"scripts/collect_manual_upload_validation_evidence.py" = ["S108"]
+"scripts/collect_local_operations_evidence.py" = ["S108"]
+"scripts/finalize_local_operations_evidence.py" = ["S108"]
+"scripts/collect_local_acceptance_evidence.py" = ["S108"]
+"scripts/finalize_local_acceptance_evidence.py" = ["S108", "S603", "S607"]
+"scripts/write_local_acceptance_cleanup_evidence.py" = ["S108"]
+"scripts/test_audio_boundary.py" = ["S108"]
+"scripts/test_transcription_contract.py" = ["S108"]
+"scripts/test_transcription_live.py" = ["S108"]
+"scripts/transcription_live_preflight.py" = ["S108"]
+"scripts/test_demo_month.py" = ["S108"]
+"scripts/finalize_demo_month_evidence.py" = ["S108"]
 
 [tool.mypy]
 python_version = "3.13"

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from decimal import Decimal
 from enum import StrEnum
+from pathlib import Path
 from urllib.parse import urlsplit
 
 from pydantic import Field, SecretStr, model_validator
@@ -12,6 +14,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class AppProfile(StrEnum):
     TEST = "test"
     DEMO = "demo"
+    LOCAL_DEV = "local_dev"
+    LIVE_TEST = "live_test"
     STAGING = "staging"
     PRODUCTION = "production"
 
@@ -63,6 +67,34 @@ class Settings(BaseSettings):
     analyzer_adapter: str = "fixture"
     notification_adapter: str = "noop"
 
+    media_temp_root: Path = Path("/tmp/colacci-law-slice3a/objects")  # nosec B108
+    manual_upload_root: Path = Path("/tmp/colacci-law-slice4-local/objects")  # nosec B108
+    manual_upload_manifest_path: Path = Path(  # nosec B108
+        "/tmp/colacci-law-slice4-local/synthetic-manifest.json"
+    )
+    media_max_bytes: int = 20 * 1024 * 1024
+    media_max_duration_seconds: float = 60.0
+    live_transcription_enabled: bool = False
+    live_transcription_authorized: bool = False
+    transcription_approval_reference: str = ""
+    transcription_model_id: str = "gpt-4o-transcribe-diarize"
+    transcription_fallback_model_id: str = "gpt-transcribe"
+    transcription_timeout_seconds: float = 30.0
+    transcription_max_requests: int = 0
+    transcription_max_total_audio_seconds: float = 0
+    transcription_max_total_bytes: int = 0
+    transcription_test_budget_usd: Decimal = Decimal("0.00")
+    transcription_live_execution_confirmed: bool = False
+    openai_api_key: SecretStr | None = Field(default=None, repr=False)
+    openai_project_id: SecretStr | None = Field(default=None, repr=False)
+    firm_owned_openai_project_named: bool = False
+    openai_project_ownership_approved: bool = False
+    openai_project_data_controls_approved: bool = False
+    openai_provider_terms_approved: bool = False
+    generated_audio_test_approved: bool = False
+    transcription_live_execution_authorization_id: str = ""
+    openai_base_url: str = "https://api.openai.com/v1"
+
     audio_retention_days: int = 0
     transcript_retention_days: int = 0
     analysis_retention_days: int = 0
@@ -76,7 +108,12 @@ class Settings(BaseSettings):
 
     @property
     def synthetic_mode(self) -> bool:
-        return self.app_profile in {AppProfile.TEST, AppProfile.DEMO}
+        return self.app_profile in {
+            AppProfile.TEST,
+            AppProfile.DEMO,
+            AppProfile.LOCAL_DEV,
+            AppProfile.LIVE_TEST,
+        }
 
     @property
     def sqlalchemy_database_url(self) -> str:
@@ -94,8 +131,42 @@ class Settings(BaseSettings):
             if self.real_call_processing_authorized:
                 issues.add("real_call_processing_authorized")
 
+        if self.media_max_bytes <= 0 or self.media_max_bytes > 25 * 1024 * 1024:
+            issues.add("media_max_bytes")
+        if self.media_max_duration_seconds <= 30 or self.media_max_duration_seconds > 3600:
+            issues.add("media_max_duration_seconds")
+        if self.transcription_timeout_seconds <= 0 or self.transcription_timeout_seconds > 120:
+            issues.add("transcription_timeout_seconds")
+
+        if self.app_profile is AppProfile.LIVE_TEST:
+            self._collect_live_test_issues(issues)
+        elif self.app_profile is AppProfile.LOCAL_DEV:
+            self._collect_local_dev_issues(issues)
+        else:
+            if self.live_transcription_enabled or self.live_transcription_authorized:
+                issues.add("live_transcription_profile")
+            if self.transcription_approval_reference.strip():
+                issues.add("transcription_approval_reference")
+
         if self.app_profile in {AppProfile.STAGING, AppProfile.PRODUCTION}:
             self._collect_deployment_issues(issues)
+
+        resolved_media_root = self.media_temp_root.resolve(strict=False)
+        if self.synthetic_mode and not str(resolved_media_root).startswith(  # nosec B108
+            "/tmp/colacci-law-"
+        ):
+            issues.add("media_temp_root")
+        resolved_upload_root = self.manual_upload_root.resolve(strict=False)
+        resolved_manifest = self.manual_upload_manifest_path.resolve(strict=False)
+        if self.synthetic_mode and (
+            not str(resolved_upload_root).startswith(  # nosec B108
+                "/tmp/colacci-law-slice4-"
+            )
+            or not str(resolved_manifest).startswith(  # nosec B108
+                "/tmp/colacci-law-slice4-"
+            )
+        ):
+            issues.add("manual_upload_boundary")
 
         if self.allow_real_call_data:
             if self.app_profile not in {AppProfile.STAGING, AppProfile.PRODUCTION}:
@@ -110,6 +181,88 @@ class Settings(BaseSettings):
             raise ValueError(f"unsafe configuration fields: {field_names}")
 
         return self
+
+    def _collect_local_dev_issues(self, issues: set[str]) -> None:
+        safe_shapes = {
+            ("fixture", "fixture", "fixture"),
+            ("generated_synthetic", "openai_cli_local", "disabled"),
+            ("transcript_only", "transcript_only_import", "fixture"),
+        }
+        configured_shape = (
+            self.call_source_adapter,
+            self.transcriber_adapter,
+            self.analyzer_adapter,
+        )
+        if configured_shape not in safe_shapes:
+            issues.add("local_dev_adapter_shape")
+        if self.object_storage_backend != "local_synthetic":
+            issues.add("object_storage_backend")
+        if self.notification_adapter != "noop":
+            issues.add("notification_adapter")
+        if self.auth_mode != "fake":
+            issues.add("auth_mode")
+        if self.live_transcription_enabled or self.live_transcription_authorized:
+            issues.add("live_transcription_profile")
+        if self.transcription_approval_reference.strip():
+            issues.add("transcription_approval_reference")
+        if self.media_temp_root.resolve(strict=False) != Path(
+            "/tmp/colacci-law-slice3c/objects"  # nosec B108
+        ):
+            issues.add("media_temp_root")
+
+    def _collect_live_test_issues(self, issues: set[str]) -> None:
+        if not self.live_transcription_enabled:
+            issues.add("live_transcription_enabled")
+        if not self.live_transcription_authorized:
+            issues.add("live_transcription_authorized")
+        if self.transcription_approval_reference != "OWNER-CHAT-2026-08-17-SLICE-3B":
+            issues.add("transcription_approval_reference")
+        if self.transcription_model_id != "gpt-4o-transcribe-diarize":
+            issues.add("transcription_model_id")
+        if self.transcription_max_requests != 4:
+            issues.add("transcription_max_requests")
+        if self.transcription_max_total_audio_seconds != 120:
+            issues.add("transcription_max_total_audio_seconds")
+        if self.transcription_max_total_bytes != 20 * 1024 * 1024:
+            issues.add("transcription_max_total_bytes")
+        if self.transcription_test_budget_usd != Decimal("1.00"):
+            issues.add("transcription_test_budget_usd")
+        if self.openai_api_key is None or not self.openai_api_key.get_secret_value().strip():
+            issues.add("openai_api_key")
+        if self.openai_project_id is None or not self.openai_project_id.get_secret_value().strip():
+            issues.add("openai_project_id")
+        if not self.firm_owned_openai_project_named:
+            issues.add("firm_owned_openai_project_named")
+        if not self.openai_project_ownership_approved:
+            issues.add("openai_project_ownership_approved")
+        if not self.openai_project_data_controls_approved:
+            issues.add("openai_project_data_controls_approved")
+        if not self.openai_provider_terms_approved:
+            issues.add("openai_provider_terms_approved")
+        if not self.generated_audio_test_approved:
+            issues.add("generated_audio_test_approved")
+        if self.transcription_live_execution_confirmed and (
+            len(self.transcription_live_execution_authorization_id.strip()) < 8
+            or self.transcription_live_execution_authorization_id
+            == "OWNER-CHAT-2026-08-19-SLICE-3B-REENTRY-PREFLIGHT-ONLY"
+        ):
+            issues.add("transcription_live_execution_authorization_id")
+        if not _safe_openai_base_url(self.openai_base_url):
+            issues.add("openai_base_url")
+        if self.call_source_adapter != "generated_synthetic":
+            issues.add("call_source_adapter")
+        if self.transcriber_adapter != "openai_live":
+            issues.add("transcriber_adapter")
+        if self.analyzer_adapter != "disabled":
+            issues.add("analyzer_adapter")
+        if self.notification_adapter != "noop":
+            issues.add("notification_adapter")
+        if self.object_storage_backend != "local_synthetic":
+            issues.add("object_storage_backend")
+        if self.media_temp_root.resolve(strict=False) != Path(
+            "/tmp/colacci-law-slice3b/objects"  # nosec B108
+        ):
+            issues.add("media_temp_root")
 
     def _collect_deployment_issues(self, issues: set[str]) -> None:
         if self.auth_mode != "sso":
@@ -173,6 +326,32 @@ def _safe_deployment_origin(origin: str) -> bool:
             "127.0.0.1",
             "0.0.0.0",
         }
+    )
+
+
+def _safe_openai_base_url(value: str) -> bool:
+    parsed = urlsplit(value)
+    allowed_hosts = {
+        "api.openai.com",
+        "us.api.openai.com",
+        "eu.api.openai.com",
+        "au.api.openai.com",
+        "ca.api.openai.com",
+        "jp.api.openai.com",
+        "in.api.openai.com",
+        "sg.api.openai.com",
+        "kr.api.openai.com",
+        "gb.api.openai.com",
+        "ae.api.openai.com",
+    }
+    return (
+        parsed.scheme == "https"
+        and (parsed.hostname or "").lower() in allowed_hosts
+        and parsed.path.rstrip("/") == "/v1"
+        and parsed.username is None
+        and parsed.password is None
+        and not parsed.query
+        and not parsed.fragment
     )
 
 

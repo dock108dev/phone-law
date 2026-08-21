@@ -1,0 +1,14 @@
+{
+  "duration": 3.0,
+  "language": "en",
+  "response_version": "invented-invalid-v1",
+  "segments": [
+    {
+      "end": "later",
+      "speaker": "speaker_0",
+      "start": 0.0,
+      "text": "This timestamp is intentionally malformed."
+    }
+  ],
+  "text": "This timestamp is intentionally malformed."
+}

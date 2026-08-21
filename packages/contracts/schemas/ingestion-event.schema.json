@@ -1,0 +1,183 @@
+{
+  "$defs": {
+    "CallSource": {
+      "enum": [
+        "fixture",
+        "transcript_only",
+        "manual_upload",
+        "broadvoice"
+      ],
+      "title": "CallSource",
+      "type": "string"
+    },
+    "Direction": {
+      "enum": [
+        "inbound",
+        "outbound",
+        "unknown"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "NormalizedCall": {
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "$ref": "#/$defs/Direction"
+        },
+        "duration_seconds": {
+          "minimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "language_hint": {
+          "anyOf": [
+            {
+              "enum": [
+                "en",
+                "es"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language Hint"
+        },
+        "media_reference": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Media Reference"
+        },
+        "metadata": {
+          "additionalProperties": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Metadata",
+          "type": "object"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "recording_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Recording Id"
+        },
+        "source": {
+          "$ref": "#/$defs/CallSource"
+        },
+        "source_call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Call Id",
+          "type": "string"
+        },
+        "source_event_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Event Id",
+          "type": "string"
+        },
+        "staff_extension": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staff Extension"
+        },
+        "synthetic": {
+          "title": "Synthetic",
+          "type": "boolean"
+        },
+        "transcript_fixture_reference": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Transcript Fixture Reference"
+        }
+      },
+      "required": [
+        "source",
+        "source_event_id",
+        "source_call_id",
+        "occurred_at",
+        "direction",
+        "duration_seconds",
+        "synthetic"
+      ],
+      "title": "NormalizedCall",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "call": {
+      "$ref": "#/$defs/NormalizedCall"
+    },
+    "fixture_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Fixture Id",
+      "type": "string"
+    },
+    "received_at": {
+      "format": "date-time",
+      "title": "Received At",
+      "type": "string"
+    }
+  },
+  "required": [
+    "fixture_id",
+    "received_at",
+    "call"
+  ],
+  "title": "IngestionEvent",
+  "type": "object"
+}

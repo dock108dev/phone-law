@@ -1,0 +1,122 @@
+{
+  "$defs": {
+    "DemoPrincipal": {
+      "additionalProperties": false,
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/DemoPrincipalId"
+        },
+        "role": {
+          "$ref": "#/$defs/DemoRole"
+        },
+        "synthetic": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "principal_id",
+        "role"
+      ],
+      "title": "DemoPrincipal",
+      "type": "object"
+    },
+    "DemoPrincipalId": {
+      "enum": [
+        "demo-reviewer",
+        "demo-admin",
+        "demo-operations"
+      ],
+      "title": "DemoPrincipalId",
+      "type": "string"
+    },
+    "DemoRole": {
+      "enum": [
+        "reviewer",
+        "administrator",
+        "operations"
+      ],
+      "title": "DemoRole",
+      "type": "string"
+    },
+    "ReviewLabel": {
+      "enum": [
+        "correct",
+        "partially_correct",
+        "incorrect",
+        "unsupported",
+        "missing",
+        "not_applicable"
+      ],
+      "title": "ReviewLabel",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "analysis_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Analysis Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "event_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "finding_id": {
+      "anyOf": [
+        {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Finding Id"
+    },
+    "label": {
+      "$ref": "#/$defs/ReviewLabel"
+    },
+    "note": {
+      "anyOf": [
+        {
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Note"
+    },
+    "principal": {
+      "$ref": "#/$defs/DemoPrincipal"
+    },
+    "schema_version": {
+      "const": "review-event-v1",
+      "title": "Schema Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "event_id",
+    "analysis_id",
+    "label",
+    "principal",
+    "created_at"
+  ],
+  "title": "ReviewEvent",
+  "type": "object"
+}

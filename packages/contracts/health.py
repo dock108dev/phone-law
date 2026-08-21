@@ -12,7 +12,7 @@ class HealthResponse(BaseModel):
 
     status: Literal["up", "ready", "not_ready"]
     service: Literal["api", "worker"]
-    profile: Literal["test", "demo", "staging", "production"]
+    profile: Literal["test", "demo", "local_dev", "live_test", "staging", "production"]
     version: str
     synthetic_data: bool
     database: Literal["not_checked", "ready", "not_ready"]

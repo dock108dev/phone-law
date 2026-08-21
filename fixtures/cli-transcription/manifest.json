@@ -1,0 +1,20 @@
+{
+  "manifest_version": "openai-cli-local-fixtures-v1",
+  "synthetic": true,
+  "cases": [
+    {"case": "english-short", "response_fixture": "english-diarized.json", "duration_class": "short", "expected": "accepted"},
+    {"case": "spanish-short", "response_fixture": "spanish-diarized.json", "duration_class": "short", "expected": "accepted"},
+    {"case": "english-long", "response_fixture": "english-diarized.json", "duration_class": "greater-than-30-seconds", "expected": "accepted-with-auto-chunking"},
+    {"case": "multiple-speakers", "response_fixture": "two-unknown-speakers.json", "duration_class": "short", "expected": "opaque-speakers"},
+    {"case": "text-only-fallback", "response_fixture": "text-only-fallback.json", "duration_class": "short", "expected": "requires-human-review"},
+    {"case": "malformed-json", "behavior": "malformed-output", "expected": "rejected"},
+    {"case": "unsupported-output", "behavior": "unsupported-output", "expected": "rejected"},
+    {"case": "timeout", "behavior": "timeout", "expected": "terminated"},
+    {"case": "authentication-failure", "behavior": "authentication-failure", "expected": "terminal-safe-error"},
+    {"case": "retryable-failure", "behavior": "rate-limit-then-success", "expected": "one-retryable-failure"},
+    {"case": "terminal-failure", "behavior": "terminal-failure", "expected": "terminal-safe-error"},
+    {"case": "duplicate-delivery", "behavior": "same-artifact-twice", "expected": "one-normalized-result"},
+    {"case": "cancellation", "behavior": "cancellation", "expected": "terminated"},
+    {"case": "confirmed-cleanup", "behavior": "success-and-failure-cleanup", "expected": "no-temporary-inputs-or-outputs"}
+  ]
+}

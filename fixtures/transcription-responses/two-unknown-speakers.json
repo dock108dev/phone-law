@@ -1,0 +1,20 @@
+{
+  "duration": 4.0,
+  "language": "en",
+  "response_version": "invented-diarized-v1",
+  "segments": [
+    {
+      "end": 1.8,
+      "speaker": "speaker_0",
+      "start": 0.0,
+      "text": "Is the invented checklist available?"
+    },
+    {
+      "end": 3.9,
+      "speaker": "speaker_1",
+      "start": 1.8,
+      "text": "It will be reviewed in this synthetic example."
+    }
+  ],
+  "text": "Is the invented checklist available? It will be reviewed in this synthetic example."
+}

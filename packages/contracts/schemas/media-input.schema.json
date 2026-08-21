@@ -1,0 +1,57 @@
+{
+  "$defs": {
+    "MediaContentType": {
+      "enum": [
+        "audio/mpeg",
+        "audio/mp4",
+        "audio/wav",
+        "audio/webm",
+        "video/mp4"
+      ],
+      "title": "MediaContentType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "artifact_id": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+      "title": "Artifact Id",
+      "type": "string"
+    },
+    "declared_byte_size": {
+      "minimum": 0,
+      "title": "Declared Byte Size",
+      "type": "integer"
+    },
+    "declared_content_type": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MediaContentType"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "schema_version": {
+      "const": "media-contracts-v1",
+      "default": "media-contracts-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "synthetic": {
+      "const": true,
+      "title": "Synthetic",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "artifact_id",
+    "synthetic",
+    "declared_byte_size"
+  ],
+  "title": "MediaInput",
+  "type": "object"
+}

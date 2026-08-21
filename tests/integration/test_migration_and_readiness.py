@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from urllib.parse import urlsplit
 
 import pytest
@@ -7,11 +8,24 @@ from alembic import command
 from alembic.config import Config
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, inspect, text
+from sqlalchemy.exc import DBAPIError
 
 from apps.api.colacci_api import create_app
 from apps.worker.colacci_worker.health import readiness_payload
 from packages.config import Settings
+from packages.contracts.media import (
+    DiarizationAvailability,
+    MediaContentType,
+    MediaDeletionEvent,
+    MediaInspectionResult,
+    MediaLifecycleState,
+    SupportedMediaFormat,
+    TimestampAvailability,
+    TranscriptionResponseMetadata,
+    TranscriptionUsageMetadata,
+)
 from packages.database.health import EXPECTED_ALEMBIC_REVISION, create_database_engine
+from packages.database.transcription_metadata import TranscriptionMetadataRepository
 
 pytestmark = pytest.mark.integration
 
@@ -28,9 +42,32 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
 
     engine = create_engine(settings.sqlalchemy_database_url)
     try:
-        assert {"alembic_version", "system_metadata"}.issubset(
-            set(inspect(engine).get_table_names())
-        )
+        expected_tables = {
+            "alembic_version",
+            "analyses",
+            "audit_events",
+            "backup_restore_drills",
+            "calls",
+            "daily_report_items",
+            "daily_reports",
+            "ingestion_events",
+            "firm_configuration_versions",
+            "maintenance_runs",
+            "media_artifacts",
+            "media_lifecycle_events",
+            "manual_upload_receipts",
+            "manual_upload_state_events",
+            "notification_previews",
+            "playbook_versions",
+            "processing_attempts",
+            "review_events",
+            "retention_jobs",
+            "retention_tombstones",
+            "system_metadata",
+            "transcripts",
+            "transcription_provider_attempts",
+        }
+        assert expected_tables == set(inspect(engine).get_table_names())
         with engine.connect() as connection:
             revision = connection.execute(
                 text("SELECT version_num FROM alembic_version")
@@ -39,7 +76,103 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
                 text("SELECT value FROM system_metadata WHERE key = 'schema_purpose'")
             ).scalar_one()
         assert revision == EXPECTED_ALEMBIC_REVISION
-        assert purpose == "foundation_only"
+        assert purpose == "local_operations"
+
+        repository = TranscriptionMetadataRepository(engine)
+        inspection_result = MediaInspectionResult(
+            artifact_id="0123456789abcdef0123456789abcdef",
+            synthetic=True,
+            media_format=SupportedMediaFormat.WAV,
+            content_type=MediaContentType.AUDIO_WAV,
+            byte_size=32044,
+            duration_seconds=1.0,
+            sample_rate_hz=16000,
+            channel_count=1,
+            codec="pcm_s16le",
+            content_sha256="a" * 64,
+            inspected_at=datetime.now(UTC),
+        )
+        repository.store_artifact(inspection_result, call_id=None)
+        deletion = MediaDeletionEvent(
+            event_id="1123456789abcdef0123456789abcdef",
+            artifact_id=inspection_result.artifact_id,
+            object_id="2123456789abcdef0123456789abcdef",
+            state=MediaLifecycleState.DELETED,
+            deletion_confirmed=True,
+            occurred_at=datetime.now(UTC),
+        )
+        repository.store_lifecycle(deletion)
+        repository.store_attempt(
+            attempt_id="3123456789abcdef0123456789abcdef",
+            artifact_id=inspection_result.artifact_id,
+            call_id=None,
+            adapter_version="openai-transcriber-candidate-v1",
+            model_id="gpt-4o-transcribe-diarize",
+            duration_ms=10,
+            response=TranscriptionResponseMetadata(
+                call_id="4123456789abcdef0123456789abcdef",
+                attempt_number=1,
+                model_id="gpt-4o-transcribe-diarize",
+                provider_response_version="invented-diarized-v1",
+                language="en",
+                timestamp_availability=TimestampAvailability.AVAILABLE,
+                diarization_availability=DiarizationAvailability.AVAILABLE,
+                usage=TranscriptionUsageMetadata(duration_seconds=1.0),
+            ),
+        )
+        assert repository.counts() == {
+            "media_artifacts": 1,
+            "media_lifecycle_events": 1,
+            "transcription_provider_attempts": 1,
+        }
+        with pytest.raises(DBAPIError, match="immutable"), engine.begin() as connection:
+            connection.execute(
+                text(
+                    "UPDATE media_artifacts SET byte_size = 1 "
+                    "WHERE id = '0123456789abcdef0123456789abcdef'"
+                )
+            )
+
+        command.downgrade(alembic, "0004_offline_transcription_readiness")
+        assert not {
+            "manual_upload_receipts",
+            "manual_upload_state_events",
+            "firm_configuration_versions",
+            "retention_jobs",
+            "retention_tombstones",
+            "maintenance_runs",
+            "backup_restore_drills",
+            "notification_previews",
+        }.intersection(inspect(engine).get_table_names())
+        with engine.connect() as connection:
+            assert (
+                connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
+                == "0004_offline_transcription_readiness"
+            )
+            assert (
+                connection.execute(
+                    text("SELECT value FROM system_metadata WHERE key = 'schema_purpose'")
+                ).scalar_one()
+                == "offline_transcription_readiness"
+            )
+
+        command.downgrade(alembic, "0003_synthetic_review_experience")
+        assert not {
+            "media_artifacts",
+            "media_lifecycle_events",
+            "transcription_provider_attempts",
+        }.intersection(inspect(engine).get_table_names())
+        with engine.connect() as connection:
+            assert (
+                connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
+                == "0003_synthetic_review_experience"
+            )
+        command.upgrade(alembic, "head")
+        with engine.connect() as connection:
+            assert (
+                connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
+                == EXPECTED_ALEMBIC_REVISION
+            )
     finally:
         engine.dispose()
 
