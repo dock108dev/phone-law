@@ -1,6 +1,6 @@
-# Slice 5A local operations
+# Local operations
 
-Slice 5A is a local-only operational control plane for synthetic demo data. It does not activate production authentication, real data, cloud storage, external notifications, Broadvoice, or a provider request. The visible Operations page is available to the allowlisted demo administrator and operations identities. The reviewer receives a sanitized denial.
+This is a local-only operational control plane for synthetic demo data. It does not activate production authentication, real data, cloud storage, external notifications, Broadvoice, or a provider request. The visible Operations page is available to the allowlisted demo administrator and operations identities. The reviewer receives a sanitized denial.
 
 ## Architecture and data flow
 
@@ -12,7 +12,7 @@ Slice 5A is a local-only operational control plane for synthetic demo data. It d
 6. The backup/restore drill uses disposable SQLite databases containing invented identifiers only, reapplies retention after an isolated restore, verifies the ordinary database signature is unchanged, and deletes every disposable artifact.
 7. Notification preview persists a safe count and internal reference with `external_attempts = 0`. Any non-`noop` adapter fails closed.
 
-The active OpenAI CLI boundary remains unchanged. An unsupported host CLI still selects the accepted `fixture-and-transcript-only` fallback. Slice 5A never invokes it.
+The active OpenAI CLI boundary remains unchanged. An unsupported host CLI still selects the accepted `fixture-and-transcript-only` fallback. Local operations never invoke it.
 
 ## Access-control matrix
 
@@ -107,6 +107,10 @@ Policy destruction is the single exception documented in [ADR 0010](decisions/00
 - `restart_recovered`: the prior process stopped after claim. The job was safely returned to the retry queue without incrementing its attempt count.
 - `DELETION_FAILED`: terminal. Inspect the safe diagnostic and audit transitions. Do not edit the job or accepted content directly.
 - Reconciliation mismatch: compare expected, received, analyzed, failed, and missing safe counts. Do not inspect or copy call content into operational logs.
+- Reconciliation unavailable: no current report exists. This is explicitly non-exact; seed or
+  generate the expected synthetic report before relying on the counts. A malformed persisted
+  reconciliation payload fails the overview request instead of being converted to zero-count
+  success.
 - Non-local notification rejection: restore `NOTIFICATION_ADAPTER=noop`; do not configure an address, token, webhook, or external service.
 
 ## Local incident simulation
@@ -123,4 +127,8 @@ Evidence is retained under `/tmp/colacci-law-slice5a/evidence` with a `0700` roo
 
 ## Explicit production-only remainder
 
-Slice 5A does not provide firm SSO, named real users, client access, cloud object storage, managed secrets, production authentication, approved production retention or backup behavior, staging, production, external notification delivery, live provider usage, Broadvoice ingestion, batch upload, or real/human data processing. Slice 3B, full production Slice 3, CL-060, Slice 5B, Slice 6A, and client readiness remain incomplete.
+Local operations do not provide firm SSO, named real users, client access, cloud object storage,
+managed secrets, production authentication, approved production retention or backup behavior,
+staging, production, external notification delivery, generally enabled provider usage, Broadvoice
+ingestion, batch upload, or real/human data processing. Those capabilities require separate
+architecture, authorization, implementation, and acceptance work.

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import json
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any, cast
@@ -11,7 +10,6 @@ from uuid import uuid4
 from zoneinfo import ZoneInfo
 
 import sqlalchemy as sa
-from pydantic import BaseModel
 from sqlalchemy import Engine
 from sqlalchemy.exc import IntegrityError
 
@@ -25,6 +23,7 @@ from packages.contracts.manual_upload import (
 )
 from packages.contracts.report import DemoPrincipal, DemoPrincipalId, DemoRole
 from packages.contracts.review import Direction
+from packages.database.model_hydration import validated_model
 from packages.database.review_schema import (
     manual_upload_receipts,
     manual_upload_state_events,
@@ -64,10 +63,6 @@ class SubmissionConflictError(ValueError):
 
 class UploadStateConflictError(ValueError):
     """The requested lifecycle operation is not available in the current state."""
-
-
-def _validated[ModelT: BaseModel](model: type[ModelT], payload: object) -> ModelT:
-    return model.model_validate_json(json.dumps(payload, ensure_ascii=False))
 
 
 class ManualUploadRepository:
@@ -276,7 +271,7 @@ class ManualUploadRepository:
             diagnostic_code=cast(str | None, row["diagnostic_code"]),
             retryable=bool(row["retryable"]),
             deletion_confirmed=cast(bool | None, row["deletion_confirmed"]),
-            validation=_validated(UploadValidationSummary, row["validation_summary"]),
+            validation=validated_model(UploadValidationSummary, row["validation_summary"]),
             created_at=cast(datetime, row["created_at"]),
             updated_at=cast(datetime, row["updated_at"]),
             cancelled_at=cast(datetime | None, row["cancelled_at"]),

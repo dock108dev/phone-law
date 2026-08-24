@@ -2,7 +2,7 @@
 
 ## Local OpenAI CLI development transport
 
-Slice 3C adds `openai_cli_local` only under the synthetic `local_dev` profile. The repository
+`openai_cli_local` is available only under the synthetic `local_dev` profile. The repository
 declares exact support for OpenAI CLI `1.6.0` and local contract
 `openai-cli-audio-transcriptions-v1`. Preflight checks the installed version and
 `audio:transcriptions create` command surface without passing credentials or making a request.
@@ -11,7 +11,7 @@ fallback.
 
 The CLI client is an SDK-shaped shim, so successful provider JSON passes through the same strict
 OpenAI response converter, opaque-speaker mapping, error classifier, and three-attempt cap as the
-Slice 3A/3B SDK adapter. It supports only `gpt-4o-transcribe-diarize`, `diarized_json`, the source
+SDK adapter. It supports only `gpt-4o-transcribe-diarize`, `diarized_json`, the source
 language hint, and automatic chunking above 30 seconds. Safe provenance records the transport,
 declared contract, observed version or `unavailable`, model, response format, input SHA-256
 fingerprint, attempt, and result kind; it never records command text, environment values,
@@ -30,7 +30,7 @@ object. Invalid, oversized, symlinked, or group/world-writable inputs are reject
 mutation. Valid import uses existing analysis, report, evidence, feedback, audit, and persistence
 contracts; deterministic IDs make duplicate import a no-op.
 
-## Slice 4 local request adapters
+## Local request adapters
 
 The demo API adds only a request adapter around existing local components. Multipart audio is
 bounded before buffering, parsed as exactly one file, inspected by content, and admitted only when
@@ -50,10 +50,10 @@ guard. Live requests use only `/v1/audio/transcriptions`,
 Provider speaker labels remain opaque and map only to `unknown_participant`.
 
 These are architecture seams. Slices 1 and 2 implement local deterministic fixture adapters.
-Slice 3A adds a disabled candidate file-transcription adapter exercised only through an injected
+The disabled candidate file-transcription adapter is exercised only through an injected
 mock transport. No vendor credential, live provider URL, or external request is implemented.
 
-| Boundary | Synthetic/test option | Future option | Slice 1 state |
+| Boundary | Synthetic/test option | Future option | Current state |
 |---|---|---|---|
 | `CallSource` | `FixtureCallSource`; local synthetic manual upload | Broadvoice only after approval | Deterministic generic ingestion events plus a narrow local route |
 | `Transcriber` | `FixtureTranscriber`; offline `OpenAITranscriber`; local `openai_cli_local` shim | Separately authorized approved provider adapter | Exact fixtures, network-blocked response contracts, and bounded local CLI process harness |
@@ -73,5 +73,5 @@ The candidate sends file transcription to `/v1/audio/transcriptions` with config
 identifiers, `diarized_json`, and automatic chunking above 30 seconds. It never uses the Files API,
 Realtime API, streaming, known-speaker names/references, or analysis/report generation. Provider
 speaker labels remain opaque and map only to unverified unknown participants. Normal demo/test
-application factories construct no network client, and live construction always raises the
-Slice 3B hard stop.
+application factories construct no network client, and live construction remains behind the
+explicit owner-gated hard stop.

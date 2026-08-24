@@ -1,15 +1,38 @@
 # Architecture and repository layout
 
-## Slice 5A local operations control plane
+The authoritative module and caller inventory is maintained in
+[Current implementation sources of truth](ssot.md). That inventory describes runtime ownership;
+the Desktop tracker remains the only roadmap and status source.
+
+## Processes and entry points
+
+| Process | Entry point | Implemented responsibility |
+|---|---|---|
+| API | `python -m apps.api.colacci_api.main` | FastAPI health, review, manual-upload, and operations routes on container port 8000 |
+| Worker | `python -m apps.worker.colacci_worker.main` | Liveness/readiness HTTP server on container port 8001; it has no queue consumer, scheduler, or background job handler |
+| Web | `npm run dev` in `apps/web` | Vite/React local UI on container port 5173 with `/api` proxying |
+| Migration | `alembic upgrade head` | Applies the PostgreSQL schema through `0006_local_operations` |
+| Seed | `python scripts/seed_demo.py` or `python scripts/seed_demo_month.py` | Explicitly loads deterministic synthetic fixtures and reports; seeding is never automatic |
+
+FastAPI disables `/docs`, `/redoc`, and `/openapi.json`; the supported browser/API behavior is
+defined by route modules, strict Pydantic contracts, and tests rather than a published HTTP API.
+The browser exposes month history, daily reports, call evidence/review, manual upload, failures,
+playbooks, local operations, and a content-free health page. Host ports are mapped separately in
+`docker-compose.yml` and remain loopback-only.
+
+PostgreSQL is the only durable runtime component. See [Data model and migrations](data-models.md)
+for the persisted domains, migration sequence, and database-enforced immutability rules.
+
+## Local operations control plane
 
 The API now has a content-free local operations router backed by immutable configuration versions,
 restart-safe retention jobs, append-only tombstones, maintenance evidence, disposable restore
 drills, and notification previews with zero external attempts. The browser exposes the same safe
 controls to demo administrators and operations users and returns a sanitized denial to reviewers.
-See [the Slice 5A architecture and operator guide](local-operations.md) and
+See [the local operations architecture and operator guide](local-operations.md) and
 [ADR 0010](decisions/0010-local-retention-and-tombstones.md).
 
-## Slice 4 local manual-upload bridge
+## Local manual-upload bridge
 
 The normal local demo now exposes one authenticated, single-item submission boundary:
 
@@ -39,7 +62,7 @@ Both modes reuse the accepted call, attempt, transcript, analysis, report, evide
 audit tables. Migration `0005_manual_upload_local` adds only content-free receipts and state
 events; accepted transcripts, analyses, feedback, playbooks, and audit history remain immutable.
 
-## Slice 3C local development bridge
+## Local CLI development bridge
 
 `local_dev` is a synthetic-only command-line profile, not an API or worker runtime. It allows
 exactly two additional local paths:
@@ -60,7 +83,7 @@ stores no media reference, records source mode and safe transport provenance, an
 existing state machine, fixture analyzer, immutable report, evidence, and feedback flows. Its
 deterministic identifiers make repeated import idempotent.
 
-## Slice 3B isolation
+## Gated live-verification isolation
 
 The `live_test` path is a separate command-line verification boundary, not part of the
 demo application factory. Fresh local synthetic media moves through the restrictive
@@ -69,8 +92,8 @@ and a disposable evidence database. Downstream analysis and report generation ar
 connected. Terminal cleanup removes media and the database while retaining only
 sanitized preflight and designated synthetic evaluation evidence outside the repository.
 
-The accepted Slices 0 and 1 remain a four-component local stack. Slice 2 adds an immutable daily
-report snapshot, reviewer feedback/audit events, a failure queue, and playbook lifecycle routes:
+The supported application is a four-component local stack with immutable daily report snapshots,
+reviewer feedback/audit events, a failure queue, and playbook lifecycle routes:
 
 ```text
 Browser -> React/Vite synthetic review UI
@@ -87,12 +110,14 @@ Readiness requires a connection and exact Alembic revision
 `0006_local_operations`. The web container serves a content-free health artifact and
 a persistent synthetic-data banner on every review route.
 
-There is no real-data upload, external source, identity integration, notification, live
-transcription, or vendor request. Slice 3A adds only locally generated non-human media outside the repository,
-restrictive temporary synthetic objects, and mocked response-contract tests. The demo principal
-header is allowlisted and accepted only in
+There is no real-data upload, external source, identity integration, notification delivery, or
+normal-runtime vendor request. Locally generated non-human media stays outside the repository in
+restrictive temporary synthetic objects, and provider-shaped responses remain mocked in routine
+tests. The demo principal header is allowlisted and accepted only in
 demo/test. Fixture processing is an explicit local command; the worker remains a process and
-readiness boundary until a later accepted slice introduces jobs.
+readiness boundary. There is no automatic scheduler: report generation, retry, retention,
+backup/restore drill, and notification preview behavior is initiated explicitly by scripts or
+authorized local API/UI actions.
 
 Docker Compose publishes every port to loopback only. PostgreSQL is the only stateful service.
 The database contains only typed synthetic review records and the non-sensitive schema marker.
@@ -100,6 +125,9 @@ The database contains only typed synthetic review records and the non-sensitive 
 ## Shared boundaries
 
 - Configuration: `packages/config`
+- Demo authorization: `packages/authorization/demo_policy.py`; routes, capability responses, and
+  repository defense checks do not define independent role matrices
+- API error envelope: `apps/api/colacci_api/errors.py`
 - Health schema: `packages/contracts/health.schema.json`
 - Database readiness: `packages/database`
 - Content-free logging: `packages/observability`

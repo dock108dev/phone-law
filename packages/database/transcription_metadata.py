@@ -1,4 +1,4 @@
-"""Content-free persistence for Slice 3A media and provider-attempt provenance."""
+"""Content-free persistence for media and provider-attempt provenance."""
 
 from __future__ import annotations
 

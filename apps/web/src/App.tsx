@@ -1024,7 +1024,7 @@ function OperationsPage({ principal }: { principal: DemoPrincipal }): ReactNode 
           <div><span>Restore drill</span><b>{humanize(overview.backup_restore_status)}</b></div>
         </div>
         <div className={`reconciliation-strip ${overview.reconciliation.exact ? "exact" : "mismatch"}`}>
-          <b>{overview.reconciliation.exact ? "Reconciliation exact" : "Reconciliation needs attention"}</b>
+          <b>{!overview.reconciliation.available ? "Reconciliation unavailable" : overview.reconciliation.exact ? "Reconciliation exact" : "Reconciliation needs attention"}</b>
           <span>Expected {overview.reconciliation.expected} · Received {overview.reconciliation.received} · Analyzed {overview.reconciliation.analyzed} · Failed {overview.reconciliation.failed} · Missing {overview.reconciliation.missing}</span>
         </div>
         <div className="safe-state-list" aria-label="Processing volume by safe state">

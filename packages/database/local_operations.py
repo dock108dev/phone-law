@@ -1,4 +1,4 @@
-"""Persistence and execution boundary for local-only Slice 5A operations."""
+"""Persistence and execution boundary for local-only operations."""
 
 from __future__ import annotations
 
@@ -19,10 +19,10 @@ from pydantic import BaseModel
 from sqlalchemy import Engine
 from sqlalchemy.dialects.postgresql import insert
 
+from packages.authorization import DemoPermission, has_permission, operations_actions
 from packages.config import Settings
 from packages.contracts.media import TemporaryObjectReference
 from packages.contracts.operations import (
-    DEFAULT_LOCAL_FIRM_CONFIGURATION,
     BackupRestoreDrillResult,
     ConfigurationHistory,
     ConfigurationVersion,
@@ -184,7 +184,7 @@ class LocalOperationsRepository:
     def publish_configuration(
         self, configuration: LocalFirmConfiguration, *, principal: DemoPrincipal
     ) -> ConfigurationVersion:
-        if principal.role is not DemoRole.ADMINISTRATOR:
+        if not has_permission(principal.role, DemoPermission.PUBLISH_CONFIGURATION):
             raise PermissionError("configuration_publish_forbidden")
         serialized, content_hash = _json_payload(configuration)
         now = self.clock.now()
@@ -862,26 +862,7 @@ class LocalOperationsRepository:
             )
             for row in latency_rows
         ]
-        permitted = (
-            (
-                "view_configuration",
-                "publish_configuration",
-                "run_retention",
-                "retry_deletion",
-                "run_backup_restore",
-                "view_audit",
-                "preview_notification",
-            )
-            if principal.role is DemoRole.ADMINISTRATOR
-            else (
-                "view_configuration",
-                "run_retention",
-                "retry_deletion",
-                "run_backup_restore",
-                "view_audit",
-                "preview_notification",
-            )
-        )
+        permitted = operations_actions(principal.role)
         return OperationsOverview(
             environment="Local development",
             data_label="Synthetic demo data",
@@ -918,20 +899,31 @@ class LocalOperationsRepository:
     def _safe_reconciliation(payload: object) -> ReconciliationMetrics:
         if not isinstance(payload, dict):
             return ReconciliationMetrics(
-                expected=0, received=0, analyzed=0, failed=0, missing=0, exact=True
+                available=False,
+                expected=0,
+                received=0,
+                analyzed=0,
+                failed=0,
+                missing=0,
+                exact=False,
             )
         completeness = payload.get("completeness")
         source = completeness.get("reconciliation") if isinstance(completeness, dict) else None
         if not isinstance(source, dict):
-            return ReconciliationMetrics(
-                expected=0, received=0, analyzed=0, failed=0, missing=0, exact=True
-            )
-        expected = int(source.get("expected", 0))
-        received = int(source.get("received", 0))
-        analyzed = int(source.get("analyzed", 0))
-        failed = int(source.get("failed", 0))
-        missing = int(source.get("missing", 0))
+            raise ValueError("reconciliation_payload_invalid")
+        values: dict[str, int] = {}
+        for key in ("expected", "received", "analyzed", "failed", "missing"):
+            value = source.get(key)
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise ValueError("reconciliation_payload_invalid")
+            values[key] = value
+        expected = values["expected"]
+        received = values["received"]
+        analyzed = values["analyzed"]
+        failed = values["failed"]
+        missing = values["missing"]
         return ReconciliationMetrics(
+            available=True,
             expected=expected,
             received=received,
             analyzed=analyzed,
@@ -941,7 +933,7 @@ class LocalOperationsRepository:
         )
 
     def run_backup_restore_drill(self, *, principal: DemoPrincipal) -> BackupRestoreDrillResult:
-        if principal.role not in {DemoRole.ADMINISTRATOR, DemoRole.OPERATIONS}:
+        if not has_permission(principal.role, DemoPermission.USE_OPERATIONS):
             raise PermissionError("backup_restore_drill_forbidden")
         now = self.clock.now()
         before = self._normal_database_signature()
@@ -1117,9 +1109,3 @@ class LocalOperationsRepository:
                 created_at=now,
             )
         return preview
-
-
-def default_configuration() -> LocalFirmConfiguration:
-    """Return the validated default without sharing mutable state."""
-
-    return DEFAULT_LOCAL_FIRM_CONFIGURATION.model_copy(deep=True)

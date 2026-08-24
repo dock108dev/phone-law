@@ -1,4 +1,4 @@
-"""Strict, content-free contracts for Slice 5A local operations."""
+"""Strict, content-free contracts for local operations."""
 
 from __future__ import annotations
 
@@ -210,6 +210,7 @@ class RetentionRunResult(StrictModel):
 
 
 class ReconciliationMetrics(StrictModel):
+    available: bool
     expected: Annotated[int, Field(ge=0)]
     received: Annotated[int, Field(ge=0)]
     analyzed: Annotated[int, Field(ge=0)]

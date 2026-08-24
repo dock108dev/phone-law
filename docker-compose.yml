@@ -43,6 +43,7 @@ x-python-service: &python-service
     RETENTION_POLICY_APPROVED: "false"
     DEBUG: "false"
     CORS_ORIGINS: '${CORS_ORIGINS:-["http://localhost:15173"]}'
+    TRUSTED_HOSTS: '${TRUSTED_HOSTS:-["localhost","127.0.0.1","api","web","testserver"]}'
     FIRM_TIMEZONE: America/New_York
     LOG_LEVEL: INFO
     RUFF_CACHE_DIR: /tmp/ruff-cache

@@ -11,6 +11,7 @@ from sqlalchemy.exc import DBAPIError, SQLAlchemyError
 
 from apps.api.colacci_api import create_app
 from packages.config import Settings
+from packages.contracts.manual_upload import UploadState
 from packages.contracts.media import MediaDeletionEvent, MediaErrorClass, MediaLifecycleState
 from packages.database.manual_uploads import ManualUploadRepository
 from packages.database.review_schema import (
@@ -452,8 +453,9 @@ def test_named_terminal_and_analysis_failures_retry_and_cancel_race() -> None:
     )
 
 
-def test_object_store_database_and_unexpected_failures_are_sanitized_and_cleaned(
+def test_object_store_database_and_unexpected_failures_are_sanitized_logged_and_cleaned(
     monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
 ) -> None:
     settings = Settings(_env_file=None, app_profile="test")
     app = create_app(settings)
@@ -488,6 +490,7 @@ def test_object_store_database_and_unexpected_failures_are_sanitized_and_cleaned
             )
         assert database_failure.status_code == 500
         assert database_failure.json()["detail"]["error"] == "manual_upload_failed"
+        assert "unexpected_manual_upload_failure" in caplog.text
         assert receipt_count(app) == before
 
         unexpected = post_audio(
@@ -507,10 +510,14 @@ def test_object_store_database_and_unexpected_failures_are_sanitized_and_cleaned
                 f"/api/uploads/{unexpected['upload_id']}/process",
                 headers={"X-Demo-Principal": "demo-admin"},
             )
-        assert result.status_code == 200
-        assert result.json()["state"] == "analysis_failed"
-        assert result.json()["diagnostic_code"] == "unexpected_processing_failure"
-        assert result.json()["deletion_confirmed"] is True
+        assert result.status_code == 500
+        assert result.json()["detail"]["error"] == "manual_upload_failed"
+        stored = ManualUploadRepository(app.state.engine).get(unexpected["upload_id"])
+        assert stored is not None
+        assert stored.receipt.state is UploadState.ANALYSIS_FAILED
+        assert stored.receipt.diagnostic_code == "unexpected_processing_failure"
+        assert stored.receipt.deletion_confirmed is True
+        assert "unexpected_audio_processing_failure" in caplog.text
     assert not settings.manual_upload_root.exists() or not any(
         settings.manual_upload_root.iterdir()
     )

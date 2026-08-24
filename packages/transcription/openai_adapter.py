@@ -215,7 +215,13 @@ class OpenAITranscriber:
                     inspection=inspection,
                     provenance=provenance,
                 )
-            except Exception as exc:
+            except (
+                SafeTranscriptionTransportError,
+                APIConnectionError,
+                APIStatusError,
+                ValueError,
+                ValidationError,
+            ) as exc:
                 classification = self._classify_exception(exc, provider_attempt)
                 duration_ms = max(0.0, (self.clock() - started) * 1000)
                 record = ProviderAttemptRecord(provider_attempt, duration_ms, classification)
@@ -432,8 +438,7 @@ class OpenAITranscriber:
             error_class = MediaErrorClass.TRANSCRIPTION_RESPONSE_INVALID
             retryable = False
         else:
-            error_class = MediaErrorClass.TRANSCRIPTION_PROVIDER_FAILED
-            retryable = False
+            raise exc
         return TranscriptionErrorClassification(
             error_class=error_class,
             retryable=retryable,

@@ -1,164 +1,96 @@
-# Colacci Law Call Review — Slice 5A Local
+# Colacci Law Call Review
 
-This repository contains the synthetic-only daily review experience and its bounded local
-development bridges. It turns deterministic fixtures into an immutable daily report,
-evidence-linked call analysis, append-only human feedback, a content-free failure queue, and an
-immutable playbook publication lifecycle. Slice 4 adds an authenticated, single-item local bridge
-for allowlisted generated non-human audio and the accepted invented transcript-only artifact.
-Slice 5A adds visible versioned local configuration, complete demo-role security, retention and
-deletion with content-free tombstones, safe operational reconciliation, a disposable restore drill,
-and a notification preview that sends nothing. It contains no real recording, unapproved live AI
-request, Broadvoice contract, external notification, production authentication, approved production
-retention, or cloud infrastructure.
+Local synthetic call-review application for deterministic reports, evidence-linked analysis,
+reviewer feedback, failure recovery, manual submission of invented artifacts, and local operations.
 
-The sole roadmap and next-steps source is
+This repository contains no client data, real recording, production authentication, external
+notification, Broadvoice integration, or generally enabled provider request. The separately
+gated transcription verification commands are not part of the normal application runtime.
+
+The sole roadmap and status source is
 `/Users/michaelfuscoletti/Desktop/colacci_law_next_steps.md`. Do not add a repository-level
 `NEXT_STEPS.md`.
 
-## Prerequisites
+## Start locally
 
-- Docker Engine 29.7.2 or compatible and Docker Compose 5.3.1 or compatible.
-- `make` and a POSIX shell.
-- Internet access is required only for the first image/dependency download and the optional
-  live advisory audit. After `make bootstrap`, linting, type checks, tests, integration tests,
-  migrations, secret scanning, and smoke checks use only pinned local images and the local
-  Docker network.
-
-Host Python 3 is used only by deterministic local fixture and evidence helpers; it does not
-run the application or install project dependencies. Host Node is not required. The exact
-container versions are Python 3.13.5, Node.js 22.18.0, npm 10.9.3, and PostgreSQL 17.6 on
-Alpine 3.22.
-
-## Start from a clean checkout
+Prerequisites are Docker Engine 29.7.2 or compatible, Docker Compose 5.3.1 or compatible, `make`,
+a POSIX shell, and `python3` for deterministic fixture/evidence helpers. Application Python,
+Node, npm, and project dependencies run only in pinned containers; host Node is not required.
 
 ```bash
 make bootstrap
 make dev
 make smoke
+make seed-demo-month
 ```
 
-Seed the local synthetic review data, then open the app:
+Open [http://localhost:15173](http://localhost:15173). The UI must always show **Local / synthetic**
+and **No client data or live services**.
 
-```bash
-make seed-demo
-```
-
-Open [http://localhost:15173](http://localhost:15173). Every review view must display
-**Synthetic demo data**. Local endpoints are:
-
-- Web: `http://localhost:15173` and `/health`
-- API: `http://localhost:18000/health/live` and `/health/ready`
-- Worker: `http://localhost:18001/health/live` and `/health/ready`
-- PostgreSQL: loopback port `54329`
-
-Stop without deleting the local database:
+Stop services without deleting the synthetic database:
 
 ```bash
 make stop
 ```
 
-Start again with `make dev`. To remove only this project's synthetic containers and local
-database volume, use the explicit guarded reset:
+For a guarded project-only reset:
 
 ```bash
 CONFIRM_LOCAL_DATA_DELETE=yes make clean
-make bootstrap
-make dev
 ```
 
-## Stable command surface
+## Daily engineering commands
 
-```bash
-make bootstrap          # build pinned images, start PostgreSQL, apply migration 0006
-make seed-demo          # idempotently install all fixtures and the immutable daily report
-make dev                # start database, migrate, and start API, worker, and web
-make lint               # formatting, lint, code security, pins, and secret scan
-make typecheck          # strict Python and TypeScript checks
-make test               # offline unit/security and web tests
-make test-integration   # empty-test-database migration and readiness tests
-make test-fixtures      # all 12 deterministic fixtures; report under /tmp
-make test-e2e           # disposable seeded browser flow, accessibility, screenshots, log proof
-make smoke              # API, worker, web, review shell, database, and migration readiness
-make transcription-cli-preflight # inspect the installed CLI without credentials or a request
-make test-transcription-cli-offline # network-blocked CLI contracts and transcript-only full loop
-make test-local-operations # private zero-network Slice 5A proof, browser flows, and cleanup evidence
-make test-manual-upload # network-isolated upload boundary, lifecycle, browser, and evidence proof
-```
+| Command | Purpose |
+|---|---|
+| `make lint` | Format check, Ruff, Bandit, pins, generated schemas, secret scan, and web lint |
+| `make typecheck` | Strict Python and TypeScript checks |
+| `make test` | Offline Python unit/security tests and web unit tests |
+| `make test-integration` | PostgreSQL migration and repository integration tests |
+| `make test-e2e` | Disposable seeded reviewer, upload, and operations browser journeys |
+| `make build` | Type-check and build the production web bundle |
+| `make test-fixtures` | All deterministic analysis fixtures |
+| `make test-manual-upload` | Network-isolated invented-artifact lifecycle proof |
+| `make test-local-operations` | Network-isolated role, retention, recovery, and cleanup proof |
+| `make test-demo-month` | July 2026 deterministic month and reconciliation proof |
+| `make generate-contract-schemas` | Regenerate strict JSON Schemas in the pinned offline image |
+| `make smoke` | API, worker, web, dashboard, database, and migration readiness |
+| `make audit` | Separate online Python/npm vulnerability advisory check |
 
-`make audit` is the separately labeled vulnerability-advisory check. It contacts public
-advisory/package registries and is therefore not part of the deterministic offline suite.
-
-The Slice 3C bridge declares exact support for OpenAI CLI `1.6.0` and contract
-`openai-cli-audio-transcriptions-v1`. Run `make transcription-cli-preflight` before selecting the
-transport. An absent, mismatched, or legacy CLI selects the fixture and transcript-only fallback;
-it never triggers installation, upgrade, or a provider request. Sanitized evidence is written
-under `/tmp/colacci-law-slice3c/evidence/`.
-
-The Slice 4 page is [http://localhost:15173/uploads](http://localhost:15173/uploads). Demo
-administrators and operations users may submit one allowlisted generated audio file or one strict
-invented transcript JSON artifact. Reviewers cannot access receipts or upload actions, but may
-open completed calls and append feedback. `make test-manual-upload` runs its service and browser
-proof on internal-only Docker networks and writes sanitized evidence beneath
-`/tmp/colacci-law-slice4-local/evidence/`.
+Run `make help` for the complete stable command surface. Provider-facing live verification is
+owner-gated and never part of routine setup, development, or validation.
 
 ## Repository map
 
-- `apps/api`: FastAPI service and Alembic migration.
-- `apps/worker`: Python worker process with independent health server. No jobs exist yet.
-- `apps/web`: React/TypeScript daily report, call review, manual upload, failure, and playbook views.
-- `packages/config`: shared profiles and fail-closed startup validation.
-- `packages/contracts`: strict review models and synchronized versioned JSON Schemas.
-- `packages/database`: readiness plus immutable synthetic review persistence.
-- `packages/review`: state machine, evidence validation, adapter protocols, fixture pipeline, and
-  strict transcript-only import.
-- `packages/manual_upload`: strict request parsing, private fingerprint allowlist, and bounded
-  local orchestration through the existing immutable review pipeline.
-- `packages/transcription`: shared response conversion plus the bounded SDK and local CLI
-  transports.
-- `packages/observability`: correlation IDs and allowlisted structured logs.
-- `fixtures`: the twelve-scenario synthetic manifest and draft synthetic playbook.
-- `infrastructure/local`: pinned local containers and test database initialization.
-- `docs`: architecture, security, decisions, and runbooks.
-- `scripts`: stable command implementation and deterministic scanners.
-- `tests`: unit, security, integration, and future contract/end-to-end boundaries.
+- `apps/api`: FastAPI routes, application factory, and Alembic migrations.
+- `apps/worker`: health/readiness process; no background jobs are currently supported.
+- `apps/web`: React/TypeScript application and browser tests.
+- `packages/authorization`: authoritative synthetic role-permission policy.
+- `packages/config`: shared typed settings and startup safety validation.
+- `packages/contracts`: strict models and generated JSON Schemas.
+- `packages/database`: bounded persistence repositories and migration readiness.
+- `packages/review`: state machine, fixture pipeline, reporting, and transcript import.
+- `packages/manual_upload`: request orchestration for allowlisted generated audio and invented JSON.
+- `packages/transcription`: offline contracts and separately gated CLI/SDK transports.
+- `fixtures`: deterministic invented inputs; no human or client content.
+- `scripts`: stable command implementations, evidence checks, and scanners.
+- `docs`: developer, architecture, operations, security, and decision documentation.
 
-## Safety behavior
+## Documentation
 
-The default profile is `demo`, every real-data switch is false, and only fixture/placeholder
-adapters are configured. `staging` and `production` reject fake authentication, placeholder or
-missing secrets, local storage, fixture sources/transcribers/analyzers, absent retention,
-unauthorized real processing, debug mode, unsafe CORS, and local/example databases.
+Start with the [documentation index](docs/README.md), then use:
 
-The API and worker log only allowlisted operational metadata. The review pipeline and reviewer
-routes do not log call, transcript, summary, or feedback content. Access logs are disabled. Request
-headers, query strings, error details, database URLs, caller data, audio, and transcript content
-cannot enter the application logger.
+- [Local development and troubleshooting](docs/runbooks/local-development.md)
+- [Architecture](docs/architecture.md)
+- [Current implementation sources of truth](docs/ssot.md)
+- [Maintainer guide](docs/maintenance.md)
+- [Continuous integration](docs/continuous-integration.md)
+- [Testing](docs/testing.md)
+- [Data model and migrations](docs/data-models.md)
+- [Configuration](docs/configuration.md)
+- [Local operations](docs/local-operations.md)
+- [Security](docs/security/README.md)
+- [Error handling and incident diagnosis](docs/runbooks/error-handling.md)
 
-`make test-fixtures` uses only the local `colacci_test` database and local fixture adapters. It
-writes `report.json`, accepted English and Spanish examples, and one rejected-output example to
-`/tmp/colacci-law-fixtures/`; generated evidence is never written into the repository.
-
-`make test-e2e` uses a disposable Compose project and database. It validates the report-first
-flow, evidence focus, feedback persistence, role denial, failure history, playbook publication,
-WCAG 2 A/AA and 2.1 A/AA automated checks, and content-free application logs. Evidence defaults
-to `/tmp/colacci-law-slice2-evidence/` and may be redirected with `SLICE2_EVIDENCE_DIR`.
-
-`make test-transcription-cli-offline` runs the injected CLI contract suite and the dedicated real
-child-process harness with external networking disabled. It also imports one invented transcript
-artifact through the existing review, report, evidence, and feedback contracts, repeats the import
-to prove idempotency, and rejects invalid artifacts before database mutation. The normal API and
-worker still construct no CLI client. The owner-gated Slice 3B live command remains a separate,
-unchanged future verification boundary.
-
-`make test-manual-upload` accepts only one browser-selected artifact and requires a generated-only
-attestation. The server authorizes the authenticated demo principal before reading or allocating,
-checks request and media boundaries, creates only opaque receipts and objects, deduplicates by
-submission ID and content fingerprint, supports bounded retry and pre-processing cancellation,
-and confirms temporary-media cleanup. Transcript-only input creates no media object. The command
-proves stable failures, idempotency, report/call navigation, evidence focus, feedback persistence,
-responsive layout, accessibility, content-free logs, and zero provider requests.
-
-See [architecture](docs/architecture.md), [technology choices](docs/technology.md),
-[configuration rules](docs/configuration.md), [adapter boundaries](docs/adapters.md), and the
-[security documentation](docs/security/README.md). Slice 5A operators should start with the
-[local operations guide](docs/local-operations.md).
+All routine tests, migrations, smoke checks, and application flows use deterministic synthetic
+data and no live AI, telephony, email, cloud storage, or identity service.

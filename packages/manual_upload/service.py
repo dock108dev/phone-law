@@ -47,6 +47,7 @@ from packages.manual_upload.manifest import SyntheticFingerprintManifest, Synthe
 from packages.manual_upload.request_boundary import ParsedAudioUpload, UploadRequestError
 from packages.media.processing import MediaBoundaryError, MediaInspector, MediaNormalizer
 from packages.media.store import LocalSyntheticObjectStore, SyntheticObjectStoreError
+from packages.observability.logging import OperationalLogger
 from packages.review.fixtures import FixtureAnalyzer, FixtureTranscriber
 from packages.review.transcript_import import (
     TRANSCRIPT_ONLY_ARTIFACT_VERSION,
@@ -60,8 +61,19 @@ MANUAL_AUDIO_CONTRACT = "manual-upload-synthetic-audio-v1"
 MANUAL_AUDIO_MODEL = "deterministic-fingerprint-fixture-v1"
 
 
+class ManualUploadUnexpectedError(RuntimeError):
+    """An unexpected defect was persisted as a safe receipt state before escalation."""
+
+
 class ManualUploadService:
-    def __init__(self, settings: Settings, engine: Any) -> None:
+    def __init__(
+        self,
+        settings: Settings,
+        engine: Any,
+        *,
+        operational_logger: OperationalLogger | None = None,
+        correlation_id: str | None = None,
+    ) -> None:
         self.settings = settings
         self.receipts = ManualUploadRepository(engine)
         self.reviews = ReviewRepository(engine)
@@ -78,6 +90,8 @@ class ManualUploadService:
         self.normalizer = MediaNormalizer(store=self.store, inspector=self.inspector)
         self.transcriber = FixtureTranscriber()
         self.analyzer = FixtureAnalyzer()
+        self.operational_logger = operational_logger
+        self.correlation_id = correlation_id
 
     def submit_audio(
         self,
@@ -190,13 +204,15 @@ class ManualUploadService:
             claimed = self.receipts.claim_processing(created.stored.receipt.upload_id)
             try:
                 final = self._process_transcript(claimed, artifact)
-            except Exception:
-                final = self.receipts.complete(
+            except Exception as exc:
+                self.receipts.complete(
                     claimed.receipt.upload_id,
                     state=UploadState.ANALYSIS_FAILED,
                     diagnostic_code="transcript_processing_failed",
                     retryable=False,
                 )
+                self._record_unexpected_failure("unexpected_transcript_processing_failure")
+                raise ManualUploadUnexpectedError("transcript_processing_failed") from exc
             return CreateReceiptResult(stored=final, duplicate=False)
         return created
 
@@ -221,8 +237,10 @@ class ManualUploadService:
             return self._run_audio_attempt(
                 claimed, manifest_entry.fixture_id, manifest_entry.outcome
             )
-        except Exception:
-            return self._unexpected_audio_failure(claimed)
+        except Exception as exc:
+            self._unexpected_audio_failure(claimed)
+            self._record_unexpected_failure("unexpected_audio_processing_failure")
+            raise ManualUploadUnexpectedError("unexpected_processing_failure") from exc
 
     def cancel(self, upload_id: str) -> StoredUpload:
         stored, changed = self.receipts.cancel(upload_id)
@@ -451,6 +469,18 @@ class ManualUploadService:
             retryable=False,
             deletion_confirmed=deletion_confirmed,
             deleted_at=deleted_at,
+        )
+
+    def _record_unexpected_failure(self, error_code: str) -> None:
+        if self.operational_logger is None:
+            return
+        self.operational_logger.event(
+            "manual_upload_processing_failed",
+            level="error",
+            component="manual_upload",
+            correlation_id=self.correlation_id or "correlation-unavailable",
+            error_code=error_code,
+            status="failed",
         )
 
     def _audio_event(self, stored: StoredUpload) -> IngestionEvent:

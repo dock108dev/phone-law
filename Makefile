@@ -5,10 +5,18 @@ COMPOSE := docker compose
 PY_RUN := $(COMPOSE) run --rm --no-deps api
 WEB_RUN := $(COMPOSE) run --rm --no-deps web
 
-.PHONY: help bootstrap seed-demo seed-demo-month dev stop clean generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations test-local-acceptance test-demo-month test-demo-release test-ui-redesign lint typecheck test test-integration test-fixtures test-e2e smoke audit secret-scan logs
+.PHONY: help bootstrap seed-demo seed-demo-month dev stop clean generate-contract-schemas generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations test-local-acceptance test-demo-month test-demo-release test-ui-redesign lint typecheck test test-integration test-fixtures test-e2e build smoke audit secret-scan logs
 
 help:
-	@echo "Stable commands: bootstrap generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations test-local-acceptance test-demo-release seed-demo dev lint typecheck test test-integration test-fixtures test-e2e smoke"
+	@printf '%s\n' \
+		"Stable commands:" \
+		"  bootstrap  seed-demo  seed-demo-month  dev  stop  clean" \
+		"  generate-contract-schemas  generate-test-audio" \
+		"  lint  typecheck  test  test-integration  test-fixtures  test-e2e  build  smoke  audit" \
+		"  test-audio  test-transcription-contract  transcription-cli-preflight" \
+		"  test-transcription-cli-offline  transcription-live-preflight  test-transcription-live" \
+		"  test-manual-upload  test-local-operations  test-local-acceptance" \
+		"  test-demo-month  test-demo-release  test-ui-redesign  secret-scan  logs"
 
 bootstrap:
 	./scripts/bootstrap.sh
@@ -40,6 +48,9 @@ stop:
 
 clean:
 	./scripts/clean-local.sh
+
+generate-contract-schemas:
+	docker run --rm --network none -e PYTHONPATH=/workspace -v "$(CURDIR):/workspace" -w /workspace colacci-law-api:latest python scripts/generate_contract_schemas.py
 
 generate-test-audio:
 	PYTHONPATH=. python3 scripts/generate_test_audio.py
@@ -108,6 +119,9 @@ test-fixtures:
 
 test-e2e:
 	./scripts/test_e2e.sh
+
+build:
+	$(WEB_RUN) npm run build
 
 smoke:
 	$(COMPOSE) run --rm api python scripts/smoke.py

@@ -1,4 +1,4 @@
-"""Known source text for the locally generated, non-human Slice 3 media."""
+"""Known source text for locally generated non-human media."""
 
 ENGLISH_SHORT_TEXT = (
     "Good afternoon. This invented demonstration asks whether a packet can be reviewed "

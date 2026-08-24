@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
@@ -30,6 +32,7 @@ def safe_deployment_settings(**overrides: object) -> Settings:
         "retention_policy_approved": True,
         "debug": False,
         "cors_origins": ["https://review.firm.invalid"],
+        "trusted_hosts": ["review.firm.invalid"],
     }
     values.update(overrides)
     return Settings(**values)
@@ -43,9 +46,26 @@ def test_demo_is_the_safe_default() -> None:
     assert settings.call_source_adapter == "fixture"
 
 
+def test_environment_example_covers_every_operator_setting() -> None:
+    env_keys = {
+        line.split("=", 1)[0]
+        for line in Path(".env.example").read_text(encoding="utf-8").splitlines()
+        if line and not line.startswith("#")
+    }
+    operator_settings = {name.upper() for name in Settings.model_fields} - {"SERVICE_NAME"}
+
+    assert env_keys == operator_settings
+
+
 def test_demo_rejects_real_call_data() -> None:
     with pytest.raises(ValidationError, match="allow_real_call_data"):
         Settings(_env_file=None, allow_real_call_data=True)
+
+
+@pytest.mark.parametrize("value", [[], ["*"], ["UPPER.invalid"], ["bad_host.invalid"]])
+def test_all_profiles_reject_invalid_trusted_hosts(value: list[str]) -> None:
+    with pytest.raises(ValidationError, match="trusted_hosts"):
+        Settings(_env_file=None, trusted_hosts=value)
 
 
 def local_dev_settings(**overrides: object) -> Settings:
@@ -133,6 +153,8 @@ def test_staging_rejects_demo_defaults() -> None:
         ("debug", True, "debug"),
         ("cors_origins", ["*"], "cors_origins"),
         ("cors_origins", ["http://localhost:15173"], "cors_origins"),
+        ("trusted_hosts", ["*"], "trusted_hosts"),
+        ("trusted_hosts", ["localhost"], "trusted_hosts"),
         (
             "database_url",
             "postgresql+psycopg://colacci_app:strong-password-123456@db/colacci",

@@ -1,4 +1,4 @@
-"""Strict Slice 3A media and transcription-boundary contracts."""
+"""Strict media and transcription-boundary contracts."""
 
 from __future__ import annotations
 

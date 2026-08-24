@@ -1,4 +1,4 @@
-"""Disabled-by-default candidate transcription adapter for Slice 3A."""
+"""Disabled-by-default transcription adapters and local CLI boundary."""
 
 from packages.transcription.cli_local import (
     DECLARED_CLI_CONTRACT_VERSION,

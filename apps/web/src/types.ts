@@ -333,6 +333,7 @@ export type OperationsOverview = {
   failure_count: number;
   retry_count: number;
   reconciliation: {
+    available: boolean;
     expected: number;
     received: number;
     analyzed: number;

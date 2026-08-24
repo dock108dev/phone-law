@@ -3,11 +3,11 @@
 ## Assets and trust boundaries
 
 Restricted assets include synthetic transcripts, caller/staff metadata, findings, reviewer
-feedback, and audit history. Slice 2 stores only deterministic fictional fixtures and synthetic
+feedback, and audit history. The current application stores only deterministic fictional fixtures and synthetic
 human-review records. Current boundaries are browser-to-web/API, API/worker-to-PostgreSQL,
 environment configuration, container images, logs, and the source repository.
 
-## Threats and Slice 2 controls
+## Threats and current controls
 
 | Threat | Control now | Remaining requirement |
 |---|---|---|
@@ -23,6 +23,7 @@ environment configuration, container images, logs, and the source repository.
 | Playbook publication changes prior analysis | Playbook structured payload is immutable; only lifecycle timestamps/status can change; analyses retain original provenance | Approved authoring and change-control process |
 | Broadvoice contract is guessed | No route, fields, header, signature, URL, fixture, or code | Account-specific feasibility evidence |
 | Overbroad network exposure | Every published local port binds to loopback | TLS, firewall, private networking, and approved ingress in staging |
+| Host-header or browser embedding abuse | API allowlists trusted hosts; API and local web set no-store, noindex, nosniff, deny framing, strict referrer/permissions, resource isolation, and CSP headers; API also sets opener isolation | Approved HTTPS proxy must preserve/strengthen headers and add web opener isolation/HSTS only after TLS is enforced |
 | Denial of service | Local synthetic-only routes, bounded fixture corpus, no ingestion | Rate limits and resource limits before ingestion |
 | CLI argument injection or shell expansion | Direct argument array, `shell=False`, fixed option surface, absolute allowlisted executable | Reassess before any broader command surface |
 | Ambient environment or credential leakage | Rebuilt child environment, named-variable allowlist, no value logging, no command logging | Managed ephemeral credential delivery before any separately authorized live run |
@@ -32,7 +33,7 @@ environment configuration, container images, logs, and the source repository.
 | Upload bypasses authenticated role | Principal is resolved before buffering/allocation; request role fields are rejected; reviewer denials are audited | Firm SSO and centralized policy before staging |
 | Filename or multipart input escapes local storage | Single file, strict safe name, no destination field, no path import, opaque object ID, fixed `/tmp` root, no symlinks | Private cloud object boundary before real use |
 | Duplicate or retry creates competing records | Unique submission/content/source IDs; row locks; retry increments attempt on the same call | Distributed idempotency design before external ingestion |
-| Temporary media survives its lifecycle | Cleanup on validation failure, terminal result, success, cancellation, and unexpected exception; deletion failure is visible and audited | Approved retention/deletion policy belongs to Slice 5 |
+| Temporary media survives its lifecycle | Cleanup on validation failure, terminal result, success, cancellation, and unexpected exception; deletion failure is visible and audited | Approved production retention/deletion policy remains external work |
 
 ## Abuse cases checked
 
@@ -52,6 +53,8 @@ environment configuration, container images, logs, and the source repository.
   and invalid language/direction/time leave no receipt or temporary object.
 - Object-store, database, unexpected-processing, cancellation-race, and deletion failures return
   content-free named outcomes; the focused suite confirms no test orphan remains.
+- An untrusted HTTP `Host` is rejected before route execution, and API/web responses carry the
+  documented defensive header set.
 
 ## Stop conditions
 

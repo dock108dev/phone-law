@@ -5,15 +5,16 @@ from __future__ import annotations
 from datetime import date
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Request, status
 
 from apps.api.colacci_api.demo_auth import demo_principal
+from apps.api.colacci_api.errors import api_error
+from packages.authorization import DemoPermission, has_permission
 from packages.contracts.report import (
     AuditEvent,
     CallDetail,
     DailyReport,
     DemoPrincipal,
-    DemoRole,
     FailureQueue,
     MonthHistory,
     PlaybookActionResult,
@@ -39,18 +40,6 @@ def _repository(request: Request) -> ReviewExperienceRepository:
     return ReviewExperienceRepository(request.app.state.engine)
 
 
-def _error(request: Request, code: int, message: str) -> HTTPException:
-    return HTTPException(
-        status_code=code,
-        detail={
-            "error": message,
-            "correlation_id": str(
-                getattr(request.state, "correlation_id", "correlation-unavailable")
-            ),
-        },
-    )
-
-
 @router.get("/reports/dates", response_model=ReportDateList)
 def report_dates(request: Request, _: Principal) -> ReportDateList:
     return ReportDateList(dates=_repository(request).report_dates())
@@ -59,11 +48,11 @@ def report_dates(request: Request, _: Principal) -> ReportDateList:
 @router.get("/reports/months/{year}-{month}", response_model=MonthHistory)
 def month_history(year: int, month: int, request: Request, _: Principal) -> MonthHistory:
     if year < 2000 or year > 2100 or month < 1 or month > 12:
-        raise _error(request, status.HTTP_404_NOT_FOUND, "synthetic_month_not_found")
+        raise api_error(request, status.HTTP_404_NOT_FOUND, "synthetic_month_not_found")
     try:
         return _repository(request).month_history(year, month)
     except LookupError as exc:
-        raise _error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
+        raise api_error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
 
 
 @router.get("/reports/{business_date}", response_model=DailyReport)
@@ -74,14 +63,14 @@ def report(
 ) -> DailyReport:
     result = _repository(request).report(business_date)
     if result is None:
-        raise _error(request, status.HTTP_404_NOT_FOUND, "synthetic_report_not_found")
+        raise api_error(request, status.HTTP_404_NOT_FOUND, "synthetic_report_not_found")
     return result
 
 
 def _call(request: Request, call_id: str) -> CallDetail:
     result = _repository(request).call_detail(call_id)
     if result is None:
-        raise _error(request, status.HTTP_404_NOT_FOUND, "synthetic_call_not_found")
+        raise api_error(request, status.HTTP_404_NOT_FOUND, "synthetic_call_not_found")
     return result
 
 
@@ -142,7 +131,7 @@ def create_review(
     principal: Principal,
 ) -> ReviewEvent:
     repository = _repository(request)
-    if principal.role is DemoRole.OPERATIONS:
+    if not has_permission(principal.role, DemoPermission.APPEND_FEEDBACK):
         repository.record_audit(
             principal=principal,
             action="review_event_create_denied",
@@ -150,7 +139,7 @@ def create_review(
             target_id=analysis_id,
             result="forbidden",
         )
-        raise _error(
+        raise api_error(
             request,
             status.HTTP_403_FORBIDDEN,
             "The operations role cannot record finding feedback.",
@@ -158,7 +147,7 @@ def create_review(
     try:
         return repository.add_review(analysis_id=analysis_id, request=payload, principal=principal)
     except LookupError as exc:
-        raise _error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
+        raise api_error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
 
 
 @router.get("/failures", response_model=FailureQueue)
@@ -166,7 +155,7 @@ def failure_queue(
     request: Request,
     principal: Principal,
 ) -> FailureQueue:
-    if principal.role not in {DemoRole.ADMINISTRATOR, DemoRole.OPERATIONS}:
+    if not has_permission(principal.role, DemoPermission.MANAGE_FAILURES):
         _repository(request).record_audit(
             principal=principal,
             action="failure_queue_view_denied",
@@ -174,7 +163,7 @@ def failure_queue(
             target_id="synthetic-failures",
             result="forbidden",
         )
-        raise _error(
+        raise api_error(
             request,
             status.HTTP_403_FORBIDDEN,
             "Only demo administrators and operations can view the failure queue.",
@@ -189,7 +178,7 @@ def retry_failure(
     principal: Principal,
 ) -> RetryResult:
     repository = _repository(request)
-    if principal.role not in {DemoRole.ADMINISTRATOR, DemoRole.OPERATIONS}:
+    if not has_permission(principal.role, DemoPermission.MANAGE_FAILURES):
         repository.record_audit(
             principal=principal,
             action="synthetic_retry_denied",
@@ -197,14 +186,14 @@ def retry_failure(
             target_id=call_id,
             result="forbidden",
         )
-        raise _error(
+        raise api_error(
             request,
             status.HTTP_403_FORBIDDEN,
             "Only demo administrators and operations can retry a synthetic failure.",
         )
     target = repository.retry_target(call_id)
     if target is None:
-        raise _error(request, status.HTTP_404_NOT_FOUND, "synthetic_failure_not_found")
+        raise api_error(request, status.HTTP_404_NOT_FOUND, "synthetic_failure_not_found")
     fixture_id, retryable, current_state = target
     if not retryable or current_state not in {
         ProcessingState.TRANSCRIPTION_FAILED,
@@ -217,7 +206,7 @@ def retry_failure(
             target_id=call_id,
             result="not_retryable",
         )
-        raise _error(
+        raise api_error(
             request,
             status.HTTP_409_CONFLICT,
             "This synthetic failure is permanent or already resolved and cannot be retried.",
@@ -253,7 +242,7 @@ def create_playbook_draft(
     principal: Principal,
 ) -> PlaybookDraftResult:
     repository = _repository(request)
-    if principal.role is not DemoRole.ADMINISTRATOR:
+    if not has_permission(principal.role, DemoPermission.MANAGE_PLAYBOOKS):
         repository.record_audit(
             principal=principal,
             action="playbook_draft_create_denied",
@@ -261,7 +250,7 @@ def create_playbook_draft(
             target_id="synthetic-draft",
             result="forbidden",
         )
-        raise _error(
+        raise api_error(
             request,
             status.HTTP_403_FORBIDDEN,
             "Only the demo administrator can create a synthetic playbook draft.",
@@ -269,9 +258,9 @@ def create_playbook_draft(
     try:
         return repository.create_playbook_draft(request=draft, principal=principal)
     except LookupError as exc:
-        raise _error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
+        raise api_error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
     except ValueError as exc:
-        raise _error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
+        raise api_error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
 
 
 @router.post("/playbooks/{version}/publish", response_model=PlaybookActionResult)
@@ -281,7 +270,7 @@ def publish_playbook(
     principal: Principal,
 ) -> PlaybookActionResult:
     repository = _repository(request)
-    if principal.role is not DemoRole.ADMINISTRATOR:
+    if not has_permission(principal.role, DemoPermission.MANAGE_PLAYBOOKS):
         repository.record_audit(
             principal=principal,
             action="playbook_publish_denied",
@@ -289,7 +278,7 @@ def publish_playbook(
             target_id=version,
             result="forbidden",
         )
-        raise _error(
+        raise api_error(
             request,
             status.HTTP_403_FORBIDDEN,
             "Only the demo administrator can publish a synthetic playbook.",
@@ -297,9 +286,9 @@ def publish_playbook(
     try:
         return repository.publish_playbook(version=version, principal=principal)
     except LookupError as exc:
-        raise _error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
+        raise api_error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
     except ValueError as exc:
-        raise _error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
+        raise api_error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
 
 
 @router.get("/audit-events", response_model=tuple[AuditEvent, ...])
@@ -307,7 +296,7 @@ def audit_history(
     request: Request,
     principal: Principal,
 ) -> tuple[AuditEvent, ...]:
-    if principal.role not in {DemoRole.ADMINISTRATOR, DemoRole.OPERATIONS}:
+    if not has_permission(principal.role, DemoPermission.VIEW_AUDIT):
         _repository(request).record_audit(
             principal=principal,
             action="audit_history_view_denied",
@@ -315,7 +304,7 @@ def audit_history(
             target_id="content-free-events",
             result="forbidden",
         )
-        raise _error(
+        raise api_error(
             request,
             status.HTTP_403_FORBIDDEN,
             "Only demo administrators and operations can view audit history.",
