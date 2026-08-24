@@ -23,6 +23,7 @@ environment configuration, container images, logs, and the source repository.
 | Playbook publication changes prior analysis | Playbook structured payload is immutable; only lifecycle timestamps/status can change; analyses retain original provenance | Approved authoring and change-control process |
 | Broadvoice contract is guessed | No route, fields, header, signature, URL, fixture, or code | Account-specific feasibility evidence |
 | Overbroad network exposure | Every published local port binds to loopback | TLS, firewall, private networking, and approved ingress in staging |
+| Host-header or browser embedding abuse | API allowlists trusted hosts; API and local web set no-store, noindex, nosniff, deny framing, strict referrer/permissions, resource isolation, and CSP headers; API also sets opener isolation | Approved HTTPS proxy must preserve/strengthen headers and add web opener isolation/HSTS only after TLS is enforced |
 | Denial of service | Local synthetic-only routes, bounded fixture corpus, no ingestion | Rate limits and resource limits before ingestion |
 | CLI argument injection or shell expansion | Direct argument array, `shell=False`, fixed option surface, absolute allowlisted executable | Reassess before any broader command surface |
 | Ambient environment or credential leakage | Rebuilt child environment, named-variable allowlist, no value logging, no command logging | Managed ephemeral credential delivery before any separately authorized live run |
@@ -52,6 +53,8 @@ environment configuration, container images, logs, and the source repository.
   and invalid language/direction/time leave no receipt or temporary object.
 - Object-store, database, unexpected-processing, cancellation-race, and deletion failures return
   content-free named outcomes; the focused suite confirms no test orphan remains.
+- An untrusted HTTP `Host` is rejected before route execution, and API/web responses carry the
+  documented defensive header set.
 
 ## Stop conditions
 

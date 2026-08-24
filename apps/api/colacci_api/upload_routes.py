@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Annotated
+from typing import Annotated, NoReturn
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
@@ -27,7 +27,7 @@ from packages.manual_upload.request_boundary import (
     parse_header_metadata,
     require_bounded_content_length,
 )
-from packages.manual_upload.service import ManualUploadService
+from packages.manual_upload.service import ManualUploadService, ManualUploadUnexpectedError
 from packages.review.transcript_import import TRANSCRIPT_ONLY_MAX_BYTES
 
 router = APIRouter(prefix="/api/uploads", tags=["synthetic-manual-upload"])
@@ -94,7 +94,12 @@ def _authorize(
 
 
 def _service(request: Request) -> ManualUploadService:
-    return ManualUploadService(request.app.state.settings, request.app.state.engine)
+    return ManualUploadService(
+        request.app.state.settings,
+        request.app.state.engine,
+        operational_logger=request.app.state.operational_logger,
+        correlation_id=str(getattr(request.state, "correlation_id", "correlation-unavailable")),
+    )
 
 
 def _repository(request: Request) -> ManualUploadRepository:
@@ -123,7 +128,29 @@ def _safe_upload_error(request: Request, exc: Exception) -> HTTPException:
         return _error(request, status.HTTP_409_CONFLICT, str(exc))
     if isinstance(exc, LookupError):
         return _error(request, status.HTTP_404_NOT_FOUND, "upload_receipt_not_found")
+    if isinstance(exc, ManualUploadUnexpectedError):
+        return _error(request, status.HTTP_500_INTERNAL_SERVER_ERROR, "manual_upload_failed")
     return _error(request, status.HTTP_500_INTERNAL_SERVER_ERROR, "manual_upload_failed")
+
+
+def _raise_safe_upload_error(request: Request, exc: Exception) -> NoReturn:
+    if not isinstance(
+        exc,
+        UploadRequestError
+        | SubmissionConflictError
+        | UploadStateConflictError
+        | LookupError
+        | ManualUploadUnexpectedError,
+    ):
+        request.app.state.operational_logger.event(
+            "manual_upload_request_failed",
+            level="error",
+            component="manual_upload",
+            correlation_id=str(getattr(request.state, "correlation_id", "correlation-unavailable")),
+            error_code="unexpected_manual_upload_failure",
+            status="failed",
+        )
+    raise _safe_upload_error(request, exc) from exc
 
 
 @router.get("/capabilities", response_model=UploadCapabilities)
@@ -176,7 +203,7 @@ async def submit_audio(
         )
         result = _service(request).submit_audio(parsed, principal=principal)
     except Exception as exc:
-        raise _safe_upload_error(request, exc) from None
+        _raise_safe_upload_error(request, exc)
     if result.duplicate:
         response.status_code = status.HTTP_200_OK
     return result.stored.receipt.model_copy(update={"duplicate": result.duplicate})
@@ -206,7 +233,7 @@ async def submit_transcript(
             principal=principal,
         )
     except Exception as exc:
-        raise _safe_upload_error(request, exc) from None
+        _raise_safe_upload_error(request, exc)
     if result.duplicate:
         response.status_code = status.HTTP_200_OK
     return result.stored.receipt.model_copy(update={"duplicate": result.duplicate})
@@ -218,7 +245,7 @@ def process(upload_id: str, request: Request, principal: Principal) -> UploadRec
     try:
         receipt = _service(request).process_audio(upload_id).receipt
     except Exception as exc:
-        raise _safe_upload_error(request, exc) from None
+        _raise_safe_upload_error(request, exc)
     _audit_deletion_failure(request, principal, receipt)
     return receipt
 
@@ -237,7 +264,7 @@ def retry(upload_id: str, request: Request, principal: Principal) -> UploadRecei
     try:
         receipt = _service(request).process_audio(upload_id).receipt
     except Exception as exc:
-        raise _safe_upload_error(request, exc) from None
+        _raise_safe_upload_error(request, exc)
     _audit_deletion_failure(request, principal, receipt)
     return receipt
 
@@ -248,6 +275,6 @@ def cancel(upload_id: str, request: Request, principal: Principal) -> UploadRece
     try:
         receipt = _service(request).cancel(upload_id).receipt
     except Exception as exc:
-        raise _safe_upload_error(request, exc) from None
+        _raise_safe_upload_error(request, exc)
     _audit_deletion_failure(request, principal, receipt)
     return receipt

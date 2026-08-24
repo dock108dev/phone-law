@@ -17,6 +17,15 @@ def test_liveness_is_content_free_and_synthetic() -> None:
 
     assert response.status_code == 200
     assert response.headers["X-Correlation-ID"] == "slice0-test-001"
+    assert response.headers["Cache-Control"] == "no-store"
+    assert response.headers["Content-Security-Policy"].startswith("default-src 'none'")
+    assert response.headers["Cross-Origin-Opener-Policy"] == "same-origin"
+    assert response.headers["Cross-Origin-Resource-Policy"] == "same-origin"
+    assert response.headers["Permissions-Policy"] == "camera=(), microphone=(), geolocation=()"
+    assert response.headers["Referrer-Policy"] == "no-referrer"
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert response.headers["X-Frame-Options"] == "DENY"
+    assert response.headers["X-Robots-Tag"] == "noindex, nofollow, noarchive"
     assert response.json() == {
         "status": "up",
         "service": "api",
@@ -87,3 +96,14 @@ def test_demo_identity_is_allowlisted_and_synthetic_profiles_only() -> None:
     with pytest.raises(HTTPException) as deployment:
         demo_principal(request, "demo-admin")
     assert deployment.value.status_code == 404
+
+
+def test_untrusted_host_is_rejected_before_route_execution() -> None:
+    app = create_app(Settings(_env_file=None))
+    with TestClient(app) as client:
+        response = client.get("/health/live", headers={"Host": "attacker.invalid"})
+
+    assert response.status_code == 400
+    assert response.text == "Invalid host header"
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert response.headers["X-Frame-Options"] == "DENY"

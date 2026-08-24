@@ -451,3 +451,27 @@ def test_disposable_backup_restore_and_noop_notification_are_local_and_clean() -
             LocalOperationsRepository(engine, unsafe)
     finally:
         engine.dispose()
+
+
+def test_reconciliation_unavailable_and_malformed_payloads_do_not_look_exact() -> None:
+    unavailable = LocalOperationsRepository._safe_reconciliation(None)
+    assert unavailable.available is False
+    assert unavailable.exact is False
+    assert unavailable.expected == 0
+
+    with pytest.raises(ValueError, match="reconciliation_payload_invalid"):
+        LocalOperationsRepository._safe_reconciliation({"completeness": {}})
+    with pytest.raises(ValueError, match="reconciliation_payload_invalid"):
+        LocalOperationsRepository._safe_reconciliation(
+            {
+                "completeness": {
+                    "reconciliation": {
+                        "expected": "11",
+                        "received": 11,
+                        "analyzed": 10,
+                        "failed": 1,
+                        "missing": 0,
+                    }
+                }
+            }
+        )

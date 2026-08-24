@@ -107,6 +107,10 @@ Policy destruction is the single exception documented in [ADR 0010](decisions/00
 - `restart_recovered`: the prior process stopped after claim. The job was safely returned to the retry queue without incrementing its attempt count.
 - `DELETION_FAILED`: terminal. Inspect the safe diagnostic and audit transitions. Do not edit the job or accepted content directly.
 - Reconciliation mismatch: compare expected, received, analyzed, failed, and missing safe counts. Do not inspect or copy call content into operational logs.
+- Reconciliation unavailable: no current report exists. This is explicitly non-exact; seed or
+  generate the expected synthetic report before relying on the counts. A malformed persisted
+  reconciliation payload fails the overview request instead of being converted to zero-count
+  success.
 - Non-local notification rejection: restore `NOTIFICATION_ADAPTER=noop`; do not configure an address, token, webhook, or external service.
 
 ## Local incident simulation

@@ -918,20 +918,31 @@ class LocalOperationsRepository:
     def _safe_reconciliation(payload: object) -> ReconciliationMetrics:
         if not isinstance(payload, dict):
             return ReconciliationMetrics(
-                expected=0, received=0, analyzed=0, failed=0, missing=0, exact=True
+                available=False,
+                expected=0,
+                received=0,
+                analyzed=0,
+                failed=0,
+                missing=0,
+                exact=False,
             )
         completeness = payload.get("completeness")
         source = completeness.get("reconciliation") if isinstance(completeness, dict) else None
         if not isinstance(source, dict):
-            return ReconciliationMetrics(
-                expected=0, received=0, analyzed=0, failed=0, missing=0, exact=True
-            )
-        expected = int(source.get("expected", 0))
-        received = int(source.get("received", 0))
-        analyzed = int(source.get("analyzed", 0))
-        failed = int(source.get("failed", 0))
-        missing = int(source.get("missing", 0))
+            raise ValueError("reconciliation_payload_invalid")
+        values: dict[str, int] = {}
+        for key in ("expected", "received", "analyzed", "failed", "missing"):
+            value = source.get(key)
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise ValueError("reconciliation_payload_invalid")
+            values[key] = value
+        expected = values["expected"]
+        received = values["received"]
+        analyzed = values["analyzed"]
+        failed = values["failed"]
+        missing = values["missing"]
         return ReconciliationMetrics(
+            available=True,
             expected=expected,
             received=received,
             analyzed=analyzed,

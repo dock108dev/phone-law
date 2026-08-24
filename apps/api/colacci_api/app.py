@@ -9,6 +9,7 @@ from time import monotonic
 from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from apps.api.colacci_api.operations_routes import router as operations_router
 from apps.api.colacci_api.review_routes import router as review_router
@@ -70,6 +71,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "X-Upload-Staff-Extension",
         ],
     )
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=configured.trusted_hosts)
 
     @app.middleware("http")
     async def operational_request_log(request: Request, call_next: object) -> Response:
@@ -90,8 +92,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             )
             raise
         response.headers["X-Correlation-ID"] = correlation_id
-        if request.url.path.startswith("/api/"):
-            response.headers["Cache-Control"] = "no-store"
+        response.headers["Cache-Control"] = "no-store"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'"
+        )
+        response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+        response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
         logger.event(
             "http_request_completed",
             correlation_id=correlation_id,

@@ -210,6 +210,7 @@ class RetentionRunResult(StrictModel):
 
 
 class ReconciliationMetrics(StrictModel):
+    available: bool
     expected: Annotated[int, Field(ge=0)]
     received: Annotated[int, Field(ge=0)]
     analyzed: Annotated[int, Field(ge=0)]

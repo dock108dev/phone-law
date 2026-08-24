@@ -20,7 +20,17 @@ test("local operations administrator, operations, reviewer denial, responsivenes
     }
   });
 
-  await page.goto("/operations");
+  const navigation = await page.goto("/operations");
+  expect(navigation).not.toBeNull();
+  const headers = navigation!.headers();
+  expect(headers["cache-control"]).toBe("no-store");
+  expect(headers["content-security-policy"]).toContain("frame-ancestors 'none'");
+  expect(headers["cross-origin-resource-policy"]).toBe("same-origin");
+  expect(headers["permissions-policy"]).toBe("camera=(), microphone=(), geolocation=()");
+  expect(headers["referrer-policy"]).toBe("no-referrer");
+  expect(headers["x-content-type-options"]).toBe("nosniff");
+  expect(headers["x-frame-options"]).toBe("DENY");
+  expect(headers["x-robots-tag"]).toBe("noindex, nofollow, noarchive");
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-admin");
   await expect(page.getByRole("heading", { name: "Local controls and recovery" })).toBeVisible();
   await expect(page.getByText("Local / synthetic", { exact: true }).last()).toBeVisible();

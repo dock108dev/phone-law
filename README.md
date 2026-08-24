@@ -161,4 +161,5 @@ responsive layout, accessibility, content-free logs, and zero provider requests.
 See [architecture](docs/architecture.md), [technology choices](docs/technology.md),
 [configuration rules](docs/configuration.md), [adapter boundaries](docs/adapters.md), and the
 [security documentation](docs/security/README.md). Slice 5A operators should start with the
-[local operations guide](docs/local-operations.md).
+[local operations guide](docs/local-operations.md). Engineers diagnosing failures should use the
+[error-handling and incident guide](docs/runbooks/error-handling.md).

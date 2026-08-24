@@ -86,6 +86,11 @@ Real-call authorization is represented in validation so it can fail closed, but 
 grant authority and does not make real processing available. The roadmap preflight remains a
 separate stop condition.
 
+`TRUSTED_HOSTS` is a JSON list of lowercase DNS names or literal IPv4 host values accepted by the
+API. The local Compose default is limited to `localhost`, `127.0.0.1`, and the named internal
+Compose/test services. Staging and production must replace that list with approved deployment DNS
+names; wildcards, local names, and internal demo service names fail startup validation.
+
 Configuration values are never dumped or included in an exception log. Only the content-free
 `unsafe_configuration` code is emitted when process startup is rejected.
 

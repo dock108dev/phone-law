@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from decimal import Decimal
 from enum import StrEnum
 from pathlib import Path
@@ -28,6 +29,10 @@ UNSAFE_TEXT_MARKERS = (
     "demo",
     "local",
     "test",
+)
+HOST_PATTERN = re.compile(
+    r"^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)"
+    r"(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$"
 )
 
 
@@ -103,6 +108,9 @@ class Settings(BaseSettings):
 
     debug: bool = False
     cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:15173"])
+    trusted_hosts: list[str] = Field(
+        default_factory=lambda: ["localhost", "127.0.0.1", "api", "web", "testserver"]
+    )
     firm_timezone: str = "America/New_York"
     log_level: str = "INFO"
 
@@ -150,6 +158,9 @@ class Settings(BaseSettings):
 
         if self.app_profile in {AppProfile.STAGING, AppProfile.PRODUCTION}:
             self._collect_deployment_issues(issues)
+
+        if not self.trusted_hosts or any(not _safe_host(item) for item in self.trusted_hosts):
+            issues.add("trusted_hosts")
 
         resolved_media_root = self.media_temp_root.resolve(strict=False)
         if self.synthetic_mode and not str(resolved_media_root).startswith(  # nosec B108
@@ -300,6 +311,8 @@ class Settings(BaseSettings):
             not _safe_deployment_origin(item) for item in self.cors_origins
         ):
             issues.add("cors_origins")
+        if any(_local_or_internal_host(item) for item in self.trusted_hosts):
+            issues.add("trusted_hosts")
 
         if _unsafe_database_url(self.database_url.get_secret_value()):
             issues.add("database_url")
@@ -327,6 +340,14 @@ def _safe_deployment_origin(origin: str) -> bool:
             "0.0.0.0",
         }
     )
+
+
+def _safe_host(value: str) -> bool:
+    return HOST_PATTERN.fullmatch(value) is not None
+
+
+def _local_or_internal_host(value: str) -> bool:
+    return value in {"localhost", "127.0.0.1", "0.0.0.0", "api", "web", "testserver"}
 
 
 def _safe_openai_base_url(value: str) -> bool:

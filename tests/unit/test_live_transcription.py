@@ -246,6 +246,17 @@ def test_permission_and_invalid_request_are_never_retryable(error_type: type[Exc
     }
 
 
+def test_unexpected_adapter_defect_is_not_mislabeled_as_provider_failure() -> None:
+    adapter = OpenAITranscriber(
+        client=object(),  # type: ignore[arg-type]
+        media_resolver=object(),  # type: ignore[arg-type]
+        settings=Settings(_env_file=None, app_profile=AppProfile.TEST),
+    )
+    defect = RuntimeError("unexpected adapter defect")
+    with pytest.raises(RuntimeError, match="unexpected adapter defect"):
+        adapter._classify_exception(defect, 1)
+
+
 def test_raw_preflight_gate_never_accepts_credentials_alone() -> None:
     failures = live_gate_failures({"OPENAI_API_KEY": "present", "OPENAI_PROJECT_ID": "present"})
     assert "app_profile" in failures
