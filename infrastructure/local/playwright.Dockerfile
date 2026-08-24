@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.55.1-noble
+FROM mcr.microsoft.com/playwright:v1.62.1-noble
 
 WORKDIR /workspace/apps/web
 RUN npm install --global npm@10.9.3
