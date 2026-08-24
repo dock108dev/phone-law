@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
+from uuid import uuid4
 
 from pydantic import BaseModel, ValidationError
 from sqlalchemy import Engine
@@ -30,6 +32,12 @@ class WorkerHealthServer(ThreadingHTTPServer):
 
 class HealthHandler(BaseHTTPRequestHandler):
     server: WorkerHealthServer
+    _CORRELATION_HEADER_PATTERN = re.compile(r"^[A-Za-z0-9._-]{8,64}$")
+
+    def _header_safe_correlation_id(self, candidate: str) -> str:
+        if self._CORRELATION_HEADER_PATTERN.fullmatch(candidate):
+            return candidate
+        return uuid4().hex
 
     def do_GET(self) -> None:
         route = urlsplit(self.path).path
@@ -73,15 +81,16 @@ class HealthHandler(BaseHTTPRequestHandler):
     ) -> None:
         content = payload.model_dump() if isinstance(payload, BaseModel) else payload
         encoded = json.dumps(content, separators=(",", ":")).encode("utf-8")
+        safe_correlation_id = self._header_safe_correlation_id(correlation_id)
         self.send_response(status_code.value)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(encoded)))
-        self.send_header("X-Correlation-ID", correlation_id)
+        self.send_header("X-Correlation-ID", safe_correlation_id)
         self.end_headers()
         self.wfile.write(encoded)
         self.server.operational_logger.event(
             "worker_health_request_completed",
-            correlation_id=correlation_id,
+            correlation_id=safe_correlation_id,
             method="GET",
             route=urlsplit(self.path).path,
             status=str(status_code.value),
