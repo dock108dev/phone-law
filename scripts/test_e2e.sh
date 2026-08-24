@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# The generated fixtures remain private to the invoking user. Match the Python
+# containers to that user so native Linux bind mounts preserve the boundary.
+export COLACCI_PYTHON_RUNTIME_USER="$(id -u):$(id -g)"
+
 PYTHONPATH=. python3 scripts/generate_manual_upload_assets.py
 evidence_directory="${SLICE4_EVIDENCE_DIR:-${SLICE2_EVIDENCE_DIR:-/tmp/colacci-law-slice2-evidence}}"
 mkdir -p "$evidence_directory"

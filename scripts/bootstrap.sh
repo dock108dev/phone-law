@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Compose bind mounts create a missing host directory as root. Prepare the
+# synthetic manual-upload runtime as the invoking user so later host-side test
+# asset generation can replace its private files.
+install -d -m 0700 /tmp/colacci-law-slice4-local
+
 docker compose build
 docker compose up -d --wait db
 docker compose exec -T db psql \

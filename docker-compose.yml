@@ -4,6 +4,7 @@ x-python-service: &python-service
   build:
     context: .
     dockerfile: infrastructure/local/python.Dockerfile
+  user: ${COLACCI_PYTHON_RUNTIME_USER:-app}
   environment: &python-environment
     APP_PROFILE: ${APP_PROFILE:-demo}
     APP_VERSION: 0.1.0

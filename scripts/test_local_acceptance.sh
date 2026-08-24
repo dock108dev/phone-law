@@ -12,6 +12,7 @@ export SLICE4_EVIDENCE_DIR="$evidence_root"
 export SLICE4_RUNTIME_ROOT="$runtime_root"
 export VITE_API_BASE_URL="http://api:8000"
 export CORS_ORIGINS='["http://web:5173"]'
+export COLACCI_PYTHON_RUNTIME_USER="$(id -u):$(id -g)"
 
 umask 077
 cd "$repository_root"

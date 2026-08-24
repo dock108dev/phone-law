@@ -7,6 +7,7 @@ export SLICE4_EVIDENCE_DIR="/tmp/colacci-law-slice4-local/evidence"
 export PLAYWRIGHT_GREP="manual upload"
 export COLLECT_SLICE4="1"
 export MANUAL_UPLOAD_OFFLINE="1"
+export COLACCI_PYTHON_RUNTIME_USER="$(id -u):$(id -g)"
 
 cd "$repository_root"
 

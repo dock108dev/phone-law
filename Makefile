@@ -106,6 +106,7 @@ test:
 	$(PY_RUN) pytest -m "not integration" --cov --cov-report=term-missing
 	$(WEB_RUN) npm test -- --run
 
+test-integration: export COLACCI_PYTHON_RUNTIME_USER := $(shell id -u):$(shell id -g)
 test-integration:
 	PYTHONPATH=. python3 scripts/generate_manual_upload_assets.py
 	$(COMPOSE) up -d --wait db
