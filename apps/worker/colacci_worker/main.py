@@ -35,8 +35,9 @@ class HealthHandler(BaseHTTPRequestHandler):
     _CORRELATION_HEADER_PATTERN = re.compile(r"^[A-Za-z0-9._-]{8,64}$")
 
     def _header_safe_correlation_id(self, candidate: str) -> str:
-        if self._CORRELATION_HEADER_PATTERN.fullmatch(candidate):
-            return candidate
+        sanitized = candidate.replace("\r", "").replace("\n", "").replace(":", "")
+        if self._CORRELATION_HEADER_PATTERN.fullmatch(sanitized):
+            return sanitized
         return uuid4().hex
 
     def do_GET(self) -> None:
