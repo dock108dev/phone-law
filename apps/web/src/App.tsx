@@ -1,7 +1,7 @@
 import {
   Fragment,
-  type FormEvent,
   type ReactNode,
+  type SubmitEvent,
   useEffect,
   useRef,
   useState,
@@ -387,7 +387,7 @@ function FindingFeedback({
     }, 0);
     return () => { window.clearTimeout(focusMessage); };
   }, [message]);
-  async function submit(event: FormEvent): Promise<void> {
+  async function submit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     setMessage("");
     try {
@@ -442,7 +442,7 @@ function MissingFeedback({ detail, principal, reload }: { detail: CallDetail; pr
     }, 0);
     return () => { window.clearTimeout(focusMessage); };
   }, [message]);
-  async function submit(event: FormEvent): Promise<void> {
+  async function submit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     try {
       await apiRequest(`/api/analyses/${detail.analysis_id}/reviews`, principal, {
@@ -627,7 +627,7 @@ function PlaybookPage({ principal }: { principal: DemoPrincipal }): ReactNode {
     try { await apiRequest(`/api/playbooks/${version}/publish`, principal, { method: "POST" }); setMessage("Synthetic playbook published. Prior analyses remain tied to their original provenance."); await load(); }
     catch (reason) { setMessage(reason instanceof ApiRequestError ? reason.message : "Publication could not be completed."); }
   }
-  async function createDraft(event: FormEvent): Promise<void> {
+  async function createDraft(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     setMessage("");
     try {
@@ -739,7 +739,7 @@ function UploadPage({ principal }: { principal: DemoPrincipal }): ReactNode {
     return () => { window.clearTimeout(timer); };
   }, [receipt?.upload_id, receipt?.state, principal]);
 
-  async function submit(event: FormEvent): Promise<void> {
+  async function submit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     if (!file || !attested) return;
     setSubmitting(true);
@@ -978,7 +978,7 @@ function OperationsPage({ principal }: { principal: DemoPrincipal }): ReactNode 
     }
   }
 
-  async function publish(event: FormEvent): Promise<void> {
+  async function publish(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     if (!draft) return;
     await perform(
