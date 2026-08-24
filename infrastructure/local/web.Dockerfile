@@ -1,4 +1,4 @@
-FROM node:22.18.0-alpine3.22
+FROM node:26.3.0-alpine3.22
 
 WORKDIR /workspace/apps/web
 
