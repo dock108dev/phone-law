@@ -427,7 +427,6 @@
       "$ref": "#/$defs/Provenance"
     },
     "provider_response_version": {
-      "default": "legacy-review-contract-v1",
       "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
       "title": "Provider Response Version",
       "type": "string"
@@ -458,6 +457,7 @@
     "call_id",
     "language",
     "diarization_status",
+    "provider_response_version",
     "segments",
     "provenance"
   ],

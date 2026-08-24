@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Request, status
 
 from apps.api.colacci_api.demo_auth import demo_principal
+from apps.api.colacci_api.errors import api_error
+from packages.authorization import DemoPermission, has_permission
 from packages.contracts.operations import (
     BackupRestoreDrillResult,
     ConfigurationHistory,
@@ -17,25 +19,12 @@ from packages.contracts.operations import (
     OperationsOverview,
     RetentionRunResult,
 )
-from packages.contracts.report import DemoPrincipal, DemoRole
+from packages.contracts.report import DemoPrincipal
 from packages.database.local_operations import LocalOperationsRepository
 from packages.database.review_experience import ReviewExperienceRepository
 
 router = APIRouter(prefix="/api/operations", tags=["local-operations"])
 Principal = Annotated[DemoPrincipal, Depends(demo_principal)]
-OPERATOR_ROLES = {DemoRole.ADMINISTRATOR, DemoRole.OPERATIONS}
-
-
-def _error(request: Request, code: int, message: str) -> HTTPException:
-    return HTTPException(
-        status_code=code,
-        detail={
-            "error": message,
-            "correlation_id": str(
-                getattr(request.state, "correlation_id", "correlation-unavailable")
-            ),
-        },
-    )
 
 
 def _repository(request: Request) -> LocalOperationsRepository:
@@ -52,11 +41,12 @@ def _authorize(
     action: str,
     administrator_only: bool = False,
 ) -> None:
-    allowed = (
-        principal.role is DemoRole.ADMINISTRATOR
+    permission = (
+        DemoPermission.PUBLISH_CONFIGURATION
         if administrator_only
-        else principal.role in OPERATOR_ROLES
+        else DemoPermission.USE_OPERATIONS
     )
+    allowed = has_permission(principal.role, permission)
     ReviewExperienceRepository(request.app.state.engine).record_audit(
         principal=principal,
         action=f"{action}_{'authorized' if allowed else 'denied'}",
@@ -65,7 +55,7 @@ def _authorize(
         result="allowed" if allowed else "forbidden",
     )
     if not allowed:
-        raise _error(request, status.HTTP_403_FORBIDDEN, "local_operations_access_denied")
+        raise api_error(request, status.HTTP_403_FORBIDDEN, "local_operations_access_denied")
 
 
 @router.get("/overview", response_model=OperationsOverview)
@@ -99,7 +89,7 @@ def publish_configuration(
     try:
         return _repository(request).publish_configuration(payload, principal=principal)
     except ValueError as exc:
-        raise _error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
+        raise api_error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
 
 
 @router.post("/retention/run", response_model=RetentionRunResult)
@@ -120,9 +110,9 @@ def retry_deletion(job_id: str, request: Request, principal: Principal) -> Delet
     try:
         return _repository(request).retry_deletion(job_id, principal=principal)
     except LookupError as exc:
-        raise _error(request, status.HTTP_404_NOT_FOUND, "deletion_job_not_found") from exc
+        raise api_error(request, status.HTTP_404_NOT_FOUND, "deletion_job_not_found") from exc
     except ValueError as exc:
-        raise _error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
+        raise api_error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
 
 
 @router.post("/backup-restore-drill", response_model=BackupRestoreDrillResult)

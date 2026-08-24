@@ -1,6 +1,6 @@
 # Data classification
 
-| Class | Examples | Slice 2 handling |
+| Class | Examples | Current handling |
 |---|---|---|
 | Restricted client content | Real audio, transcript text, caller/staff identity, phone number, matter facts | Prohibited; local routes accept only allowlisted generated audio or the strict invented artifact |
 | Restricted credentials | Authorization headers, API keys, database/provider credentials, signed URLs | Never logged or committed; local demo credential is explicitly non-deployable |
@@ -14,7 +14,7 @@ are excluded from logs.
 
 The `fixtures/` folder contains only explicit fictional scenarios and a synthetic playbook. No
 recording, real client identity, phone number, credential, or live-service payload is included.
-Generated non-human upload inputs exist only beneath the disposable Slice 4 `/tmp` root and are
+Generated non-human upload inputs exist only beneath the disposable manual-upload `/tmp` root and are
 deleted after tests. Receipt metadata is internal operational data: opaque IDs, a truncated hash
 reference, bounded language/direction/time, synthetic extension, authenticated demo principal,
 state, attempt, safe versions, and lifecycle timestamps. Original filenames, paths, MIME headers,

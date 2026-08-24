@@ -3,11 +3,11 @@
 ## Assets and trust boundaries
 
 Restricted assets include synthetic transcripts, caller/staff metadata, findings, reviewer
-feedback, and audit history. Slice 2 stores only deterministic fictional fixtures and synthetic
+feedback, and audit history. The current application stores only deterministic fictional fixtures and synthetic
 human-review records. Current boundaries are browser-to-web/API, API/worker-to-PostgreSQL,
 environment configuration, container images, logs, and the source repository.
 
-## Threats and Slice 2 controls
+## Threats and current controls
 
 | Threat | Control now | Remaining requirement |
 |---|---|---|
@@ -33,7 +33,7 @@ environment configuration, container images, logs, and the source repository.
 | Upload bypasses authenticated role | Principal is resolved before buffering/allocation; request role fields are rejected; reviewer denials are audited | Firm SSO and centralized policy before staging |
 | Filename or multipart input escapes local storage | Single file, strict safe name, no destination field, no path import, opaque object ID, fixed `/tmp` root, no symlinks | Private cloud object boundary before real use |
 | Duplicate or retry creates competing records | Unique submission/content/source IDs; row locks; retry increments attempt on the same call | Distributed idempotency design before external ingestion |
-| Temporary media survives its lifecycle | Cleanup on validation failure, terminal result, success, cancellation, and unexpected exception; deletion failure is visible and audited | Approved retention/deletion policy belongs to Slice 5 |
+| Temporary media survives its lifecycle | Cleanup on validation failure, terminal result, success, cancellation, and unexpected exception; deletion failure is visible and audited | Approved production retention/deletion policy remains external work |
 
 ## Abuse cases checked
 

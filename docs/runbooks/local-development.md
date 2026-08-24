@@ -1,7 +1,20 @@
 # Local development and troubleshooting
 
-Run `make bootstrap`, `make dev`, then `make smoke`. Stop with `make stop`; this preserves the
-local synthetic database. Restart with `make dev`.
+Docker, Compose, `make`, a POSIX shell, and host `python3` are required. Host Python runs only
+deterministic fixture/evidence helpers; application code and dependencies run in the Python 3.13.5
+container. Host Node is not required.
+
+Run the first-day workflow from the repository root:
+
+```bash
+make bootstrap
+make dev
+make smoke
+make seed-demo-month
+```
+
+Open `http://localhost:15173`. Stop with `make stop`; this preserves the local synthetic database.
+Restart with `make dev`.
 
 If a port is occupied, stop the conflicting local process or update only the host-side loopback
 mapping. Do not publish services on all interfaces. If API or worker readiness fails, confirm
@@ -17,7 +30,28 @@ resolved lockfile.
 Tests, smoke checks, and migrations use no live AI, telephony, email, cloud, or identity service.
 No external credential is accepted.
 
-## Slice 3C CLI and transcript-only workflow
+## Routine validation
+
+The complete command, isolation, and evidence matrix is in [Testing](../testing.md).
+
+Run these after ordinary source or documentation changes:
+
+```bash
+make lint
+make typecheck
+make test
+make test-integration
+```
+
+Use `make smoke` after route, runtime, configuration, migration, or container changes. Run the
+affected browser gate for review, upload, or operations changes: `make test-e2e`,
+`make test-manual-upload`, or `make test-local-operations`. The focused scripts create disposable
+Compose projects, inspect sanitized logs, and clean up their isolated resources.
+
+`make audit` is a separately labeled online vulnerability-advisory check. It is not part of the
+deterministic offline suite and does not replace exact dependency pins.
+
+## Local CLI and transcript-only workflow
 
 Run the capability check first:
 
@@ -43,10 +77,10 @@ idempotency, content-free evidence, and cleanup. Evidence is generated only unde
 `/tmp/colacci-law-slice3c/evidence/` and is not committed.
 
 Do not place human or realistic audio, a credential, a project identifier, transcript text, raw
-CLI output, or a command string in evidence. The Slice 3B command `make test-transcription-live`
-remains separately owner-gated and is not a fallback or completion requirement for Slice 3C.
+CLI output, or a command string in evidence. The `make test-transcription-live` command remains
+separately owner-gated and is not a fallback or routine completion requirement.
 
-## Slice 4 local synthetic manual upload
+## Local synthetic manual upload
 
 Run the complete isolated proof before using the page:
 
@@ -71,10 +105,10 @@ reviewer for the review step.
 
 If a receipt reaches `deletion_failed`, stop. Do not retry by manually manipulating the object or
 database. Preserve only the content-free receipt/evidence, run the focused test to diagnose the
-local boundary. Use the Slice 5A Operations page for policy-driven synthetic retention only; it is
+local boundary. Use the Operations page for policy-driven synthetic retention only; it is
 not an approved production retention policy.
 
-## Slice 5A local operations
+## Local operations
 
 Run `make test-local-operations` before using the Operations page. The focused proof is
 network-isolated, uses an injected clock, covers every demo role and adversarial session case,

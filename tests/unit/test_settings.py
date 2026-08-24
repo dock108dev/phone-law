@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
@@ -42,6 +44,17 @@ def test_demo_is_the_safe_default() -> None:
     assert settings.synthetic_mode is True
     assert settings.allow_real_call_data is False
     assert settings.call_source_adapter == "fixture"
+
+
+def test_environment_example_covers_every_operator_setting() -> None:
+    env_keys = {
+        line.split("=", 1)[0]
+        for line in Path(".env.example").read_text(encoding="utf-8").splitlines()
+        if line and not line.startswith("#")
+    }
+    operator_settings = {name.upper() for name in Settings.model_fields} - {"SERVICE_NAME"}
+
+    assert env_keys == operator_settings
 
 
 def test_demo_rejects_real_call_data() -> None:

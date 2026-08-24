@@ -1,6 +1,6 @@
 # Technology choices and pinned versions
 
-## Slice 3B live verification
+## Gated live verification
 
 The existing pinned OpenAI Python SDK and `httpx2` client support the bounded file
 transcription probe. The SDK client is created only after profile, authorization,
@@ -19,14 +19,14 @@ only as a disposable live-test evidence store, so no schema migration is added.
 | Psycopg | 3.2.9 | PostgreSQL driver with a pinned binary wheel |
 | Alembic | 1.16.5 | Reversible, inspectable database migrations |
 | Uvicorn | 0.35.0 | Minimal API process with access logging disabled |
-| OpenAI Python SDK | 3.2.0 | Exact candidate file-transcription SDK behind an injected, network-blocked transport; no live Slice 3A factory |
+| OpenAI Python SDK | 3.2.0 | Exact candidate file-transcription SDK behind an injected, network-blocked transport; no normal live factory |
 | ffmpeg / ffprobe | 7:5.1.9-0+deb12u1 | Exact Debian media inspection and normalization package; fixed arguments preserve channel count |
 | Node.js | 22.18.0 | LTS-generation runtime, pinned to a patch release |
 | npm | 10.9.3 | Lockfile v3 package manager, pinned in image and manifest |
 | React / React DOM | 19.1.1 | Typed dashboard shell |
 | TypeScript | 5.9.2 | Strict static checks |
 | Vite | 7.3.6 | Local development server and deterministic production build; selected above known file-read advisories affecting earlier 7.x patches |
-| Playwright | 1.55.1 | Pinned Chromium end-to-end flow and responsive screenshots in a digest-pinned image |
+| Playwright | 1.55.1 | Pinned Chromium end-to-end flow and responsive screenshots in a version-pinned image |
 | axe-core Playwright | 4.10.2 | Automated WCAG 2 A/AA and 2.1 A/AA checks on report and call views |
 | PostgreSQL | 17.6-alpine3.22 | Supported database major with an exact patch/OS image tag |
 
@@ -48,7 +48,7 @@ their private container network; Compose is the enforcement point and publishes 
 same literal is a value it rejects rather than a listener.
 
 The 80% unit-coverage gate applies to application and shared decision logic. Thin process entry
-points, migration runners, and the Slice 3A media/SDK boundaries are excluded from that unit-only
+points, migration runners, and the media/SDK boundaries are excluded from that unit-only
 metric and are instead exercised by the PostgreSQL integration suite, `make test-audio`,
-`make test-transcription-contract`, and live local smoke checks. The two Slice 3A harnesses are
+`make test-transcription-contract`, and live local smoke checks. The two media harnesses are
 offline and produce machine-readable evidence outside the repository.

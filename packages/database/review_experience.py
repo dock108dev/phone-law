@@ -11,7 +11,6 @@ from uuid import uuid4
 from zoneinfo import ZoneInfo
 
 import sqlalchemy as sa
-from pydantic import BaseModel
 from sqlalchemy import Engine
 
 from packages.contracts.report import (
@@ -47,6 +46,7 @@ from packages.contracts.review import (
     StructuredAnalysis,
     Transcript,
 )
+from packages.database.model_hydration import validated_model
 from packages.database.review_schema import (
     analyses,
     audit_events,
@@ -66,10 +66,6 @@ from packages.review.reporting import ReportCallInput, aggregate_daily_report
 
 def _id() -> str:
     return uuid4().hex
-
-
-def _validated[ModelT: BaseModel](model: type[ModelT], payload: object) -> ModelT:
-    return model.model_validate_json(json.dumps(payload, ensure_ascii=False))
 
 
 def _attempt_summary(row: sa.RowMapping) -> ProcessingAttemptSummary:
@@ -137,7 +133,7 @@ class ReviewExperienceRepository:
                 state = ProcessingState(str(row["state"]))
                 analysis_payload = row["analysis_payload"]
                 analysis = (
-                    _validated(StructuredAnalysis, analysis_payload)
+                    validated_model(StructuredAnalysis, analysis_payload)
                     if analysis_payload is not None
                     else None
                 )
@@ -227,7 +223,7 @@ class ReviewExperienceRepository:
                 )
             ).scalar_one_or_none()
             if existing is not None:
-                return _validated(DailyReport, existing)
+                return validated_model(DailyReport, existing)
             version = (
                 int(
                     connection.execute(
@@ -332,7 +328,7 @@ class ReviewExperienceRepository:
                 .order_by(daily_reports.c.version.desc())
                 .limit(1)
             ).scalar_one_or_none()
-        return _validated(DailyReport, payload) if payload else None
+        return validated_model(DailyReport, payload) if payload else None
 
     def month_history(self, year: int, month: int) -> MonthHistory:
         _, final_day = monthrange(year, month)
@@ -475,9 +471,9 @@ class ReviewExperienceRepository:
                 .mappings()
                 .all()
             )
-        normalized = _validated(NormalizedCall, row["normalized_payload"])
-        transcript = _validated(Transcript, row["transcript_payload"])
-        analysis = _validated(StructuredAnalysis, row["analysis_payload"])
+        normalized = validated_model(NormalizedCall, row["normalized_payload"])
+        transcript = validated_model(Transcript, row["transcript_payload"])
+        analysis = validated_model(StructuredAnalysis, row["analysis_payload"])
         finding_map: dict[str, Finding] = {}
         for finding in (
             *analysis.attorney_attention_issues,
@@ -547,7 +543,7 @@ class ReviewExperienceRepository:
             ).scalar_one_or_none()
             if payload is None:
                 raise LookupError("analysis_not_found")
-            analysis = _validated(StructuredAnalysis, payload)
+            analysis = validated_model(StructuredAnalysis, payload)
             findings = {
                 item.finding_id
                 for item in (
@@ -735,7 +731,7 @@ class ReviewExperienceRepository:
         return tuple(self._playbook_summary(row) for row in rows)
 
     def _playbook_summary(self, row: sa.RowMapping | dict[str, object]) -> PlaybookSummary:
-        playbook = _validated(PlaybookVersion, row["structured_payload"])
+        playbook = validated_model(PlaybookVersion, row["structured_payload"])
         key_rules = (
             *playbook.priority_rules,
             *playbook.evidence_requirements,
@@ -818,7 +814,7 @@ class ReviewExperienceRepository:
                 )
             ).scalar_one_or_none():
                 raise ValueError("playbook_version_exists")
-            cloned = _validated(PlaybookVersion, source["structured_payload"]).model_copy(
+            cloned = validated_model(PlaybookVersion, source["structured_payload"]).model_copy(
                 update={
                     "playbook_id": hashlib.sha256(
                         f"local-acceptance|{request.version}".encode()

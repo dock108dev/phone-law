@@ -1,4 +1,4 @@
-"""Offline-only Slice 3A media processing boundary."""
+"""Offline-only media processing boundary."""
 
 from packages.media.processing import MediaBoundaryError, MediaInspector, MediaNormalizer
 from packages.media.store import LocalSyntheticObjectStore

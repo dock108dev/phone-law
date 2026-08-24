@@ -1,3 +1,4 @@
-# Empty synthetic-audio boundary
+# Generated-audio boundary
 
-No audio, recording, or generated media is stored in Slice 0.
+No audio or recording is stored in the repository. Test commands generate deterministic non-human
+media only beneath guarded `/tmp/colacci-law-*` roots and remove it after the focused run.

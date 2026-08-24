@@ -1,6 +1,35 @@
 # Environment profiles and configuration rules
 
-## Slice 3C local-development profile
+## Configuration sources and variable groups
+
+`packages/config/settings.py` is the typed authority for API, worker, migration, and command-line
+settings. `.env.example` lists every operator-settable field with non-deployable local defaults;
+Docker Compose fixes the normal demo values and injects `SERVICE_NAME` separately for API and
+worker. Pydantic reads names case-insensitively and ignores unknown environment keys, but engineers
+should not rely on ignored keys as configuration.
+
+| Group | Variables |
+|---|---|
+| Profile and version | `APP_PROFILE`, `APP_VERSION` |
+| Real-data guard | `ALLOW_REAL_CALL_DATA`, `REAL_CALL_PROCESSING_AUTHORIZED`, `REAL_DATA_APPROVAL_REFERENCE` |
+| Authentication and database | `AUTH_MODE`, `APP_SECRET`, `DATABASE_URL` |
+| Adapter selection | `CALL_SOURCE_ADAPTER`, `TRANSCRIBER_ADAPTER`, `ANALYZER_ADAPTER`, `NOTIFICATION_ADAPTER` |
+| Storage and media | `OBJECT_STORAGE_BACKEND`, `OBJECT_STORAGE_BUCKET`, `MEDIA_TEMP_ROOT`, `MANUAL_UPLOAD_ROOT`, `MANUAL_UPLOAD_MANIFEST_PATH`, `MEDIA_MAX_BYTES`, `MEDIA_MAX_DURATION_SECONDS` |
+| Transcription gate | `LIVE_TRANSCRIPTION_ENABLED`, `LIVE_TRANSCRIPTION_AUTHORIZED`, `TRANSCRIPTION_APPROVAL_REFERENCE`, `TRANSCRIPTION_MODEL_ID`, `TRANSCRIPTION_FALLBACK_MODEL_ID`, `TRANSCRIPTION_TIMEOUT_SECONDS`, `TRANSCRIPTION_MAX_REQUESTS`, `TRANSCRIPTION_MAX_TOTAL_AUDIO_SECONDS`, `TRANSCRIPTION_MAX_TOTAL_BYTES`, `TRANSCRIPTION_TEST_BUDGET_USD`, `TRANSCRIPTION_LIVE_EXECUTION_CONFIRMED`, `TRANSCRIPTION_LIVE_EXECUTION_AUTHORIZATION_ID` |
+| Provider preconditions | `OPENAI_API_KEY`, `OPENAI_PROJECT_ID`, `OPENAI_BASE_URL`, `FIRM_OWNED_OPENAI_PROJECT_NAMED`, `OPENAI_PROJECT_OWNERSHIP_APPROVED`, `OPENAI_PROJECT_DATA_CONTROLS_APPROVED`, `OPENAI_PROVIDER_TERMS_APPROVED`, `GENERATED_AUDIO_TEST_APPROVED` |
+| Retention | `AUDIO_RETENTION_DAYS`, `TRANSCRIPT_RETENTION_DAYS`, `ANALYSIS_RETENTION_DAYS`, `AUDIT_RETENTION_DAYS`, `RETENTION_POLICY_APPROVED` |
+| HTTP and operations | `DEBUG`, `CORS_ORIGINS`, `TRUSTED_HOSTS`, `FIRM_TIMEZONE`, `LOG_LEVEL` |
+
+The browser has a separate build-time boundary: `VITE_APP_PROFILE` accepts only `test` or `demo`,
+and `VITE_ALLOW_REAL_CALL_DATA` must be `false`. `VITE_API_BASE_URL` optionally selects the API
+origin; otherwise Vite proxies `/api` through `VITE_API_PROXY_TARGET`, which defaults to
+`http://api:8000`. None of the `VITE_*` variables may contain credentials or secrets.
+
+Blank provider fields in `.env.example` document the complete shape only. Credentials and approval
+identifiers must come from a separately approved ephemeral environment and must never be saved in
+`.env`, Compose, shell history, logs, screenshots, or evidence.
+
+## Local-development profile
 
 `local_dev` remains synthetic-only and rejects both live-transcription flags, an approval
 reference, real data, non-local storage, real notifications, and non-fake authentication. Its
@@ -15,7 +44,7 @@ required first; an unsupported result keeps the process on the fixture/transcrip
 The normal Compose services remain `demo`, and their application factories do not construct a
 CLI client.
 
-## Slice 4 local demo boundary
+## Local demo boundary
 
 The `demo`, `test`, and `local_dev` profiles may use `LocalSyntheticObjectStore` only beneath an
 absolute `/tmp/colacci-law-slice4-*` root. The default manual-upload root and private fingerprint
@@ -25,7 +54,7 @@ seconds. `staging` and `production` cannot activate this local bridge. Live-tran
 real-data flags, remote storage, real notification, and non-fake authentication remain rejected in
 the local profiles.
 
-## Slice 5A versioned local firm configuration
+## Versioned local firm configuration
 
 The operational policy is persisted separately from process environment settings as immutable
 `local-firm-configuration-v1` rows. The exact contract includes the local timezone and report
@@ -38,7 +67,7 @@ operations may review configuration history but cannot publish.
 `America/New_York` is the explicit local default only. The retention values are accelerated
 synthetic defaults only. Neither represents client approval. See [the operator guide](local-operations.md).
 
-## Slice 3B live-test profile
+## Gated live-test profile
 
 `live_test` is a fail-closed, generated-media-only verification profile. It requires the
 exact owner authorization, the approved transcription model, an explicit project-scoped
@@ -48,7 +77,8 @@ manual upload, and Broadvoice. The normal application and Compose defaults remai
 offline `demo` profile.
 
 Use `make transcription-live-preflight` first. It runs without network access and emits
-sanitized evidence under `/tmp/colacci-law-slice3b/reports`. Only a fresh passing report
+sanitized evidence at
+`/tmp/colacci-law-slice3b-final-preflight/evidence/slice3b-final-preflight.json`. Only a fresh passing report
 allows `make test-transcription-live`, which also requires
 `TRANSCRIPTION_LIVE_EXECUTION_CONFIRMED=true`. Credentials must arrive through an
 approved ephemeral environment and must never be written to `.env` or repository files.

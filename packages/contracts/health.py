@@ -1,4 +1,4 @@
-"""Stable operational health response contracts for Slice 0."""
+"""Stable operational health response contracts."""
 
 from __future__ import annotations
 

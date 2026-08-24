@@ -293,7 +293,7 @@ class Transcript(StrictModel):
     diarization_status: DiarizationStatus
     original_language_text: NonEmptyText | None = None
     timestamp_availability: TimestampAvailability = TimestampAvailability.AVAILABLE
-    provider_response_version: OpaqueId = "legacy-review-contract-v1"
+    provider_response_version: OpaqueId
     media_hash_reference: (
         Annotated[str, StringConstraints(pattern=r"^sha256:[a-f0-9]{12}$")] | None
     ) = None

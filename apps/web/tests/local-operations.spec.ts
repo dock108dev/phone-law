@@ -22,7 +22,10 @@ test("local operations administrator, operations, reviewer denial, responsivenes
 
   const navigation = await page.goto("/operations");
   expect(navigation).not.toBeNull();
-  const headers = navigation!.headers();
+  if (navigation === null) {
+    throw new Error("operations navigation returned no response");
+  }
+  const headers = navigation.headers();
   expect(headers["cache-control"]).toBe("no-store");
   expect(headers["content-security-policy"]).toContain("frame-ancestors 'none'");
   expect(headers["cross-origin-resource-policy"]).toBe("same-origin");

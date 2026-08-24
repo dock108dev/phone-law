@@ -5,9 +5,10 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from uuid import uuid4
 
-from fastapi import Header, HTTPException, Request, status
+from fastapi import Header, Request, status
 from sqlalchemy.exc import SQLAlchemyError
 
+from apps.api.colacci_api.errors import api_error
 from packages.config import AppProfile
 from packages.contracts.report import DemoPrincipal, DemoPrincipalId, DemoRole
 from packages.database.review_schema import audit_events
@@ -17,13 +18,6 @@ PRINCIPALS = {
     DemoPrincipalId.ADMIN: DemoRole.ADMINISTRATOR,
     DemoPrincipalId.OPERATIONS: DemoRole.OPERATIONS,
 }
-
-
-def _detail(request: Request, error: str) -> dict[str, str]:
-    return {
-        "error": error,
-        "correlation_id": str(getattr(request.state, "correlation_id", "correlation-unavailable")),
-    }
 
 
 def _audit_auth(request: Request, *, action: str, target_id: str, result: str) -> None:
@@ -70,9 +64,7 @@ def demo_principal(
         x_demo_role = None
     settings = request.app.state.settings
     if settings.app_profile not in {AppProfile.TEST, AppProfile.DEMO}:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=_detail(request, "not_found")
-        )
+        raise api_error(request, status.HTTP_404_NOT_FOUND, "not_found")
     if x_demo_principal is None:
         _audit_auth(
             request,
@@ -80,9 +72,10 @@ def demo_principal(
             target_id="anonymous-session",
             result="denied",
         )
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=_detail(request, "select_an_allowlisted_demo_principal"),
+        raise api_error(
+            request,
+            status.HTTP_401_UNAUTHORIZED,
+            "select_an_allowlisted_demo_principal",
         )
     try:
         principal_id = DemoPrincipalId(x_demo_principal)
@@ -93,9 +86,10 @@ def demo_principal(
             target_id="invalid-session",
             result="denied",
         )
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=_detail(request, "select_an_allowlisted_demo_principal"),
+        raise api_error(
+            request,
+            status.HTTP_401_UNAUTHORIZED,
+            "select_an_allowlisted_demo_principal",
         ) from exc
     if x_demo_session not in {None, "active"}:
         _audit_auth(
@@ -104,10 +98,7 @@ def demo_principal(
             target_id=principal_id.value,
             result="denied",
         )
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=_detail(request, "demo_session_expired"),
-        )
+        raise api_error(request, status.HTTP_401_UNAUTHORIZED, "demo_session_expired")
     resolved_role = PRINCIPALS[principal_id]
     if x_demo_role is not None:
         _audit_auth(
