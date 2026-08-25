@@ -2,7 +2,7 @@ FROM node:26.3.0-alpine3.22
 
 WORKDIR /workspace/apps/web
 
-RUN npm install --global npm@10.9.3
+RUN npm install --global npm@12.0.2
 COPY --chown=node:node apps/web/package.json apps/web/package-lock.json ./
 RUN npm ci
 COPY --chown=node:node apps/web ./
