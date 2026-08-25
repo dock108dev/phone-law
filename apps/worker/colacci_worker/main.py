@@ -101,7 +101,7 @@ class HealthHandler(BaseHTTPRequestHandler):
 def main() -> None:
     try:
         settings = Settings(service_name="worker")
-    except (ValidationError, ValueError):
+    except ValidationError, ValueError:
         emit_startup_rejection("worker")
         sys.exit(78)
 

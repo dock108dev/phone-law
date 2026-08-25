@@ -2,7 +2,7 @@
 name = "colacci-law-foundation"
 version = "0.1.0"
 description = "Synthetic-only Slice 5A local operations for Colacci Law Call Review"
-requires-python = "==3.13.5"
+requires-python = "==3.14.7"
 
 [tool.pytest.ini_options]
 addopts = "--strict-markers --strict-config"
@@ -42,7 +42,7 @@ show_missing = true
 skip_covered = true
 
 [tool.ruff]
-target-version = "py313"
+target-version = "py314"
 line-length = 100
 extend-exclude = ["apps/api/migrations/versions"]
 
@@ -76,7 +76,7 @@ ignore = ["S101"]
 "scripts/finalize_demo_month_evidence.py" = ["S108"]
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.14"
 strict = true
 warn_unreachable = true
 show_error_codes = true

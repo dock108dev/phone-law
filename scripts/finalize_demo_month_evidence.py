@@ -49,7 +49,7 @@ def main() -> None:
         "external_requests": browser["externalRequests"],
         "failed_browser_requests": browser["failedRequests"],
         "log_inspection": "passed",
-        "secret_inspection": "passed",
+        "secret_inspection": "passed",  # nosec B105 -- acceptance status, not a secret
         "cleanup": "generated test media removed by the inherited boundary suites",
         "real_or_human_audio": 0,
         "client_data": 0,

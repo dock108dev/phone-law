@@ -68,7 +68,7 @@ def scan_paths(paths: list[Path]) -> list[Finding]:
             continue
         try:
             content = path.read_text(encoding="utf-8")
-        except (OSError, UnicodeDecodeError):
+        except OSError, UnicodeDecodeError:
             continue
         for line_number, line in enumerate(content.splitlines(), start=1):
             for kind, pattern in PATTERNS.items():

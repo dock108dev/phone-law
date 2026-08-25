@@ -151,7 +151,7 @@ class FixturePipeline:
                     ),
                 )
                 self.repository.store_analysis(analysis, attempt.attempt_id)
-            except (ValidationError, ReviewValidationError, ValueError):
+            except ValidationError, ReviewValidationError, ValueError:
                 failure = SanitizedProcessingFailure(
                     failure_class=FailureClass.INVALID_STRUCTURED_OUTPUT,
                     terminal_state=ProcessingState.OUTPUT_VALIDATION_FAILED,

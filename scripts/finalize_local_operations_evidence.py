@@ -20,7 +20,7 @@ def main() -> None:
         "other_external_requests": 0,
         "offline_internal_network": True,
         "content_free_logs_inspected": True,
-        "secret_scan": "passed",
+        "secret_scan": "passed",  # nosec B105 -- acceptance status, not a secret
         "disposable_stack_removed": True,
         "disposable_database_removed": True,
         "disposable_runtime_removed": True,

@@ -49,7 +49,7 @@ def _bounded_local_command(executable: Path, arguments: tuple[str, ...]) -> tupl
             timeout=3,
             check=False,
         )
-    except (OSError, subprocess.TimeoutExpired):
+    except OSError, subprocess.TimeoutExpired:
         return 127, b""
     combined = completed.stdout + completed.stderr
     if len(combined) > 128 * 1024:
