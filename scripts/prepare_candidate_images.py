@@ -194,11 +194,23 @@ def collect_image_observation() -> dict[str, Any]:
     return observation
 
 
-def _evidence_root() -> Path:
-    root = Path(os.environ.get("COLACCI_CANDIDATE_EVIDENCE_DIR", DEFAULT_EVIDENCE_ROOT)).resolve()
-    if root == Path("/tmp") or not str(root).startswith("/tmp/colacci-law-"):  # nosec B108
+def validate_evidence_root(candidate: Path) -> Path:
+    root = candidate.resolve()
+    temporary_root = Path("/tmp").resolve()  # nosec B108 - canonical private temp root
+    try:
+        relative = root.relative_to(temporary_root)
+    except ValueError as error:
+        raise CandidateImageError(
+            "candidate evidence must use a bounded Colacci Law temp path"
+        ) from error
+    if not relative.parts or not relative.parts[0].startswith("colacci-law-"):
         raise CandidateImageError("candidate evidence must use a bounded Colacci Law temp path")
     return root
+
+
+def _evidence_root() -> Path:
+    candidate = Path(os.environ.get("COLACCI_CANDIDATE_EVIDENCE_DIR", DEFAULT_EVIDENCE_ROOT))
+    return validate_evidence_root(candidate)
 
 
 def main() -> None:

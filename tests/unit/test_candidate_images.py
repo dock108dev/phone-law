@@ -13,6 +13,7 @@ from scripts.prepare_candidate_images import (
     CandidateIdentity,
     CandidateImageError,
     declared_runtime_contract,
+    validate_evidence_root,
     validate_image_observation,
 )
 
@@ -91,6 +92,17 @@ def test_runtime_declarations_agree_on_python_3147() -> None:
     assert contract["node"] == "26.3.0"
     assert contract["npm"] == "12.0.2"
     assert contract["playwright"] == "1.62.1"
+
+
+def test_candidate_evidence_accepts_canonical_macos_private_tmp() -> None:
+    accepted = validate_evidence_root(Path("/tmp/colacci-law-candidate/evidence"))
+    assert accepted.name == "evidence"
+    assert accepted.parent.name == "colacci-law-candidate"
+
+
+def test_candidate_evidence_rejects_unbounded_temp_root() -> None:
+    with pytest.raises(CandidateImageError, match="bounded Colacci Law temp path"):
+        validate_evidence_root(Path("/tmp"))
 
 
 def test_exact_candidate_image_observation_is_accepted() -> None:
