@@ -21,6 +21,12 @@ Run `make bootstrap` before the core gate on a new checkout. It builds pinned im
 Python dependencies and `npm ci`, starts PostgreSQL, initializes the test database, and migrates
 the demo database. Stop the default stack with `make stop` when finished.
 
+`make test-demo-release` is stricter than ordinary local gates. It requires a clean checkout,
+builds API, worker, web, and browser images with the exact candidate commit, Git tree, and runtime
+contract labels, verifies those labels and the runtimes inside each image, writes private sanitized
+image evidence, and only then begins deterministic seeding. Existing `latest` tags are never
+accepted as candidate evidence without that rebuild and verification.
+
 ## Focused gates
 
 | Command | Use when changing |
@@ -32,16 +38,17 @@ the demo database. Stop the default stack with `make stop` when finished.
 | `make test-manual-upload` | Upload request parsing, receipt lifecycle, temporary objects, or upload UI |
 | `make test-local-operations` | Role policy, configuration versions, retention/deletion, restore drill, or operations UI |
 | `make test-demo-month` | Month generation, daily/month reconciliation, or month-history UI |
-| `make test-local-acceptance` | Historical combined acceptance on its explicitly allowlisted clean slice branches only |
+| `make test-local-acceptance` | Combined acceptance on clean historical slice branches or a verified exact `main` candidate |
 
 `make transcription-live-preflight` and `make test-transcription-live` are not routine tests. The
 first is a network-disabled owner-authorization preflight; the second is a separately authorized
 generated-audio provider verification. Never use the live command as a fallback or CI gate.
 
-`make test-local-acceptance` is also not a general current-branch gate. Its script intentionally
-requires a clean checkout descended from its accepted source and an allowlisted historical branch.
-Generalizing that frozen proof to `main` or a new release candidate requires a separate acceptance
-decision; use the core and affected focused gates for ordinary development.
+`make test-local-acceptance` is not a general current-branch gate. Its script requires a clean
+checkout descended from its accepted source and either an allowlisted historical branch or `main`.
+On `main`, the separately authorized candidate campaign must first build exact candidate images;
+the acceptance script independently rechecks their commit, tree, runtime-contract labels, image
+identities, and actual runtimes before retagging them into its disposable proof stack.
 
 ## Isolation and outputs
 

@@ -49,7 +49,8 @@ def _bounded_local_command(executable: Path, arguments: tuple[str, ...]) -> tupl
             timeout=3,
             check=False,
         )
-    except OSError, subprocess.TimeoutExpired:
+    # Preserve Python 3.13 parse compatibility for stale-image rejection diagnostics.
+    except (OSError, subprocess.TimeoutExpired):  # fmt: skip
         return 127, b""
     combined = completed.stdout + completed.stderr
     if len(combined) > 128 * 1024:

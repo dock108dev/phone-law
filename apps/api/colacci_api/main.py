@@ -15,7 +15,8 @@ from packages.observability.logging import configure_logging, emit_startup_rejec
 def main() -> None:
     try:
         settings = Settings(service_name="api")
-    except ValidationError, ValueError:
+    # Preserve Python 3.13 parse compatibility for stale-image rejection diagnostics.
+    except (ValidationError, ValueError):  # fmt: skip
         emit_startup_rejection("api")
         sys.exit(78)
 

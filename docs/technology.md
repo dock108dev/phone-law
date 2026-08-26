@@ -10,16 +10,16 @@ only as a disposable live-test evidence store, so no schema migration is added.
 
 | Layer | Exact version | Reason |
 |---|---:|---|
-| Python | 3.13.5 | Stable modern runtime with supported FastAPI/Pydantic/SQLAlchemy wheels; avoids adopting Python 3.14 in the foundation |
-| pip | 25.2 | Exact installer in the Python image |
+| Python | 3.14.7 | Exact application, image, formatter, type-checker, and lock-generation runtime |
+| pip | 26.2.1 | Exact installer in the Python image |
 | FastAPI | 0.141.1 | Small typed health API with mature ASGI testing; permits patched Starlette 1.x |
 | Starlette | 1.6.0 | Patched ASGI layer selected above advisories affecting the initial pre-1.0 pin |
 | Pydantic Settings | 2.10.1 | Typed environment parsing and model-level fail-closed validation |
-| SQLAlchemy | 2.0.43 | Explicit connection handling and portable readiness checks |
-| Psycopg | 3.2.9 | PostgreSQL driver with a pinned binary wheel |
-| Alembic | 1.16.5 | Reversible, inspectable database migrations |
-| Uvicorn | 0.35.0 | Minimal API process with access logging disabled |
-| OpenAI Python SDK | 3.2.0 | Exact candidate file-transcription SDK behind an injected, network-blocked transport; no normal live factory |
+| SQLAlchemy | 2.0.52 | Explicit connection handling and portable readiness checks |
+| Psycopg | 3.3.4 | PostgreSQL driver with a Python 3.14-compatible pinned binary wheel |
+| Alembic | 1.19.1 | Reversible, inspectable database migrations |
+| Uvicorn | 0.52.4 | Minimal API process with access logging disabled |
+| OpenAI Python SDK | 3.3.1 | Exact candidate file-transcription SDK behind an injected, network-blocked transport; no normal live factory |
 | ffmpeg / ffprobe | 7:5.1.9-0+deb12u1 | Exact Debian media inspection and normalization package; fixed arguments preserve channel count |
 | Node.js | 22.18.0 | LTS-generation runtime, pinned to a patch release |
 | npm | 10.9.3 | Lockfile v3 package manager, pinned in image and manifest |
@@ -38,7 +38,7 @@ exact in `package.json` and lockfile v3. Python, Node, npm, and PostgreSQL conta
 patch versions. Images are not digest-pinned because the supported local platforms differ; this
 is a documented residual reproducibility risk.
 
-Ruff 0.12.10, mypy 1.17.1, pytest 9.1.1, pytest-cov 6.2.1, Bandit 1.8.6,
+Ruff 0.16.4, mypy 2.3.1, pytest 9.1.1, pytest-cov 7.1.0, Bandit 1.9.4,
 pip-audit 2.10.0, ESLint 9.33.0, typescript-eslint 8.40.0, and Vitest 3.2.7 form the
 quality toolchain.
 

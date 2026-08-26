@@ -5,12 +5,12 @@ COMPOSE := docker compose
 PY_RUN := $(COMPOSE) run --rm --no-deps api
 WEB_RUN := $(COMPOSE) run --rm --no-deps web
 
-.PHONY: help bootstrap seed-demo seed-demo-month dev stop clean generate-contract-schemas generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations test-local-acceptance test-demo-month test-demo-release test-ui-redesign lint typecheck test test-integration test-fixtures test-e2e build smoke audit secret-scan logs
+.PHONY: help bootstrap prepare-candidate-images seed-demo seed-demo-month dev stop clean generate-contract-schemas generate-test-audio test-audio test-transcription-contract transcription-cli-preflight test-transcription-cli-offline transcription-live-preflight test-transcription-live test-manual-upload test-local-operations test-local-acceptance test-demo-month test-demo-release test-ui-redesign lint typecheck test test-integration test-fixtures test-e2e build smoke audit secret-scan logs
 
 help:
 	@printf '%s\n' \
 		"Stable commands:" \
-		"  bootstrap  seed-demo  seed-demo-month  dev  stop  clean" \
+		"  bootstrap  prepare-candidate-images  seed-demo  seed-demo-month  dev  stop  clean" \
 		"  generate-contract-schemas  generate-test-audio" \
 		"  lint  typecheck  test  test-integration  test-fixtures  test-e2e  build  smoke  audit" \
 		"  test-audio  test-transcription-contract  transcription-cli-preflight" \
@@ -34,7 +34,11 @@ seed-demo-month:
 test-demo-month:
 	./scripts/test_demo_month.sh
 
-test-demo-release:
+prepare-candidate-images:
+	COLACCI_CANDIDATE_EVIDENCE_DIR="$${COLACCI_CANDIDATE_EVIDENCE_DIR:-/tmp/colacci-law-candidate/evidence}" PYTHONPATH=. python3 scripts/prepare_candidate_images.py
+
+test-demo-release: export COLACCI_CANDIDATE_EVIDENCE_DIR := /tmp/colacci-law-slice6e/evidence
+test-demo-release: prepare-candidate-images
 	SLICE6C_EVIDENCE_DIR=/tmp/colacci-law-slice6e/evidence ./scripts/test_demo_month.sh
 
 test-ui-redesign:

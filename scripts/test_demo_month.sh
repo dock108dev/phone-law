@@ -18,7 +18,6 @@ docker compose up -d --wait --force-recreate api web
 docker compose restart api web >/dev/null
 docker compose up -d --wait api web
 docker compose run --rm -e SLICE6C_EVIDENCE_DIR=/evidence -v "$evidence_directory:/evidence" api python scripts/test_demo_month.py > "$evidence_directory/restart-persistence.json"
-docker compose --profile e2e build e2e
 PLAYWRIGHT_GREP="July month history" INCLUDE_DEMO_MONTH=1 SLICE4_EVIDENCE_DIR="$evidence_directory" docker compose --profile e2e run --rm e2e
 docker compose logs --no-color api worker > "$evidence_directory/application.log"
 docker compose run --rm --no-deps -v "$evidence_directory:/evidence:ro" api python scripts/inspect_logs.py /evidence/application.log

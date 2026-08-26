@@ -4,6 +4,10 @@ x-python-service: &python-service
   build:
     context: .
     dockerfile: infrastructure/local/python.Dockerfile
+    args:
+      COLACCI_CANDIDATE_COMMIT: ${COLACCI_CANDIDATE_COMMIT:-unbound}
+      COLACCI_CANDIDATE_TREE: ${COLACCI_CANDIDATE_TREE:-unbound}
+      COLACCI_RUNTIME_CONTRACT: ${COLACCI_RUNTIME_CONTRACT:-unbound}
   user: ${COLACCI_PYTHON_RUNTIME_USER:-app}
   environment: &python-environment
     APP_PROFILE: ${APP_PROFILE:-demo}
@@ -132,6 +136,10 @@ services:
     build:
       context: .
       dockerfile: infrastructure/local/web.Dockerfile
+      args:
+        COLACCI_CANDIDATE_COMMIT: ${COLACCI_CANDIDATE_COMMIT:-unbound}
+        COLACCI_CANDIDATE_TREE: ${COLACCI_CANDIDATE_TREE:-unbound}
+        COLACCI_RUNTIME_CONTRACT: ${COLACCI_RUNTIME_CONTRACT:-unbound}
     environment:
       VITE_APP_PROFILE: demo
       VITE_ALLOW_REAL_CALL_DATA: "false"
@@ -163,6 +171,10 @@ services:
     build:
       context: .
       dockerfile: infrastructure/local/playwright.Dockerfile
+      args:
+        COLACCI_CANDIDATE_COMMIT: ${COLACCI_CANDIDATE_COMMIT:-unbound}
+        COLACCI_CANDIDATE_TREE: ${COLACCI_CANDIDATE_TREE:-unbound}
+        COLACCI_RUNTIME_CONTRACT: ${COLACCI_RUNTIME_CONTRACT:-unbound}
     profiles: ["e2e"]
     environment:
       BASE_URL: http://web:5173

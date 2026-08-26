@@ -32,6 +32,11 @@ make test-e2e
 make stop
 ```
 
+Hosted jobs build from their checked-out source before executing application gates. The separate
+local owner-demo candidate uses `make test-demo-release`, which additionally labels and verifies
+the exact commit, Git tree, declared runtime contract, image identities, and actual container
+runtimes before deterministic seeding.
+
 GitHub-hosted runner behavior, branch-protection requirements, repository rulesets, and GitHub's
 default CodeQL setup cannot be fully reproduced locally. Repository settings are owner-managed and
 are not changed by the workflow.
