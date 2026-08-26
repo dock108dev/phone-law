@@ -101,7 +101,8 @@ class HealthHandler(BaseHTTPRequestHandler):
 def main() -> None:
     try:
         settings = Settings(service_name="worker")
-    except (ValidationError, ValueError):
+    # Preserve Python 3.13 parse compatibility for stale-image rejection diagnostics.
+    except (ValidationError, ValueError):  # fmt: skip
         emit_startup_rejection("worker")
         sys.exit(78)
 

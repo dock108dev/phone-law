@@ -151,7 +151,8 @@ class FixturePipeline:
                     ),
                 )
                 self.repository.store_analysis(analysis, attempt.attempt_id)
-            except (ValidationError, ReviewValidationError, ValueError):
+            # Preserve Python 3.13 parse compatibility for stale-image rejection diagnostics.
+            except (ValidationError, ReviewValidationError, ValueError):  # fmt: skip
                 failure = SanitizedProcessingFailure(
                     failure_class=FailureClass.INVALID_STRUCTURED_OUTPUT,
                     terminal_state=ProcessingState.OUTPUT_VALIDATION_FAILED,

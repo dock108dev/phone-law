@@ -26,7 +26,7 @@ if [[ "$(git merge-base HEAD 22710801be61a3f97825fbc36fb3d0e0e92f8dbc)" != "2271
   exit 1
 fi
 current_branch="$(git branch --show-current)"
-if [[ "$current_branch" != "codex/slice-6a-local-acceptance" && "$current_branch" != "codex/slice-3b-final-preflight" && "$current_branch" != "codex/slice-6c-demo-month" && "$current_branch" != "codex/slice-6d-firm-ui" ]]; then
+if [[ "$current_branch" != "main" && "$current_branch" != "codex/slice-6a-local-acceptance" && "$current_branch" != "codex/slice-3b-final-preflight" && "$current_branch" != "codex/slice-6c-demo-month" && "$current_branch" != "codex/slice-6d-firm-ui" ]]; then
   echo "local acceptance must run on an accepted local-product descendant branch" >&2
   exit 1
 fi
@@ -49,6 +49,9 @@ cleanup_all
 rm -rf -- "$acceptance_root"
 mkdir -p "$evidence_root"
 chmod 700 "$acceptance_root" "$evidence_root"
+
+COLACCI_CANDIDATE_EVIDENCE_DIR="$evidence_root" PYTHONPATH=. \
+  python3 scripts/prepare_candidate_images.py --verify-only >/dev/null
 
 # Bootstrap is a required preceding command. Reuse its local images without a
 # registry, package-manager, or provider request during the measured rehearsal.
