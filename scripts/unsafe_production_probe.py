@@ -13,7 +13,7 @@ from packages.observability.logging import emit_startup_rejection
 def main() -> None:
     try:
         Settings(service_name="production-guard-probe")
-    except ValidationError, ValueError:
+    except (ValidationError, ValueError):
         emit_startup_rejection("production-guard-probe")
         sys.exit(78)
     raise SystemExit("unsafe probe unexpectedly passed")

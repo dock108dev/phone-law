@@ -1,5 +1,13 @@
 FROM python:3.14.7-slim-bookworm
 
+ARG COLACCI_CANDIDATE_COMMIT=unbound
+ARG COLACCI_CANDIDATE_TREE=unbound
+ARG COLACCI_RUNTIME_CONTRACT=unbound
+
+LABEL io.colacci-law.candidate.commit="$COLACCI_CANDIDATE_COMMIT" \
+    io.colacci-law.candidate.tree="$COLACCI_CANDIDATE_TREE" \
+    io.colacci-law.runtime.contract="$COLACCI_RUNTIME_CONTRACT"
+
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1

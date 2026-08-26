@@ -1,7 +1,7 @@
 # Local development and troubleshooting
 
 Docker, Compose, `make`, a POSIX shell, and host `python3` are required. Host Python runs only
-deterministic fixture/evidence helpers; application code and dependencies run in the Python 3.13.5
+deterministic fixture/evidence helpers; application code and dependencies run in the Python 3.14.7
 container. Host Node is not required.
 
 Run the first-day workflow from the repository root:

@@ -15,7 +15,7 @@ from packages.observability.logging import configure_logging, emit_startup_rejec
 def main() -> None:
     try:
         settings = Settings(service_name="api")
-    except ValidationError, ValueError:
+    except (ValidationError, ValueError):
         emit_startup_rejection("api")
         sys.exit(78)
 

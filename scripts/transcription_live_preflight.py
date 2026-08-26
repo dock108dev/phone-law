@@ -152,7 +152,7 @@ def _inspect_assets() -> tuple[list[dict[str, object]], list[str]]:
             failures.append("planned_audio_duration_cap")
         if sum(cast(int, item["byte_size"]) for item in safe_assets) > MAX_TOTAL_BYTES:
             failures.append("planned_media_byte_cap")
-    except FileNotFoundError, KeyError, TypeError, ValueError, MediaBoundaryError:
+    except (FileNotFoundError, KeyError, TypeError, ValueError, MediaBoundaryError):
         failures.append("generated_media_inspection")
     return safe_assets, sorted(set(failures))
 
