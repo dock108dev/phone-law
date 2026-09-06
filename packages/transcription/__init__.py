@@ -6,14 +6,16 @@ from packages.transcription.cli_local import (
     CliCapability,
     CliCapabilityState,
     CliExecutionAuthorization,
-    CommandRequest,
-    CommandResult,
-    CommandRunError,
     OpenAICliLocalClient,
-    ProcessCommandRunner,
     create_local_cli_transcriber,
     evaluate_cli_capability,
     inspect_cli_capability,
+)
+from packages.transcription.cli_process import (
+    CommandRequest,
+    CommandResult,
+    CommandRunError,
+    ProcessCommandRunner,
 )
 from packages.transcription.openai_adapter import (
     LiveTranscriptionBlockedError,

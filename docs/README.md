@@ -12,14 +12,12 @@ under `decisions/`; current behavior is defined by source, tests, and the docume
 - [Data model and migrations](data-models.md): persisted domains, migration history, and
   immutability rules.
 - [Current implementation sources of truth](ssot.md): authoritative modules and known callers.
-- [SSOT validation](ssot-validation.md): enforcement changes, test results and retirement limits.
 - [Maintainer guide](maintenance.md): change routing, large-file rationale, and cleanup standards.
 - [Continuous integration](continuous-integration.md): configured pull-request checks and local
   reproduction.
-- [CI validation](ci-validation.md): local results, hosted inspection and remaining proof limits.
 - [Technology choices](technology.md): pinned runtimes and dependency policy.
 - [Configuration](configuration.md): profiles, environment settings, and fail-closed startup rules.
-- [Adapter boundaries](adapters.md): supported synthetic inputs and gated transcription seams.
+- [Adapter boundaries](adapters.md): supported synthetic inputs and offline transcription contracts.
 
 ## Operate and diagnose
 
@@ -27,11 +25,16 @@ under `decisions/`; current behavior is defined by source, tests, and the docume
   drills, and no-op notifications.
 - [Error handling and incident diagnosis](runbooks/error-handling.md): safe failures, retry
   boundaries, and triage.
-- [Error-handling validation](runbooks/error-handling-validation.md): checks, results,
-  retained failures, and remaining qualification boundaries.
 - [Staging and production safety](runbooks/staging-production-safety.md): non-local prerequisites;
   this is a guard description, not deployment authorization.
 - [Security documentation](security/README.md): classification, threats, logs/secrets, and hardening.
+
+## Historical validation records
+
+These describe the source tested on their recorded date, not current acceptance or setup steps:
+[CI](ci-validation.md), [SSOT enforcement](ssot-validation.md),
+[error handling](runbooks/error-handling-validation.md), and
+[security](security/security-validation.md).
 
 ## Decisions
 

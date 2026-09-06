@@ -88,7 +88,8 @@ class DemoMonthManifest:
             for language, count in cast(dict[str, int], self.contract["languages"]).items()
             for _ in range(count)
         ]
-        rng = random.Random(self.seed)  # noqa: S311  # nosec B311 - fixture ordering only
+        # Repeatable fixture ordering; this is not a security-sensitive random source.
+        rng = random.Random(self.seed)  # noqa: S311  # nosec B311
         rng.shuffle(categories)
         rng.shuffle(languages)
 

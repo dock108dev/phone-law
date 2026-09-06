@@ -1,21 +1,14 @@
 # Colacci Law Call Review
 
-Local synthetic call-review application for deterministic reports, evidence-linked analysis,
-reviewer feedback, failure recovery, manual submission of invented artifacts, and local operations.
-
-This repository contains no client data, real recording, production authentication, external
-notification, Broadvoice integration, or generally enabled provider request. The separately
-offline transcription contract tools are not part of the normal application runtime.
-
-The sole roadmap and status source is
-`/Users/michaelfuscoletti/Desktop/colacci_law_next_steps.md`. Do not add a repository-level
-`NEXT_STEPS.md`.
+A local application for reviewing synthetic calls: daily briefings, evidence-linked reports,
+reviewer feedback, failure recovery, invented-artifact uploads and local operations.
+There is no production deployment, client-data workflow or live provider integration.
 
 ## Start locally
 
-Prerequisites are Docker Engine 29.7.2 or compatible, Docker Compose 5.3.1 or compatible, `make`,
-a POSIX shell, and `python3` for deterministic fixture/evidence helpers. Application Python,
-Node, npm, and project dependencies run only in pinned containers; host Node is not required.
+Install Docker with Compose, `make`, a shell and host `python3` for fixture helpers. Application
+Python, Node and dependencies run in pinned containers; host Node is not required.
+From the repository root:
 
 ```bash
 make bootstrap
@@ -24,75 +17,30 @@ make smoke
 make seed-demo-month
 ```
 
-For the revised isolated host-browser rehearsal, use
-[the supported loopback launch](docs/runbooks/local-development.md#isolated-desktop-browser-review-rehearsal).
+Open [the local application](http://localhost:15173). `make stop` preserves the synthetic database.
+For setup details, troubleshooting and a rehearsal that preserves an existing demo, see
+[local development](docs/runbooks/local-development.md).
 
-Open [http://localhost:15173](http://localhost:15173). The UI must always show **Local / synthetic**
-and **No client data or live services**.
-
-Stop services without deleting the synthetic database:
+## Develop and validate
 
 ```bash
-make stop
+make lint typecheck test build
+make test-integration
+make test-e2e
 ```
 
-For a guarded project-only reset:
+Use [the CI reproduction procedure](docs/continuous-integration.md) to run these checks in an
+isolated project. [Testing](docs/testing.md) explains focused gates and the separate online
+`make audit` check. `make help` lists commands.
 
-```bash
-CONFIRM_LOCAL_DATA_DELETE=yes make clean
-```
+## Find your way
 
-## Daily engineering commands
+- `apps/`: FastAPI service, readiness-only worker and React web application.
+- `packages/`: shared configuration, contracts, authorization, persistence and domain services.
+- `fixtures/`: deterministic invented inputs; `scripts/`: development and validation entry points.
+- [Documentation index](docs/README.md): setup, configuration, operations and security.
+- [Architecture](docs/architecture.md) and [source ownership](docs/ssot.md): how the system fits together.
+- [Maintainer guide](docs/maintenance.md): change conventions and module boundaries.
 
-| Command | Purpose |
-|---|---|
-| `make lint` | Format check, Ruff, Bandit, pins, generated schemas, secret scan, and web lint |
-| `make typecheck` | Strict Python and TypeScript checks |
-| `make test` | Offline Python unit/security tests and web unit tests |
-| `make test-integration` | PostgreSQL migration and repository integration tests |
-| `make test-e2e` | Disposable seeded reviewer, upload, and operations browser journeys |
-| `make build` | Type-check and build the production web bundle |
-| `make test-fixtures` | All deterministic analysis fixtures |
-| `make test-manual-upload` | Network-isolated invented-artifact lifecycle proof |
-| `make test-local-operations` | Network-isolated role, retention, recovery, and cleanup proof |
-| `make test-demo-month` | July 2026 deterministic month and reconciliation proof |
-| `make generate-contract-schemas` | Regenerate strict JSON Schemas in the pinned offline image |
-| `make smoke` | API, worker, web, dashboard, database, and migration readiness |
-| `make audit` | Separate online Python/npm vulnerability advisory check |
-
-Run `make help` for the complete stable command surface. Provider execution is unsupported; the historical factory always rejects construction.
-
-## Repository map
-
-- `apps/api`: FastAPI routes, application factory, and Alembic migrations.
-- `apps/worker`: health/readiness process; no background jobs are currently supported.
-- `apps/web`: React/TypeScript application and browser tests.
-- `packages/authorization`: authoritative synthetic role-permission policy.
-- `packages/config`: shared typed settings and startup safety validation.
-- `packages/contracts`: strict models and generated JSON Schemas.
-- `packages/database`: bounded persistence repositories and migration readiness.
-- `packages/review`: state machine, fixture pipeline, reporting, and transcript import.
-- `packages/manual_upload`: request orchestration for allowlisted generated audio and invented JSON.
-- `packages/transcription`: offline contracts, CLI process harness and a retired SDK failure boundary.
-- `fixtures`: deterministic invented inputs; no human or client content.
-- `scripts`: stable command implementations, evidence checks, and scanners.
-- `docs`: developer, architecture, operations, security, and decision documentation.
-
-## Documentation
-
-Start with the [documentation index](docs/README.md), then use:
-
-- [Local development and troubleshooting](docs/runbooks/local-development.md)
-- [Architecture](docs/architecture.md)
-- [Current implementation sources of truth](docs/ssot.md)
-- [Maintainer guide](docs/maintenance.md)
-- [Continuous integration](docs/continuous-integration.md)
-- [Testing](docs/testing.md)
-- [Data model and migrations](docs/data-models.md)
-- [Configuration](docs/configuration.md)
-- [Local operations](docs/local-operations.md)
-- [Security](docs/security/README.md)
-- [Error handling and incident diagnosis](docs/runbooks/error-handling.md)
-
-All routine tests, migrations, smoke checks, and application flows use deterministic synthetic
-data and no live AI, telephony, email, cloud storage, or identity service.
+The sole roadmap and owner status live in
+`/Users/michaelfuscoletti/Desktop/colacci_law_next_steps.md`; do not create a second roadmap here.

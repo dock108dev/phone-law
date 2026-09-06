@@ -144,3 +144,7 @@ is already unconditionally blocked, so this ambiguity does not expose a working 
 path. CLI process code remains an explicit engineering harness with version/executable/network
 controls; deciding whether to remove that harness requires the same evidence-consumer inventory.
 No production deployment or usage is claimed by this document.
+
+
+The CLI process boundary lives in `packages/transcription/cli_process.py`; capability discovery
+and response conversion remain in `cli_local.py`. Package-level imports stay stable for harnesses.

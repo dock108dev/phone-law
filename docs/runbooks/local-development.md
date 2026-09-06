@@ -4,14 +4,7 @@ Docker, Compose, `make`, a POSIX shell, and host `python3` are required. Host Py
 deterministic fixture/evidence helpers; application code and dependencies run in the Python 3.14.7
 container. Host Node is not required.
 
-Run the first-day workflow from the repository root:
-
-```bash
-make bootstrap
-make dev
-make smoke
-make seed-demo-month
-```
+Follow the [root quick start](../../README.md#start-locally) from the repository root.
 
 Open `http://localhost:15173`. Stop with `make stop`; this preserves the local synthetic database.
 Restart with `make dev`.
@@ -89,22 +82,9 @@ from both the ordinary v2 month and the exhaustive acceptance fixtures.
 
 The complete command, isolation, and evidence matrix is in [Testing](../testing.md).
 
-Run these after ordinary source or documentation changes:
-
-```bash
-make lint
-make typecheck
-make test
-make test-integration
-```
-
-Use `make smoke` after route, runtime, configuration, migration, or container changes. Run the
-affected browser gate for review, upload, or operations changes: `make test-e2e`,
-`make test-manual-upload`, or `make test-local-operations`. The focused scripts create disposable
-Compose projects, inspect sanitized logs, and clean up their isolated resources.
-
-`make audit` is a separately labeled online vulnerability-advisory check. It is not part of the
-deterministic offline suite and does not replace exact dependency pins.
+Use [the isolated CI reproduction procedure](../continuous-integration.md) when a demo is already
+running. It selects a separate Compose project, runtime directory and unpublished ports. The
+[testing guide](../testing.md) owns the command matrix and when each focused gate is needed.
 
 ## Local CLI and transcript-only workflow
 
@@ -206,8 +186,8 @@ Supporting gates accept these project/evidence settings, plus
 
 For core Make targets, select a dedicated `COMPOSE_PROJECT_NAME` and
 `COMPOSE_FILE=docker-compose.yml:infrastructure/local/slice7c-compose.yml` with a
-fresh top-level `/tmp/colacci-law-...` `SLICE4_RUNTIME_ROOT`. Do not use bootstrap,
-`make clean`, or the retained default stack to establish this boundary. Explicitly
+fresh top-level `/tmp/colacci-law-...` `SLICE4_RUNTIME_ROOT`. Bootstrap respects the selected runtime override; never use `make clean` or the retained
+default stack to establish this boundary. Explicitly
 inspect the selected project before startup and remove only that project's
 resources afterward. Set `COLACCI_FIXTURE_IMAGE`, `COLACCI_FIXTURE_NETWORK`, and
 `COLACCI_FIXTURE_REPORT_ROOT` for fixture evaluation and offline CLI execution.

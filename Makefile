@@ -53,7 +53,7 @@ clean:
 	./scripts/clean-local.sh
 
 generate-contract-schemas:
-	docker run --rm --network none -e PYTHONPATH=/workspace -v "$(CURDIR):/workspace" -w /workspace colacci-law-api:latest python scripts/generate_contract_schemas.py
+	$(COMPOSE) run --rm --no-deps --user "$$(id -u):$$(id -g)" -v "$(CURDIR):/source:rw" -w /source -e PYTHONPATH=/source api python scripts/generate_contract_schemas.py
 
 generate-test-audio:
 	PYTHONPATH=. python3 scripts/generate_test_audio.py

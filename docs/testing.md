@@ -19,7 +19,8 @@ storage, identity, or notification services. Docker and Compose run project depe
 
 Run `make bootstrap` before the core gate on a new checkout. It builds pinned images with hashed
 Python dependencies and `npm ci`, starts PostgreSQL, initializes the test database, and migrates
-the demo database. Stop the default stack with `make stop` when finished.
+the demo database. For a retained demo, use the separate-project commands in
+[CI reproduction](continuous-integration.md); clean up only that validation project.
 
 `make test-demo-release` is stricter than ordinary local gates. It requires a clean checkout,
 builds API, worker, web, and browser images with the exact candidate commit, Git tree, and runtime
