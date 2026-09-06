@@ -15,8 +15,6 @@ should not rely on ignored keys as configuration.
 | Authentication and database | `AUTH_MODE`, `APP_SECRET`, `DATABASE_URL` |
 | Adapter selection | `CALL_SOURCE_ADAPTER`, `TRANSCRIBER_ADAPTER`, `ANALYZER_ADAPTER`, `NOTIFICATION_ADAPTER` |
 | Storage and media | `OBJECT_STORAGE_BACKEND`, `OBJECT_STORAGE_BUCKET`, `MEDIA_TEMP_ROOT`, `MANUAL_UPLOAD_ROOT`, `MANUAL_UPLOAD_MANIFEST_PATH`, `MEDIA_MAX_BYTES`, `MEDIA_MAX_DURATION_SECONDS` |
-| Transcription gate | `LIVE_TRANSCRIPTION_ENABLED`, `LIVE_TRANSCRIPTION_AUTHORIZED`, `TRANSCRIPTION_APPROVAL_REFERENCE`, `TRANSCRIPTION_MODEL_ID`, `TRANSCRIPTION_FALLBACK_MODEL_ID`, `TRANSCRIPTION_TIMEOUT_SECONDS`, `TRANSCRIPTION_MAX_REQUESTS`, `TRANSCRIPTION_MAX_TOTAL_AUDIO_SECONDS`, `TRANSCRIPTION_MAX_TOTAL_BYTES`, `TRANSCRIPTION_TEST_BUDGET_USD`, `TRANSCRIPTION_LIVE_EXECUTION_CONFIRMED`, `TRANSCRIPTION_LIVE_EXECUTION_AUTHORIZATION_ID` |
-| Provider preconditions | `OPENAI_API_KEY`, `OPENAI_PROJECT_ID`, `OPENAI_BASE_URL`, `FIRM_OWNED_OPENAI_PROJECT_NAMED`, `OPENAI_PROJECT_OWNERSHIP_APPROVED`, `OPENAI_PROJECT_DATA_CONTROLS_APPROVED`, `OPENAI_PROVIDER_TERMS_APPROVED`, `GENERATED_AUDIO_TEST_APPROVED` |
 | Retention | `AUDIO_RETENTION_DAYS`, `TRANSCRIPT_RETENTION_DAYS`, `ANALYSIS_RETENTION_DAYS`, `AUDIT_RETENTION_DAYS`, `RETENTION_POLICY_APPROVED` |
 | HTTP and operations | `DEBUG`, `CORS_ORIGINS`, `TRUSTED_HOSTS`, `FIRM_TIMEZONE`, `LOG_LEVEL` |
 
@@ -25,24 +23,13 @@ and `VITE_ALLOW_REAL_CALL_DATA` must be `false`. `VITE_API_BASE_URL` optionally 
 origin; otherwise Vite proxies `/api` through `VITE_API_PROXY_TARGET`, which defaults to
 `http://api:8000`. None of the `VITE_*` variables may contain credentials or secrets.
 
-Blank provider fields in `.env.example` document the complete shape only. Credentials and approval
-identifiers must come from a separately approved ephemeral environment and must never be saved in
-`.env`, Compose, shell history, logs, screenshots, or evidence.
-
 ## Local-development profile
 
-`local_dev` remains synthetic-only and rejects both live-transcription flags, an approval
-reference, real data, non-local storage, real notifications, and non-fake authentication. Its
-media root is fixed at `/tmp/colacci-law-slice3c/objects`. Only these adapter triples are valid:
-
-- `fixture` / `fixture` / `fixture`
-- `generated_synthetic` / `openai_cli_local` / `disabled`
-- `transcript_only` / `transcript_only_import` / `fixture`
-
-The local CLI transport is not selected by an ambient credential. Exact capability preflight is
-required first; an unsupported result keeps the process on the fixture/transcript-only fallback.
-The normal Compose services remain `demo`, and their application factories do not construct a
-CLI client.
+`local_dev` is synthetic-only and supports fixture processing or strict transcript-only import.
+The accepted adapter triples are `fixture` / `fixture` / `fixture` and
+`transcript_only` / `transcript_only_import` / `fixture`. Its media root remains
+`/tmp/colacci-law-slice3c/objects` for the supported importer. The application uses `demo` or `test`.
+Provider settings and the historical live profile have been removed.
 
 ## Local demo boundary
 
@@ -67,21 +54,11 @@ operations may review configuration history but cannot publish.
 `America/New_York` is the explicit local default only. The retention values are accelerated
 synthetic defaults only. Neither represents client approval. See [the operator guide](local-operations.md).
 
-## Historical provider configuration
-
-The provider execution command has been removed. The former factory always raises
-`LiveTranscriptionBlockedError` before client construction, even with fully populated gates.
-`live_test` settings and the network-disabled `make transcription-live-preflight` remain only
-for historical contract/evidence validation; a successful preflight cannot enable execution.
-Do not populate credentials for ordinary development. Retirement of these historical fields
-and persisted metadata is tracked in [SSOT enforcement](ssot.md).
-
 | Profile | Purpose | Real data | Adapters | Storage/auth |
 |---|---|---|---|---|
 | `test` | Deterministic automated checks | Always rejected | Fixture adapters | Local synthetic/fake |
 | `demo` | Default local application | Always rejected | Fixture adapters | Local synthetic/fake |
-| `local_dev` | Bounded local CLI or transcript-only development | Always rejected | Exact allowlisted synthetic triples | Temporary local synthetic/fake |
-| `live_test` | Historical offline gate validation only | Always rejected | Execution unconditionally rejected | No client construction |
+| `local_dev` | Offline transcript-only development | Always rejected | Exact allowlisted synthetic triples | Temporary local synthetic/fake |
 | `staging` | Future firm-owned preproduction | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 | `production` | Future authorized deployment | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 
@@ -115,14 +92,8 @@ names; wildcards, local names, and internal demo service names fail startup vali
 Configuration values are never dumped or included in an exception log. Only the content-free
 `unsafe_configuration` code is emitted when process startup is rejected.
 
-## Normal profiles remain offline
+## Provider execution is unsupported
 
-- `LIVE_TRANSCRIPTION_ENABLED=false`
-- `LIVE_TRANSCRIPTION_AUTHORIZED=false`
-- `TRANSCRIPTION_APPROVAL_REFERENCE=`
-
-These defaults remain enforced for `test`, `demo`, `staging`, and `production`; any live flag or
-approval reference is rejected outside the exact `live_test` profile. An ambient API key is not
-authority. Generated media is confined beneath an explicit `/tmp/colacci-law-*` root, the
-application cap defaults to 20 MB and can never exceed the current documented 25 MB provider
-ceiling, and the conservative synthetic duration cap is 60 seconds.
+No provider credential, endpoint, model, execution gate or CLI capability is consumed by current
+settings. Generated media remains bounded to local synthetic roots. Historical database and
+provenance compatibility do not enable execution.

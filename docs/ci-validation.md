@@ -1,5 +1,7 @@
 # CI readiness validation — September 6, 2026
 
+Historical record: provider/CLI experiments are now retired. Use [current documentation](README.md) for supported commands.
+
 Expected pull-request result: **ALL CHECKS PASSING**, based on local execution and read-only
 GitHub inspection. This is an uncommitted implementation handoff on base
 `5a59ead1b4b5c4bdeb0b44eafdda6ffc9a9a34fa`, including the preceding error-handling and security

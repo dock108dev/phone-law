@@ -28,7 +28,6 @@ from packages.review.validation import (
     transcript_validation_state,
     validate_analysis,
 )
-from packages.transcription import LiveTranscriptionBlockedError, create_live_openai_transcriber
 
 
 def provenance(fixture_id: str) -> Provenance:
@@ -127,21 +126,12 @@ def test_timestamp_free_transcript_requires_visible_review_and_blocks_analysis()
 @pytest.mark.parametrize(
     "overrides",
     [
-        {"live_transcription_enabled": True},
-        {"live_transcription_authorized": True},
-        {"transcription_approval_reference": "approval-should-not-enable-slice3a"},
         {"media_max_bytes": 25 * 1024 * 1024 + 1},
         {"media_temp_root": "/var/tmp/outside-boundary"},
     ],
 )
-def test_slice3a_configuration_rejects_live_or_unsafe_media_settings(
+def test_configuration_rejects_unsafe_media_settings(
     overrides: dict[str, object],
 ) -> None:
     with pytest.raises(ValidationError):
         Settings(_env_file=None, app_profile=AppProfile.TEST, **overrides)
-
-
-def test_live_factory_remains_blocked_with_safe_defaults() -> None:
-    settings = Settings(_env_file=None, app_profile=AppProfile.TEST)
-    with pytest.raises(LiveTranscriptionBlockedError, match="unsupported_live_transcription"):
-        create_live_openai_transcriber(settings)

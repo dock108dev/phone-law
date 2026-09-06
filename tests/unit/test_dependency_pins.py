@@ -54,7 +54,7 @@ def test_drift_fails_before_installation(declarations, name, message):
     path = declarations / name
     source = path.read_text()
     if name == "requirements.lock":
-        changed = re.sub(r"(?m)^openai==[^\s]+", "openai==0.0.0", source)
+        changed = re.sub(r"(?m)^fastapi==[^\s]+", "fastapi==0.0.0", source)
     elif name in {".nvmrc", ".python-version"}:
         changed = "0.0.0\n"
     elif name.endswith("package-lock.json"):

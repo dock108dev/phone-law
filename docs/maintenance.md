@@ -19,11 +19,9 @@
 
 ## Module boundaries and large files
 
-CLI process execution lives in `packages/transcription/cli_process.py` (179 lines): executable
-allowlists, child environments, output limits, cancellation and process-group cleanup stay together.
-`cli_local.py` (446 lines) owns capability discovery, authorization and response adaptation. The
-public `packages.transcription` imports remain stable. Existing fake-process security checks
-exercise the extracted code without provider access.
+`apps/web/src/App.tsx` contains routing and principal state. Eight page modules under `pages/`
+contain their own view state; `shared.tsx` contains common presentation. API access remains in
+`api.ts`. Provider/CLI process experiments are fully retired.
 
 The remaining source/test files over roughly 500 lines are listed below. Counts are a review
 snapshot, not a size limit. Splitting transactional methods or shared page state solely to hit a
@@ -31,19 +29,16 @@ line count would obscure behavior.
 
 | File | Lines | Reason retained |
 |---|---:|---|
-| `apps/web/src/App.tsx` | 1245 | Shared navigation, role switching and review state; page extraction needs dedicated visual/state regression review |
 | `packages/database/local_operations.py` | 1111 | Retention, deletion and recovery share transaction and failure-plan invariants |
 | `packages/database/review_experience.py` | 1019 | Report, feedback and playbook operations share immutable-record and audit invariants |
 | `packages/manual_upload/service.py` | 634 | One receipt lifecycle spans validation, retry, cancellation and cleanup |
 | `tests/integration/test_manual_upload_full_loop.py` | 580 | Sequential lifecycle assertions share database setup and exact state transitions |
 | `packages/review/demo_month.py` | 530 | Deterministic v1 recipe and v2 authored-entry loading share validation; both have explicit callers and tests |
-| `packages/contracts/review.py` | 524 | One related strict model/schema family with cross-record validators |
-| `scripts/test_transcription_contract.py` | 505 | One network-blocked provider-contract campaign produces a single evidence result |
+| `packages/contracts/review.py` | 525 | One related strict model/schema family with cross-record validators |
 
-Historical migration payloads and offline provider metadata are retained deliberately; the
-[SSOT inventory](ssot.md#bounded-follow-up) owns their retirement scope. They are not examples of
-current production capability. No unused TODO or commented-out implementation block was found in
-the source/script scan.
+Historical migration payloads, tables and serialized provenance are retained as read compatibility,
+not executable provider code. Integration tests cover migration replay without losing invented
+historical metadata. No provider-tooling retirement follow-up remains.
 
 ## Change validation
 

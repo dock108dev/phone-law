@@ -1,5 +1,7 @@
 # ADR 0006: Offline transcription readiness before any live provider use
 
+Historical record: provider/CLI experiments are now retired. Use [current documentation](../README.md) for supported commands.
+
 - Status: accepted for Slice 3A
 - Decision date: 2026-08-17
 - Official documentation accessed: 2026-08-17

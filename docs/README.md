@@ -17,7 +17,7 @@ under `decisions/`; current behavior is defined by source, tests, and the docume
   reproduction.
 - [Technology choices](technology.md): pinned runtimes and dependency policy.
 - [Configuration](configuration.md): profiles, environment settings, and fail-closed startup rules.
-- [Adapter boundaries](adapters.md): supported synthetic inputs and offline transcription contracts.
+- [Adapter boundaries](adapters.md): supported synthetic inputs and historical data compatibility.
 
 ## Operate and diagnose
 

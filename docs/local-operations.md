@@ -12,7 +12,6 @@ This is a local-only operational control plane for synthetic demo data. It does 
 6. The backup/restore drill uses disposable SQLite databases containing invented identifiers only, reapplies retention after an isolated restore, verifies the ordinary database signature is unchanged, and deletes every disposable artifact.
 7. Notification preview persists a safe count and internal reference with `external_attempts = 0`. Any non-`noop` adapter fails closed.
 
-The active OpenAI CLI boundary remains unchanged. An unsupported host CLI still selects the accepted `fixture-and-transcript-only` fallback. Local operations never invoke it.
 
 ## Access-control matrix
 

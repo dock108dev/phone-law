@@ -30,10 +30,8 @@ omit = [
   "packages/database/manual_uploads.py",
   "packages/manual_upload/service.py",
   # Exercised by the PostgreSQL integration suite and explicit Slice 3A harnesses.
-  "packages/database/transcription_metadata.py",
   "packages/media/processing.py",
   "packages/media/store.py",
-  "packages/transcription/openai_adapter.py",
 ]
 
 [tool.coverage.report]
@@ -57,7 +55,6 @@ ignore = ["S101"]
 "packages/media/store.py" = ["S108"]
 "packages/manual_upload/manifest.py" = ["S108"]
 "packages/manual_upload/service.py" = ["S108"]
-"packages/transcription/live.py" = ["S108"]
 "scripts/generate_test_audio.py" = ["S108"]
 "scripts/generate_manual_upload_assets.py" = ["S108"]
 "scripts/cleanup_manual_upload_assets.py" = ["S108"]
@@ -69,8 +66,6 @@ ignore = ["S101"]
 "scripts/finalize_local_acceptance_evidence.py" = ["S108", "S603", "S607"]
 "scripts/write_local_acceptance_cleanup_evidence.py" = ["S108"]
 "scripts/test_audio_boundary.py" = ["S108"]
-"scripts/test_transcription_contract.py" = ["S108"]
-"scripts/transcription_live_preflight.py" = ["S108"]
 "scripts/test_demo_month.py" = ["S108"]
 "scripts/finalize_demo_month_evidence.py" = ["S108"]
 "scripts/prepare_candidate_images.py" = ["S108"]

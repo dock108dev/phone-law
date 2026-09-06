@@ -1,10 +1,7 @@
 # Technology choices and pinned versions
 
-## Offline provider contracts
-
-The pinned OpenAI SDK supplies response/error types for injected, offline transcription tests.
-The live SDK client builder and execution command have been removed. Historical configuration
-and metadata remain under a documented retirement follow-up; they do not enable a provider run.
+The application uses local fixture transcription and invented-transcript import. Provider SDK
+and CLI dependencies are removed; historical migration/provenance contracts remain readable.
 
 | Layer | Exact version | Reason |
 |---|---:|---|
@@ -17,7 +14,6 @@ and metadata remain under a documented retirement follow-up; they do not enable 
 | Psycopg | 3.3.4 | PostgreSQL driver with a Python 3.14-compatible pinned binary wheel |
 | Alembic | 1.19.1 | Reversible, inspectable database migrations |
 | Uvicorn | 0.52.4 | Minimal API process with access logging disabled |
-| OpenAI Python SDK | 3.5.0 | Exact candidate file-transcription SDK behind an injected, network-blocked transport; no normal live factory |
 | ffmpeg / ffprobe | 7:5.1.9-0+deb12u1 | Exact Debian media inspection and normalization package; fixed arguments preserve channel count |
 | Node.js | 26.3.0 | Container runtime, aligned with `.nvmrc` |
 | npm | 12.0.2 | Lockfile v3 package manager, pinned in image and manifest |
@@ -46,7 +42,10 @@ their private container network; Compose is the enforcement point and publishes 
 same literal is a value it rejects rather than a listener.
 
 The 80% unit-coverage gate applies to application and shared decision logic. Thin process entry
-points, migration runners, and the media/SDK boundaries are excluded from that unit-only
+points, migration runners, and the media boundaries are excluded from that unit-only
 metric and are instead exercised by the PostgreSQL integration suite, `make test-audio`,
-`make test-transcription-contract`, and live local smoke checks. The two media harnesses are
-offline and produce machine-readable evidence outside the repository.
+and local smoke checks. The media harness is
+offline and produces machine-readable evidence outside the repository.
+
+`httpx2` is a direct test-client dependency required by the current Starlette test transport;
+it is retained independently of the removed provider SDK.

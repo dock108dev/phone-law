@@ -1,5 +1,7 @@
 # ADR 0007: bounded live generated-audio transcription
 
+Historical record: provider/CLI experiments are now retired. Use [current documentation](../README.md) for supported commands.
+
 - Status: implemented; final re-entry preflight blocked before client construction
 - Preflight authorization: `OWNER-CHAT-2026-08-19-SLICE-3B-REENTRY-PREFLIGHT-ONLY`
 - Documentation refreshed: 2026-08-19 22:09:45 EDT

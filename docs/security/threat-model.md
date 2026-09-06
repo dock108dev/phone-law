@@ -25,10 +25,7 @@ environment configuration, container images, logs, and the source repository.
 | Overbroad network exposure | Every published local port binds to loopback | TLS, firewall, private networking, and approved ingress in staging |
 | Host-header or browser embedding abuse | API allowlists trusted hosts; API and local web set no-store, noindex, nosniff, deny framing, strict referrer/permissions, resource isolation, and CSP headers; API also sets opener isolation | Approved HTTPS proxy must preserve/strengthen headers and add web opener isolation/HSTS only after TLS is enforced |
 | Denial of service | Loopback synthetic-only routes, application body caps for declared and streamed input, bounded uploads and retries | Concurrent-request quotas, read timeouts, ingress and process limits before non-local ingestion |
-| CLI argument injection or shell expansion | Direct argument array, `shell=False`, fixed option surface, absolute allowlisted executable | Reassess before any broader command surface |
-| Ambient environment or credential leakage | Rebuilt child environment, named-variable allowlist, no value logging, no command logging | Managed ephemeral credential delivery before any separately authorized live run |
 | Child hangs, floods output, or leaves descendants | Wall-clock timeout, output cap, cancellation, process-group termination, private temporary input, cleanup confirmation | Provider-specific operational limits before production |
-| Unsupported CLI changes response semantics | Exact version and command-surface preflight; fail closed to offline fallback | Re-accept every declared CLI contract change |
 | Transcript-only artifact bypasses validation | Regular private bounded file, strict existing contracts, full validation before first database write, deterministic idempotency | Authenticated approved ingestion before real data |
 | Upload bypasses authenticated role | Principal is resolved before buffering/allocation; request role fields are rejected; reviewer denials are audited | Firm SSO and centralized policy before staging |
 | Filename or multipart input escapes local storage | Single file, strict safe name, no destination field, no path import, opaque object ID, fixed `/tmp` root, no symlinks | Private cloud object boundary before real use |
@@ -47,8 +44,6 @@ environment configuration, container images, logs, and the source repository.
 - A permanent failure cannot be retried and a reviewer cannot open the operations queue.
 - A reviewer cannot publish a playbook; an administrator can publish only an existing draft.
 - Evidence links move keyboard focus to the cited original-language segment.
-- CLI timeout, cancellation, oversized output, missing executable, and nonzero exits return only
-  typed content-free failures and leave no temporary media.
 - Malformed, unsupported, oversized, or unsafe transcript-only artifacts leave database counts
   unchanged.
 - Missing attestation, empty or invalid multipart, unsupported/corrupt/overlong media, unsafe name,

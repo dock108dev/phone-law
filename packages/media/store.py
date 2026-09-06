@@ -39,7 +39,6 @@ class LocalSyntheticObjectStore:
             AppProfile.TEST,
             AppProfile.DEMO,
             AppProfile.LOCAL_DEV,
-            AppProfile.LIVE_TEST,
         }:
             raise SyntheticObjectStoreError("local_synthetic_store_profile_forbidden")
         self.root = self._validate_root(root)

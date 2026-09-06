@@ -34,15 +34,10 @@ accepted as candidate evidence without that rebuild and verification.
 |---|---|
 | `make test-fixtures` | Fixture analysis, report classification, evidence validation, or reconciliation |
 | `make test-audio` | Media signature inspection, normalization, object cleanup, or metadata |
-| `make test-transcription-contract` | Provider-response conversion, retry classification, or safe transcription metadata |
-| `make test-transcription-cli-offline` | Local CLI capability/process isolation or transcript-only import |
 | `make test-manual-upload` | Upload request parsing, receipt lifecycle, temporary objects, or upload UI |
 | `make test-local-operations` | Role policy, configuration versions, retention/deletion, restore drill, or operations UI |
 | `make test-demo-month` | Month generation, daily/month reconciliation, or month-history UI |
 | `make test-local-acceptance` | Combined acceptance on clean historical slice branches or a verified exact `main` candidate |
-
-`make transcription-live-preflight` is a network-disabled historical gate/evidence validator.
-Provider execution is unsupported and the live factory always fails before construction.
 
 `make test-local-acceptance` is not a general current-branch gate. Its script requires a clean
 checkout descended from its accepted source and either an allowlisted historical branch or `main`.

@@ -3,7 +3,7 @@
 Reviewed: 2026-09-06. Scope: working source on base `5a59ead`, including the
 preserved error-handling handoff and the security changes below. This is a local
 engineering review, not a penetration test, owner acceptance or production
-approval. Validation is recorded in [the current check record](security-validation.md).
+approval. Validation is recorded in [the historical check record](security-validation.md).
 
 ## Security understanding
 
@@ -16,8 +16,7 @@ one bounded, allowlisted generated audio artifact or one strict invented transcr
 All HTTP body consumption is now bounded and arbitrary audio is rejected before decoding.
 
 No callback, webhook, payment, reset, invite, cookie, bearer-token, multi-tenant, or outbound-link
-surface exists. The separately gated transcription SDK/CLI code is unreachable from the normal
-demo stack. Local published ports bind to loopback. Staging and production configuration rejects
+surface exists. Provider SDK/CLI experiments have been removed from the repository. Local published ports bind to loopback. Staging and production configuration rejects
 fake authentication, fixture adapters, local storage/databases, weak secrets, missing retention,
 debug mode, permissive CORS, and local trusted hosts; a real SSO implementation and deployment
 stack do not yet exist.

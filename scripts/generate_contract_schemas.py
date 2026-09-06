@@ -15,12 +15,7 @@ from packages.contracts.media import (
     MediaInspectionResult,
     MediaLifecycleEvent,
     NormalizationResult,
-    ProviderSpeakerLabel,
     TemporaryObjectReference,
-    TranscriptionErrorClassification,
-    TranscriptionRequestMetadata,
-    TranscriptionResponseMetadata,
-    TranscriptionUsageMetadata,
 )
 from packages.contracts.report import AuditEvent, DailyBriefing, DailyReport, ReviewEvent
 from packages.contracts.review import (
@@ -54,11 +49,6 @@ MODELS: dict[str, type[BaseModel]] = {
     "temporary-object-reference.schema.json": TemporaryObjectReference,
     "media-lifecycle-event.schema.json": MediaLifecycleEvent,
     "media-deletion-event.schema.json": MediaDeletionEvent,
-    "provider-speaker-label.schema.json": ProviderSpeakerLabel,
-    "transcription-usage-metadata.schema.json": TranscriptionUsageMetadata,
-    "transcription-request-metadata.schema.json": TranscriptionRequestMetadata,
-    "transcription-response-metadata.schema.json": TranscriptionResponseMetadata,
-    "transcription-error-classification.schema.json": TranscriptionErrorClassification,
     "manual-upload-receipt.schema.json": UploadReceipt,
     "manual-upload-state-event.schema.json": UploadStateEvent,
 }

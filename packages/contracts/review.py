@@ -251,6 +251,7 @@ class TranscriptSegment(StrictModel):
 
 
 class TranscriptionTransportProvenance(StrictModel):
+    # Retired transport values remain valid for lossless hydration of stored provenance.
     transport: Literal["fixture", "openai_cli_local", "sdk", "transcript_only"]
     declared_contract_version: OpaqueId
     observed_cli_version: OpaqueId | Literal["unavailable"]

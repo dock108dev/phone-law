@@ -13,19 +13,8 @@ from sqlalchemy.exc import DBAPIError
 from apps.api.colacci_api import create_app
 from apps.worker.colacci_worker.health import readiness_payload
 from packages.config import Settings
-from packages.contracts.media import (
-    DiarizationAvailability,
-    MediaContentType,
-    MediaDeletionEvent,
-    MediaInspectionResult,
-    MediaLifecycleState,
-    SupportedMediaFormat,
-    TimestampAvailability,
-    TranscriptionResponseMetadata,
-    TranscriptionUsageMetadata,
-)
 from packages.database.health import EXPECTED_ALEMBIC_REVISION, create_database_engine
-from packages.database.transcription_metadata import TranscriptionMetadataRepository
+from packages.database.review_schema import media_artifacts, transcription_provider_attempts
 
 pytestmark = pytest.mark.integration
 
@@ -78,53 +67,45 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
         assert revision == EXPECTED_ALEMBIC_REVISION
         assert purpose == "local_operations"
 
-        repository = TranscriptionMetadataRepository(engine)
-        inspection_result = MediaInspectionResult(
-            artifact_id="0123456789abcdef0123456789abcdef",
-            synthetic=True,
-            media_format=SupportedMediaFormat.WAV,
-            content_type=MediaContentType.AUDIO_WAV,
-            byte_size=32044,
-            duration_seconds=1.0,
-            sample_rate_hz=16000,
-            channel_count=1,
-            codec="pcm_s16le",
-            content_sha256="a" * 64,
-            inspected_at=datetime.now(UTC),
-        )
-        repository.store_artifact(inspection_result, call_id=None)
-        deletion = MediaDeletionEvent(
-            event_id="1123456789abcdef0123456789abcdef",
-            artifact_id=inspection_result.artifact_id,
-            object_id="2123456789abcdef0123456789abcdef",
-            state=MediaLifecycleState.DELETED,
-            deletion_confirmed=True,
-            occurred_at=datetime.now(UTC),
-        )
-        repository.store_lifecycle(deletion)
-        repository.store_attempt(
-            attempt_id="3123456789abcdef0123456789abcdef",
-            artifact_id=inspection_result.artifact_id,
-            call_id=None,
-            adapter_version="openai-transcriber-candidate-v1",
-            model_id="gpt-4o-transcribe-diarize",
-            duration_ms=10,
-            response=TranscriptionResponseMetadata(
-                call_id="4123456789abcdef0123456789abcdef",
-                attempt_number=1,
-                model_id="gpt-4o-transcribe-diarize",
-                provider_response_version="invented-diarized-v1",
-                language="en",
-                timestamp_availability=TimestampAvailability.AVAILABLE,
-                diarization_availability=DiarizationAvailability.AVAILABLE,
-                usage=TranscriptionUsageMetadata(duration_seconds=1.0),
-            ),
-        )
-        assert repository.counts() == {
-            "media_artifacts": 1,
-            "media_lifecycle_events": 1,
-            "transcription_provider_attempts": 1,
-        }
+        # Historical rows remain readable; retirement removes writers, not stored evidence.
+        artifact_id = "0123456789abcdef0123456789abcdef"
+        attempt_id = "3123456789abcdef0123456789abcdef"
+        with engine.begin() as connection:
+            connection.execute(
+                media_artifacts.insert().values(
+                    id=artifact_id,
+                    is_synthetic=True,
+                    content_hash_reference="sha256:" + "a" * 12,
+                    media_format="wav",
+                    byte_size=32044,
+                    duration_seconds=1.0,
+                    channel_count=1,
+                    sample_rate_hz=16000,
+                    lifecycle_state="INSPECTED",
+                    created_at=datetime.now(UTC),
+                )
+            )
+            connection.execute(
+                transcription_provider_attempts.insert().values(
+                    id=attempt_id,
+                    artifact_id=artifact_id,
+                    attempt_number=1,
+                    adapter_version="historical-synthetic-v1",
+                    model_id="historical-model",
+                    retryable=False,
+                    duration_ms=10,
+                    created_at=datetime.now(UTC),
+                )
+            )
+        command.upgrade(alembic, "head")
+        with engine.connect() as connection:
+            assert (
+                connection.execute(
+                    text("SELECT model_id FROM transcription_provider_attempts WHERE id = :id"),
+                    {"id": attempt_id},
+                ).scalar_one()
+                == "historical-model"
+            )
         with pytest.raises(DBAPIError, match="immutable"), engine.begin() as connection:
             connection.execute(
                 text(
@@ -154,6 +135,16 @@ def test_empty_database_migrates_and_all_components_become_ready() -> None:
                     text("SELECT value FROM system_metadata WHERE key = 'schema_purpose'")
                 ).scalar_one()
                 == "offline_transcription_readiness"
+            )
+
+        command.upgrade(alembic, "head")
+        with engine.connect() as connection:
+            assert (
+                connection.execute(
+                    text("SELECT model_id FROM transcription_provider_attempts WHERE id = :id"),
+                    {"id": attempt_id},
+                ).scalar_one()
+                == "historical-model"
             )
 
         command.downgrade(alembic, "0003_synthetic_review_experience")

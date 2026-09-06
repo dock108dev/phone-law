@@ -93,16 +93,6 @@ def test_acceptance_evidence_override_reaches_each_consumer(monkeypatch, tmp_pat
     importlib.reload(module)
 
 
-@pytest.mark.parametrize("name", ["transcription_cli_preflight", "inspect_slice3c_evidence"])
-def test_cli_host_override_reaches_consumers(monkeypatch, tmp_path, name):
-    monkeypatch.setenv("COLACCI_CLI_ROOT", str(tmp_path))
-    module = importlib.import_module("scripts." + name)
-    importlib.reload(module)
-    assert tmp_path / "evidence" == module.EVIDENCE_ROOT
-    monkeypatch.delenv("COLACCI_CLI_ROOT")
-    importlib.reload(module)
-
-
 def test_candidate_image_override_selects_all_observed_images(monkeypatch):
     monkeypatch.setenv("COLACCI_CANDIDATE_IMAGE_PREFIX", "colacci-law-proof")
     with (
@@ -120,7 +110,6 @@ def test_make_mount_overrides_reach_container_paths():
     environment = dict(
         os.environ,
         COLACCI_SYNTHETIC_ROOT="/tmp/colacci-law-proof-audio",
-        COLACCI_CLI_ROOT="/tmp/colacci-law-proof-cli",
         COLACCI_FIXTURE_IMAGE="colacci-law-proof-api:latest",
     )
     recipes = []
@@ -129,8 +118,6 @@ def test_make_mount_overrides_reach_container_paths():
         if line and not line.startswith("\t"):
             selected = line in {
                 "test-audio: generate-test-audio",
-                "test-transcription-contract: generate-test-audio",
-                "test-transcription-cli-offline:",
             }
         if selected and line.startswith("\t") and " run " in line:
             recipes.append(
@@ -148,9 +135,7 @@ def test_make_mount_overrides_reach_container_paths():
         capture_output=True,
         text=True,
     ).stdout
-    assert output.count("/tmp/colacci-law-proof-audio:/tmp/colacci-law-slice3a") == 2
-    assert output.count("/tmp/colacci-law-proof-cli:/tmp/colacci-law-slice3c") == 3
-    assert output.count("colacci-law-proof-api:latest") == 3
+    assert output.count("/tmp/colacci-law-proof-audio:/tmp/colacci-law-slice3a") == 1
 
 
 def test_shell_failure_trap_cleans_only_claimed_runtime(campaign_root):

@@ -1,5 +1,7 @@
 # Security validation — 2026-09-06
 
+Historical record: provider/CLI experiments are now retired. Use [current documentation](../README.md) for supported commands.
+
 Scope: working source on base `5a59ead`, preserving the preceding uncommitted
 error-handling changes. This is local implementation validation, not a clean
 candidate qualification or production approval. Evidence is retained under

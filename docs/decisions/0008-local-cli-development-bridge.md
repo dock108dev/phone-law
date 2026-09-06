@@ -1,5 +1,7 @@
 # ADR 0008: local CLI development bridge
 
+Historical record: provider/CLI experiments are now retired. Use [current documentation](../README.md) for supported commands.
+
 - Status: implemented for offline acceptance
 - Authorization: owner direction in chat on 2026-08-17
 - Documentation refreshed: 2026-08-17

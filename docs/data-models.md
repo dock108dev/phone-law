@@ -13,7 +13,7 @@ current required revision is `0006_local_operations`, enforced by API/worker rea
 | Call ingestion | `calls`, `ingestion_events`, `processing_attempts` | Deterministic call identity, duplicate delivery, and processing state/attempt history |
 | Accepted review data | `transcripts`, `analyses`, `playbook_versions` | Strict accepted payloads and their model, prompt, adapter, and playbook provenance |
 | Reports and review | `daily_reports`, `daily_report_items`, `review_events`, `audit_events` | Immutable daily snapshots, ordered items, append-only human review, and content-free audit history |
-| Media/transcription metadata | `media_artifacts`, `media_lifecycle_events`, `transcription_provider_attempts` | Synthetic media characteristics, cleanup state, and safe transport/usage metadata |
+| Media/transcription metadata | `media_artifacts`, `media_lifecycle_events`, `transcription_provider_attempts` | Historical media/provider metadata retained for readability and retention; no provider writer |
 | Manual upload | `manual_upload_receipts`, `manual_upload_state_events` | Idempotent submission identity, visible lifecycle state, cleanup confirmation, and append-only transitions |
 | Local operations | `firm_configuration_versions`, `retention_jobs`, `retention_tombstones`, `maintenance_runs`, `backup_restore_drills`, `notification_previews` | Immutable local policy versions, bounded deletion work, safe evidence, and zero-send previews |
 

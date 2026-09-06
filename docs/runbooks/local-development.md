@@ -86,33 +86,12 @@ Use [the isolated CI reproduction procedure](../continuous-integration.md) when 
 running. It selects a separate Compose project, runtime directory and unpublished ports. The
 [testing guide](../testing.md) owns the command matrix and when each focused gate is needed.
 
-## Local CLI and transcript-only workflow
+## Invented transcript workflow
 
-Run the capability check first:
-
-```bash
-make transcription-cli-preflight
-```
-
-It makes no provider request, does not inspect or print credential values, and writes a sanitized
-report to `/tmp/colacci-law-slice3c/evidence/cli-preflight.json`. Supported means exact CLI
-`1.6.0` plus the declared `audio:transcriptions create` surface. Any other result selects
-`fixture-and-transcript-only`; do not upgrade the host as part of this slice.
-
-Run the entire offline acceptance path:
-
-```bash
-make test-transcription-cli-offline
-```
-
-This runs injected CLI contracts and a dedicated child-process security harness with external
-networking disabled, then imports the invented transcript-only fixture on the internal database
-network. It validates the full report/evidence/feedback loop, invalid-input rollback, duplicate
-idempotency, content-free evidence, and cleanup. Evidence is generated only under
-`/tmp/colacci-law-slice3c/evidence/` and is not committed.
-
-Do not place human or realistic audio, a credential, a project identifier, transcript text, raw
-CLI output, or a command string in evidence. Provider execution is unsupported; the retired factory always rejects construction.
+Use the manual-upload page to submit the strict artifact produced by
+`scripts/generate_manual_upload_assets.py`. The API and explicit offline importer share
+`packages/review/transcript_import.py`; `make test-integration` covers idempotency and rollback.
+Provider preflight and CLI commands are removed.
 
 ## Local synthetic manual upload
 
@@ -190,16 +169,12 @@ fresh top-level `/tmp/colacci-law-...` `SLICE4_RUNTIME_ROOT`. Bootstrap respects
 default stack to establish this boundary. Explicitly
 inspect the selected project before startup and remove only that project's
 resources afterward. Set `COLACCI_FIXTURE_IMAGE`, `COLACCI_FIXTURE_NETWORK`, and
-`COLACCI_FIXTURE_REPORT_ROOT` for fixture evaluation and offline CLI execution.
+`COLACCI_FIXTURE_REPORT_ROOT` for fixture evaluation.
 
 `COLACCI_SYNTHETIC_ROOT` selects the host audio generator and audio/contract bind
 mount; the container-side consumers retain `/tmp/colacci-law-slice3a`.
-`COLACCI_CLI_ROOT` selects the host CLI preflight/inspection root and all three
-CLI bind mounts; container-side consumers retain `/tmp/colacci-law-slice3c`.
-Allocate these host roots freshly and preserve reports before reuse. These core
-helpers do not claim ownership themselves. Never mount historical audio/CLI roots
-into a new campaign. Fixture reports likewise use a private host mount with the
-canonical container path. Container paths are not evidence of host path reuse.
+Allocate host audio roots freshly and preserve reports before reuse. These helpers do not
+claim ownership themselves. Never mount historical audio roots into a new campaign.
 
 The host launcher supports `COLACCI_REVIEW_PROJECT`, `COLACCI_REVIEW_RUNTIME` and
 `COLACCI_REVIEW_PORT` for a separate disposable rehearsal. Use the same values for

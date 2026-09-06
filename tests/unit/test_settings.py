@@ -98,8 +98,6 @@ def test_local_dev_is_explicit_synthetic_and_distinct() -> None:
         {"object_storage_backend": "private_cloud"},
         {"auth_mode": "sso"},
         {"media_temp_root": "/tmp/colacci-law-other/objects"},
-        {"live_transcription_enabled": True},
-        {"transcription_approval_reference": "approval-reference"},
     ],
 )
 def test_local_dev_rejects_unsafe_or_incompatible_configuration(
@@ -107,25 +105,6 @@ def test_local_dev_rejects_unsafe_or_incompatible_configuration(
 ) -> None:
     with pytest.raises(ValidationError):
         local_dev_settings(**overrides)
-
-
-@pytest.mark.parametrize(
-    ("source", "transcriber", "analyzer"),
-    [
-        ("fixture", "fixture", "fixture"),
-        ("generated_synthetic", "openai_cli_local", "disabled"),
-        ("transcript_only", "transcript_only_import", "fixture"),
-    ],
-)
-def test_local_dev_accepts_only_the_three_safe_adapter_shapes(
-    source: str, transcriber: str, analyzer: str
-) -> None:
-    settings = local_dev_settings(
-        call_source_adapter=source,
-        transcriber_adapter=transcriber,
-        analyzer_adapter=analyzer,
-    )
-    assert settings.call_source_adapter == source
 
 
 def test_staging_rejects_demo_defaults() -> None:
@@ -221,3 +200,17 @@ def test_safe_authorized_shape_can_be_explicitly_represented() -> None:
 def test_application_profiles_reject_unimplemented_adapters(profile, field):
     with pytest.raises(ValidationError, match=field):
         Settings(_env_file=None, app_profile=profile, **{field: "unsupported"})
+
+
+def test_retired_provider_profile_is_invalid() -> None:
+    import json
+
+    from packages.contracts.health import HealthResponse
+
+    schema = json.loads(Path("packages/contracts/health.schema.json").read_text())
+    assert (
+        schema["properties"]["profile"]["enum"]
+        == HealthResponse.model_json_schema()["properties"]["profile"]["enum"]
+    )
+    with pytest.raises(ValidationError, match="app_profile"):
+        Settings(_env_file=None, app_profile="live_test")

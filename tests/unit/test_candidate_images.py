@@ -30,7 +30,7 @@ def test_every_repository_python_source_parses() -> None:
     assert parsed >= 100
 
 
-def test_all_seven_multi_exception_handlers_remain_parenthesized() -> None:
+def test_startup_multi_exception_handlers_remain_parenthesized() -> None:
     expected = {
         "apps/api/colacci_api/main.py": "except (ValidationError, ValueError):",
         "apps/worker/colacci_worker/main.py": "except (ValidationError, ValueError):",
@@ -38,10 +38,6 @@ def test_all_seven_multi_exception_handlers_remain_parenthesized() -> None:
             "except (ValidationError, ReviewValidationError, ValueError):"
         ),
         "scripts/secret_scan.py": "except (OSError, UnicodeDecodeError):",
-        "scripts/transcription_cli_preflight.py": ("except (OSError, subprocess.TimeoutExpired):"),
-        "scripts/transcription_live_preflight.py": (
-            "except (FileNotFoundError, KeyError, TypeError, ValueError, MediaBoundaryError):"
-        ),
         "scripts/unsafe_production_probe.py": "except (ValidationError, ValueError):",
     }
     for relative, handler in expected.items():

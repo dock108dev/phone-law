@@ -66,20 +66,9 @@ file imports attempt to delete their partial allocation before propagating the
 copy/permission error. Missing files remain an
 idempotent successful deletion. Persisted cancellation/processing flows expose
 `DELETION_FAILED` and audit it; pre-receipt cleanup now checks the same result.
-CLI transcription cannot report success after request-directory cleanup fails:
-it records a false cleanup confirmation and returns terminal
-`MEDIA_DELETION_FAILED`, without another provider request. Removal of the empty
-shared CLI parent remains best effort after request media is confirmed gone.
-
 The manual-upload asset cleanup command fails on OS deletion errors, including
 extensionless temporary objects. An already absent tree is acceptable. It never
 prints `temporary_objects=0` after a failed removal.
-
-The SDK retry limit is three attempts for classified connection/timeout,
-rate-limit and provider 5xx failures. Authentication, permission, invalid request
-and invalid response failures are terminal. The CLI capability probe may select
-`fixture-and-transcript-only` when its executable is absent, unsupported or
-unavailable; the capability result and offline evidence expose that decision.
 
 Operations reports `available=false` and `exact=false` when no current daily
 report exists. Invalid persisted reconciliation counts fail the request instead
@@ -110,7 +99,7 @@ of becoming zero-count success.
 | Area / severity | Implemented outcome or retained behavior |
 | --- | --- |
 | HTTP/worker diagnostics — High | Sanitized source locations, stable 500 envelope and error-level 5xx reporting replace blind spots. |
-| Temporary-media cleanup — High | Rejected-upload, CLI request cleanup and asset cleanup now reject false success. |
+| Temporary-media cleanup — High | Rejected-upload and asset cleanup now reject false success. |
 | Upload classification — Medium | Programming lookup errors are 500; explicit missing receipts remain 404. |
 | Security scan — High | Unreadable/invalid UTF-8 source is a `source_unreadable` finding and fails the gate. Binary macOS `.DS_Store` is explicitly excluded. No unreadable content is printed. |
 | Web fetch/render — Medium | Failed body reads and invalid successful payloads are explicit errors. Existing loading/error and uncertain-save UI is preserved. |
@@ -119,7 +108,7 @@ of becoming zero-count success.
 | Review pipeline — Note | Fixture and structured-output failures persist classified terminal states; no invalid analysis is presented as successful. Retry count is bounded. |
 | Media/provider boundary — Note | Inspection and subprocess failures become typed failures. Provider connection/status/response errors retain attempt classification and bounded retries; malformed Retry-After falls back to bounded delay. Model fallback metadata does not authorize a second model request. |
 | Runtime/configuration — Note | Unsafe configuration exits 78 with a content-free startup event. Synthetic notification no-op and provider guards are intentional product boundaries. No warning filters or production-mode fail-open bypass were found. |
-| Tooling/tests/CI — Note | Static suppressions cover fixture constants, known subprocess commands, temp roots, migration imports and integration-only coverage. Shell gates fail on errors; cleanup traps preserve ownership. Optional preflight failures return explicit capability/status failures. Disposable fixture setup has best-effort removal followed by validation; this is not production cleanup. |
+| Tooling/tests/CI — Note | Static suppressions cover fixture constants, known subprocess commands, temp roots, migration imports and integration-only coverage. Shell gates fail on errors; cleanup traps preserve ownership. Disposable fixture setup has best-effort removal followed by validation; this is not production cleanup. |
 
 ## Validation and remaining boundaries
 

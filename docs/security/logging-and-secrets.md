@@ -10,13 +10,8 @@ phone number, request/query bodies, authorization or cookie headers, secrets, da
 URLs, raw exception details, rejected validation inputs, and provider payloads. Uvicorn, worker HTTP, and SQL access logs are
 disabled.
 
-The local CLI boundary additionally forbids a rendered command string, raw argument dump, raw
-stdout/stderr, absolute media path, complete child environment, credential value, project
-identifier value, provider response, or transcript content in logs and evidence. Sanitized
-provenance may contain only the transport name, declared contract, observed version or
-`unavailable`, model, response format, SHA-256 input fingerprint, bounded attempt number, and
-result kind. Preflight records only booleans, classifications, exact public version metadata, and
-the chosen fallback.
+Historical provider provenance may remain in stored records, but it is never authorization to
+execute a provider request. Provider/CLI tooling and credential configuration are removed.
 
 Manual-upload request bodies, multipart headers, selected filenames, full content fingerprints,
 object IDs, local paths, transcript content, and raw exceptions are also excluded. Upload routes

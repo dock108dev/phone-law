@@ -1,5 +1,7 @@
 # SSOT enforcement validation — September 6, 2026
 
+Historical record: provider/CLI experiments are now retired. Use [current documentation](README.md) for supported commands.
+
 The implementation is uncommitted on base `5a59ead`, preserving preceding error-handling,
 security and CI changes. This record supersedes prior validation only for the current working
 source; it is not exact-candidate, hosted, production or owner-acceptance proof.

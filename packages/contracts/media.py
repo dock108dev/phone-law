@@ -57,16 +57,6 @@ class MediaErrorClass(StrEnum):
     MEDIA_DELETION_FAILED = "MEDIA_DELETION_FAILED"
 
 
-class TimestampAvailability(StrEnum):
-    AVAILABLE = "available"
-    UNAVAILABLE = "unavailable"
-
-
-class DiarizationAvailability(StrEnum):
-    AVAILABLE = "available"
-    UNAVAILABLE = "unavailable"
-
-
 class MediaInput(StrictModel):
     schema_version: Literal["media-contracts-v1"] = MEDIA_SCHEMA_VERSION
     artifact_id: OpaqueId
@@ -141,52 +131,3 @@ class MediaDeletionEvent(StrictModel):
         if self.deletion_confirmed == (self.error_class is not None):
             raise ValueError("deletion confirmation and error classification are inconsistent")
         return self
-
-
-class ProviderSpeakerLabel(StrictModel):
-    raw_label: OpaqueId
-    mapped_participant: Literal["unknown_participant"] = "unknown_participant"
-    identity_verified: Literal[False] = False
-
-
-class TranscriptionUsageMetadata(StrictModel):
-    input_tokens: Annotated[int, Field(ge=0)] | None = None
-    output_tokens: Annotated[int, Field(ge=0)] | None = None
-    duration_seconds: Annotated[float, Field(ge=0)] | None = None
-
-
-class TranscriptionRequestMetadata(StrictModel):
-    schema_version: Literal["media-contracts-v1"] = MEDIA_SCHEMA_VERSION
-    call_id: OpaqueId
-    attempt_number: Annotated[int, Field(ge=1, le=3)]
-    artifact_id: OpaqueId
-    media_hash_reference: HashReference
-    adapter_version: OpaqueId
-    model_id: OpaqueId
-    fallback_model_id: OpaqueId
-    response_format: Literal["diarized_json"]
-    chunking_strategy: Literal["auto"] | None
-    timeout_seconds: Annotated[float, Field(gt=0, le=120)]
-    byte_size: Annotated[int, Field(gt=0)]
-    duration_seconds: Annotated[float, Field(gt=0)]
-
-
-class TranscriptionResponseMetadata(StrictModel):
-    schema_version: Literal["media-contracts-v1"] = MEDIA_SCHEMA_VERSION
-    call_id: OpaqueId
-    attempt_number: Annotated[int, Field(ge=1, le=3)]
-    model_id: OpaqueId
-    provider_response_version: OpaqueId
-    language: Literal["en", "es"]
-    timestamp_availability: TimestampAvailability
-    diarization_availability: DiarizationAvailability
-    speaker_labels: tuple[ProviderSpeakerLabel, ...] = ()
-    usage: TranscriptionUsageMetadata | None = None
-
-
-class TranscriptionErrorClassification(StrictModel):
-    schema_version: Literal["media-contracts-v1"] = MEDIA_SCHEMA_VERSION
-    error_class: MediaErrorClass
-    retryable: bool
-    attempt_number: Annotated[int, Field(ge=1, le=3)]
-    retry_after_seconds: Annotated[float, Field(ge=0, le=30)] | None = None

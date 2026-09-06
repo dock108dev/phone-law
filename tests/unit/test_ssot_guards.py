@@ -72,22 +72,6 @@ def test_removed_fallbacks_and_wrappers_stay_removed() -> None:
     assert "def default_configuration(" not in operations_source
 
 
-def test_endpoint_policy_is_shared_with_preflight() -> None:
-    from packages.config.endpoints import safe_endpoint_class
-    from packages.transcription.live import safe_endpoint_class as preflight_policy
-
-    assert preflight_policy is safe_endpoint_class
-    assert "def _safe_openai_base_url" not in (ROOT / "packages/config/settings.py").read_text()
-
-
-def test_removed_live_execution_stays_removed() -> None:
-    source = (ROOT / "packages/transcription/openai_adapter.py").read_text()
-    assert "def _build_live_client" not in source
-    assert "OpenAI(" not in source
-    assert not (ROOT / "scripts/test_transcription_live.py").exists()
-    assert "test-transcription-live:" not in (ROOT / "Makefile").read_text()
-
-
 def test_middleware_cannot_reintroduce_error_envelopes() -> None:
     for name in ("app.py", "body_limits.py"):
         source = (ROOT / "apps/api/colacci_api" / name).read_text()
@@ -113,3 +97,37 @@ def test_routes_and_responses_share_error_detail(monkeypatch) -> None:
     response = errors.error_response(403, "forbidden", "corr-test")
     assert json.loads(response.body)["detail"] == raised.detail
     assert calls == [("forbidden", "corr-test"), ("forbidden", "corr-test")]
+
+
+def test_provider_experiments_cannot_return() -> None:
+    from packages.config import Settings
+
+    assert not (ROOT / "packages/transcription").exists()
+    for name in Settings.model_fields:
+        assert not name.startswith(("openai_", "transcription_", "live_transcription_"))
+    for name in (
+        "transcription-cli-preflight",
+        "transcription-live-preflight",
+        "test-transcription-contract",
+    ):
+        assert name not in (ROOT / "Makefile").read_text()
+
+
+@pytest.mark.parametrize("transport", ["sdk", "openai_cli_local"])
+def test_historical_provenance_remains_readable_after_retirement(transport) -> None:
+    from packages.database.model_hydration import validated_model
+
+    payload = _accepted_transcript().model_dump(mode="json")
+    payload["provenance"]["environment"] = "live_test"
+    payload["provenance"]["transcription_transport"] = {
+        "transport": transport,
+        "declared_contract_version": "historical-contract-v1",
+        "observed_cli_version": "unavailable",
+        "model_id": "historical-model",
+        "requested_response_format": "diarized_json",
+        "generated_asset_fingerprint": None,
+        "attempt_number": 1,
+        "result_kind": "separately_authorized_live",
+    }
+    restored = validated_model(Transcript, payload)
+    assert restored.model_dump(mode="json") == payload

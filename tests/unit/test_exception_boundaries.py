@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import subprocess
 from pathlib import Path
 from typing import Any, cast
 
@@ -23,8 +22,6 @@ from packages.review.pipeline import FixturePipeline
 from packages.review.validation import ReviewValidationError
 from scripts import (
     secret_scan,
-    transcription_cli_preflight,
-    transcription_live_preflight,
     unsafe_production_probe,
 )
 
@@ -163,33 +160,3 @@ def test_secret_scanner_fails_closed_without_disclosing_unreadable_content() -> 
     assert len(findings) == 1
     assert findings[0].kind == "source_unreadable"
     assert findings[0].line == 0
-
-
-@pytest.mark.parametrize(
-    "failure",
-    [OSError("unavailable"), subprocess.TimeoutExpired(cmd="openai", timeout=3)],
-)
-def test_cli_preflight_process_failure_is_bounded(
-    monkeypatch: pytest.MonkeyPatch, failure: Exception
-) -> None:
-    def reject(*_: object, **__: object) -> None:
-        raise failure
-
-    monkeypatch.setattr(transcription_cli_preflight.subprocess, "run", reject)
-    assert transcription_cli_preflight._bounded_local_command(Path("/usr/bin/false"), ()) == (
-        127,
-        b"",
-    )
-
-
-def test_live_transcription_preflight_rejects_missing_generated_assets(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-) -> None:
-    monkeypatch.setattr(
-        transcription_live_preflight,
-        "MANIFEST_PATH",
-        tmp_path / "missing-generated-manifest.json",
-    )
-    assets, failures = transcription_live_preflight._inspect_assets()
-    assert assets == []
-    assert failures == ["generated_media_inspection"]
