@@ -8,7 +8,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-SLICE_ROOT = Path("/tmp/colacci-law-slice3c")  # noqa: S108  # nosec B108
+SLICE_ROOT = Path(os.environ.get("COLACCI_CLI_ROOT", "/tmp/colacci-law-slice3c"))  # noqa: S108  # nosec B108
 EVIDENCE_ROOT = SLICE_ROOT / "evidence"
 INPUT_REPORTS = (
     "cli-preflight.json",

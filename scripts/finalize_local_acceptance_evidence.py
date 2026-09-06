@@ -10,7 +10,7 @@ import subprocess  # nosec B404
 from pathlib import Path
 from typing import Any, cast
 
-EVIDENCE_ROOT = Path("/tmp/colacci-law-slice6a/evidence")  # nosec B108
+EVIDENCE_ROOT = Path(os.environ.get("COLACCI_EVIDENCE_ROOT", "/tmp/colacci-law-slice6a/evidence"))  # nosec B108
 SOURCE_COMMIT = "22710801be61a3f97825fbc36fb3d0e0e92f8dbc"
 REQUIRED = {
     "administrator-journey.json",
@@ -54,6 +54,17 @@ def _write(name: str, payload: object) -> None:
     target = EVIDENCE_ROOT / name
     target.write_text(f"{json.dumps(payload, indent=2, sort_keys=True)}\n", encoding="utf-8")
     os.chmod(target, 0o600)
+
+
+def observed_candidate_images() -> dict[str, Any]:
+    candidate = json.loads(
+        (EVIDENCE_ROOT.parent / "candidate" / "candidate-images.json").read_text(encoding="utf-8")
+    )
+    if candidate["candidate_commit"] != _git("rev-parse", "HEAD") or candidate[
+        "candidate_tree"
+    ] != _git("rev-parse", "HEAD^{tree}"):
+        raise SystemExit("acceptance image evidence does not match final source")
+    return cast(dict[str, Any], candidate["images"])
 
 
 def main() -> None:
@@ -111,6 +122,7 @@ def main() -> None:
         if command_results_path.exists()
         else {"make test-local-acceptance": "passed"}
     )
+    observed_images = observed_candidate_images()
     report = {
         "schema_version": "local-product-acceptance-v1",
         "slice": "6A",
@@ -122,13 +134,13 @@ def main() -> None:
         "migration_head": "0006_local_operations",
         "runtime_versions": {
             "host_python": platform.python_version(),
-            "application_python": "3.14.7",
-            "node": "26.3.0",
-            "npm": "12.0.2",
-            "postgresql": "17.6",
-            "playwright": "1.62.1",
-            "openai_python": "3.2.0",
+            "application_python": observed_images["api"]["python"],
+            "worker_python": observed_images["worker"]["python"],
+            "node": observed_images["web"]["node"],
+            "npm": observed_images["web"]["npm"],
+            "playwright": observed_images["e2e"]["playwright"],
         },
+        "candidate_images": observed_images,
         "scenario_inventory": scenarios["scenarios"],
         "role_journeys": {"reviewer": "passed", "administrator": "passed", "operations": "passed"},
         "reconciliation": scenarios["reconciliation"],

@@ -10,7 +10,7 @@ import re
 import subprocess  # nosec B404
 from pathlib import Path
 
-SLICE_ROOT = Path("/tmp/colacci-law-slice3c")  # noqa: S108  # nosec B108
+SLICE_ROOT = Path(os.environ.get("COLACCI_CLI_ROOT", "/tmp/colacci-law-slice3c"))  # noqa: S108  # nosec B108
 EVIDENCE_ROOT = SLICE_ROOT / "evidence"
 REPORT_PATH = EVIDENCE_ROOT / "cli-preflight.json"
 DECLARED_VERSION = "1.6.0"

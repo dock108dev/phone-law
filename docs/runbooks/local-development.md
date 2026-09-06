@@ -171,3 +171,63 @@ executes deletion success/retry/terminal/restart cases, runs the disposable rest
 responsive accessibility, inspects content-free logs, and removes its stack and runtime. Private
 evidence remains under `/tmp/colacci-law-slice5a/evidence`. Follow the complete
 [operator and incident runbook](../local-operations.md).
+
+### Disposable qualification resources
+
+Use fresh attempt paths for release, acceptance, UI, month, E2E, manual-upload,
+and operations gates. These entry points refuse existing evidence/runtime paths
+and existing project containers (including stopped ones), volumes or networks
+before enabling cleanup. Their ownership marker authorizes cleanup only for that
+invocation. Cleanup retains evidence and cached images. Preserve a failed attempt;
+choose new paths for a later invocation. Never pass retained owner runtime
+`/tmp/colacci-law-slice4-local` to a qualification gate.
+
+The release gate accepts `COMPOSE_PROJECT_NAME`, `SLICE4_RUNTIME_ROOT` and
+`SLICE6C_EVIDENCE_DIR`. It enforces the unpublished internal Slice 7C Compose
+configuration, builds/verifies images named for that project, and retains image
+proof under `candidate/`. The standalone month gate uses those same isolation
+settings and requires its project images to be prepared beforehand.
+
+Acceptance accepts `COLACCI_ACCEPTANCE_PROJECT`, `COLACCI_ACCEPTANCE_ROOT` and
+`SLICE4_RUNTIME_ROOT`. `COLACCI_CANDIDATE_IMAGE_PREFIX` selects the previously
+verified candidate images; all four are checked before being tagged for the
+acceptance project. The collectors, cleanup writer and finalizer honor the same
+`COLACCI_EVIDENCE_ROOT`. Each separate acceptance invocation needs its own root.
+Its two internal technical rehearsals do not replace two required invocations.
+
+Supporting gates accept these project/evidence settings, plus
+`SLICE4_RUNTIME_ROOT` (operations uses `SLICE5A_RUNTIME_ROOT`):
+
+| Gate | Project variable | Evidence variable |
+| --- | --- | --- |
+| UI | `COLACCI_UI_PROJECT` | `SLICE6D_EVIDENCE_DIR` |
+| E2E | `COLACCI_E2E_PROJECT` | `SLICE4_EVIDENCE_DIR` |
+| Manual upload | `COLACCI_MANUAL_PROJECT`, then `COLACCI_E2E_PROJECT` | `SLICE4_EVIDENCE_DIR`; browser evidence in `browser/` |
+| Operations | `COLACCI_OPERATIONS_PROJECT` | `SLICE5A_EVIDENCE_DIR` |
+
+For core Make targets, select a dedicated `COMPOSE_PROJECT_NAME` and
+`COMPOSE_FILE=docker-compose.yml:infrastructure/local/slice7c-compose.yml` with a
+fresh top-level `/tmp/colacci-law-...` `SLICE4_RUNTIME_ROOT`. Do not use bootstrap,
+`make clean`, or the retained default stack to establish this boundary. Explicitly
+inspect the selected project before startup and remove only that project's
+resources afterward. Set `COLACCI_FIXTURE_IMAGE`, `COLACCI_FIXTURE_NETWORK`, and
+`COLACCI_FIXTURE_REPORT_ROOT` for fixture evaluation and offline CLI execution.
+
+`COLACCI_SYNTHETIC_ROOT` selects the host audio generator and audio/contract bind
+mount; the container-side consumers retain `/tmp/colacci-law-slice3a`.
+`COLACCI_CLI_ROOT` selects the host CLI preflight/inspection root and all three
+CLI bind mounts; container-side consumers retain `/tmp/colacci-law-slice3c`.
+Allocate these host roots freshly and preserve reports before reuse. These core
+helpers do not claim ownership themselves. Never mount historical audio/CLI roots
+into a new campaign. Fixture reports likewise use a private host mount with the
+canonical container path. Container paths are not evidence of host path reuse.
+
+The host launcher supports `COLACCI_REVIEW_PROJECT`, `COLACCI_REVIEW_RUNTIME` and
+`COLACCI_REVIEW_PORT` for a separate disposable rehearsal. Use the same values for
+`start`, `seed`, `restart`, `stop` and `clean`. Verify the chosen project/runtime is
+unused and the loopback port is free before starting. `clean` removes that stack
+and volume; archive its relay log before removing its private runtime directory.
+Candidate build labels (`COLACCI_CANDIDATE_COMMIT`, `COLACCI_CANDIDATE_TREE`,
+`COLACCI_RUNTIME_CONTRACT`) propagate through Compose builds, including the
+launcher. Independently verify actual image IDs, runtimes and installed dependency
+versions for each execution image; a label alone is not qualification.

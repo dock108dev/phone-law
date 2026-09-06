@@ -37,9 +37,8 @@ test-demo-month:
 prepare-candidate-images:
 	COLACCI_CANDIDATE_EVIDENCE_DIR="$${COLACCI_CANDIDATE_EVIDENCE_DIR:-/tmp/colacci-law-candidate/evidence}" PYTHONPATH=. python3 scripts/prepare_candidate_images.py
 
-test-demo-release: export COLACCI_CANDIDATE_EVIDENCE_DIR := /tmp/colacci-law-slice6e/evidence
-test-demo-release: prepare-candidate-images
-	SLICE6C_EVIDENCE_DIR=/tmp/colacci-law-slice6e/evidence ./scripts/test_demo_month.sh
+test-demo-release:
+	./scripts/test_demo_release.sh
 
 test-ui-redesign:
 	./scripts/test_ui_redesign.sh
@@ -60,10 +59,10 @@ generate-test-audio:
 	PYTHONPATH=. python3 scripts/generate_test_audio.py
 
 test-audio: generate-test-audio
-	$(COMPOSE) run --rm --no-deps --user root -v /tmp/colacci-law-slice3a:/tmp/colacci-law-slice3a api python scripts/test_audio_boundary.py
+	$(COMPOSE) run --rm --no-deps --user root -v "$${COLACCI_SYNTHETIC_ROOT:-/tmp/colacci-law-slice3a}:/tmp/colacci-law-slice3a" api python scripts/test_audio_boundary.py
 
 test-transcription-contract: generate-test-audio
-	$(COMPOSE) run --rm --no-deps --user root -v /tmp/colacci-law-slice3a:/tmp/colacci-law-slice3a api python scripts/test_transcription_contract.py
+	$(COMPOSE) run --rm --no-deps --user root -v "$${COLACCI_SYNTHETIC_ROOT:-/tmp/colacci-law-slice3a}:/tmp/colacci-law-slice3a" api python scripts/test_transcription_contract.py
 
 transcription-cli-preflight:
 	PYTHONPATH=. python3 scripts/transcription_cli_preflight.py
@@ -72,9 +71,9 @@ test-transcription-cli-offline:
 	$(COMPOSE) up -d --wait db
 	$(COMPOSE) exec -T db psql -v ON_ERROR_STOP=1 -U colacci_demo -d postgres -f /docker-entrypoint-initdb.d/001-init-databases.sql
 	$(COMPOSE) run --rm -e APP_PROFILE=test -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test api /bin/bash -c 'alembic downgrade base && alembic upgrade head'
-	docker run --rm --user root --network none -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-slice3c:/tmp/colacci-law-slice3c -w /workspace -e PYTHONPATH=/workspace colacci-law-api:latest /bin/bash -c 'pytest -q tests/unit/test_cli_transcription.py tests/unit/test_transcript_import.py && python scripts/collect_cli_contract_evidence.py'
-	docker run --rm --user root --network none -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-slice3c:/tmp/colacci-law-slice3c -w /workspace -e PYTHONPATH=/workspace colacci-law-api:latest python scripts/test_cli_process_security.py
-	docker run --rm --user root --network $${COLACCI_FIXTURE_NETWORK:-colacci-law_fixture} -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-slice3c:/tmp/colacci-law-slice3c -w /workspace -e PYTHONPATH=/workspace -e APP_PROFILE=local_dev -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test -e CALL_SOURCE_ADAPTER=transcript_only -e TRANSCRIBER_ADAPTER=transcript_only_import -e ANALYZER_ADAPTER=fixture -e NOTIFICATION_ADAPTER=noop -e OBJECT_STORAGE_BACKEND=local_synthetic -e MEDIA_TEMP_ROOT=/tmp/colacci-law-slice3c/objects colacci-law-api:latest python scripts/import_transcript_only.py
+	docker run --rm --user root --network none -v "$(CURDIR):/workspace:ro" -v "$${COLACCI_CLI_ROOT:-/tmp/colacci-law-slice3c}:/tmp/colacci-law-slice3c" -w /workspace -e PYTHONPATH=/workspace $${COLACCI_FIXTURE_IMAGE:-colacci-law-api:latest} /bin/bash -c 'pytest -q tests/unit/test_cli_transcription.py tests/unit/test_transcript_import.py && python scripts/collect_cli_contract_evidence.py'
+	docker run --rm --user root --network none -v "$(CURDIR):/workspace:ro" -v "$${COLACCI_CLI_ROOT:-/tmp/colacci-law-slice3c}:/tmp/colacci-law-slice3c" -w /workspace -e PYTHONPATH=/workspace $${COLACCI_FIXTURE_IMAGE:-colacci-law-api:latest} python scripts/test_cli_process_security.py
+	docker run --rm --user root --network $${COLACCI_FIXTURE_NETWORK:-colacci-law_fixture} -v "$(CURDIR):/workspace:ro" -v "$${COLACCI_CLI_ROOT:-/tmp/colacci-law-slice3c}:/tmp/colacci-law-slice3c" -w /workspace -e PYTHONPATH=/workspace -e APP_PROFILE=local_dev -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test -e CALL_SOURCE_ADAPTER=transcript_only -e TRANSCRIBER_ADAPTER=transcript_only_import -e ANALYZER_ADAPTER=fixture -e NOTIFICATION_ADAPTER=noop -e OBJECT_STORAGE_BACKEND=local_synthetic -e MEDIA_TEMP_ROOT=/tmp/colacci-law-slice3c/objects $${COLACCI_FIXTURE_IMAGE:-colacci-law-api:latest} python scripts/import_transcript_only.py
 	PYTHONPATH=. python3 scripts/inspect_slice3c_evidence.py
 
 test-manual-upload:

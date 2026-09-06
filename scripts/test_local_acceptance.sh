@@ -2,13 +2,14 @@
 set -euo pipefail
 
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-acceptance_root="/tmp/colacci-law-slice6a"
+acceptance_root="${COLACCI_ACCEPTANCE_ROOT:-/tmp/colacci-law-slice6a}"
 evidence_root="$acceptance_root/evidence"
-runtime_root="/tmp/colacci-law-slice4-local"
-project_name="colacci-law-slice6a-proof"
+runtime_root="${SLICE4_RUNTIME_ROOT:-/tmp/colacci-law-acceptance-runtime}"
+project_name="${COLACCI_ACCEPTANCE_PROJECT:-colacci-law-slice6a-proof}"
 
 export COMPOSE_FILE="$repository_root/docker-compose.yml:$repository_root/infrastructure/local/offline-compose.yml:$repository_root/infrastructure/local/slice5a-compose.yml:$repository_root/infrastructure/local/slice6a-compose.yml"
 export SLICE4_EVIDENCE_DIR="$evidence_root"
+export COLACCI_EVIDENCE_ROOT="$evidence_root"
 export SLICE4_RUNTIME_ROOT="$runtime_root"
 export VITE_API_BASE_URL="http://api:8000"
 export CORS_ORIGINS='["http://web:5173"]'
@@ -31,37 +32,34 @@ if [[ "$current_branch" != "main" && "$current_branch" != "codex/slice-6a-local-
   exit 1
 fi
 
-cleanup_stack() {
-  docker compose -p "$project_name" --profile e2e down -v --remove-orphans >/dev/null 2>&1 || true
-}
+source "$repository_root/scripts/campaign_resources.sh"
+# Refuse existing evidence before claiming anything; previous runs are retained.
+if [[ -e "$acceptance_root" ]]; then
+  echo "Acceptance output exists; select a fresh COLACCI_ACCEPTANCE_ROOT." >&2
+  exit 1
+fi
+campaign_claim
+cleanup_stack() { campaign_cleanup_stack; }
 cleanup_runtime() {
-  if [[ "$runtime_root" == "/tmp/colacci-law-slice4-local" ]]; then
-    rm -rf -- "$runtime_root"
-  fi
+  campaign_resource check
+  PYTHONPATH=. python3 scripts/cleanup_manual_upload_assets.py >/dev/null
 }
-cleanup_all() {
-  cleanup_stack
-  cleanup_runtime
-}
+cleanup_all() { campaign_cleanup; }
 trap cleanup_all EXIT
 
-cleanup_all
-rm -rf -- "$acceptance_root"
-mkdir -p "$evidence_root"
-chmod 700 "$acceptance_root" "$evidence_root"
-
-COLACCI_CANDIDATE_EVIDENCE_DIR="$evidence_root" PYTHONPATH=. \
+COLACCI_CANDIDATE_EVIDENCE_DIR="$acceptance_root/candidate" PYTHONPATH=. \
   python3 scripts/prepare_candidate_images.py --verify-only >/dev/null
 
 # Bootstrap is a required preceding command. Reuse its local images without a
 # registry, package-manager, or provider request during the measured rehearsal.
-for image_name in colacci-law-api:latest colacci-law-worker:latest colacci-law-web:latest colacci-law-e2e:latest; do
+image_prefix="${COLACCI_CANDIDATE_IMAGE_PREFIX:-colacci-law}"
+for image_name in "$image_prefix-api:latest" "$image_prefix-worker:latest" "$image_prefix-web:latest" "$image_prefix-e2e:latest"; do
   docker image inspect "$image_name" >/dev/null
 done
-docker tag colacci-law-api:latest "$project_name-api:latest"
-docker tag colacci-law-worker:latest "$project_name-worker:latest"
-docker tag colacci-law-web:latest "$project_name-web:latest"
-docker tag colacci-law-e2e:latest "$project_name-e2e:latest"
+docker tag "$image_prefix-api:latest" "$project_name-api:latest"
+docker tag "$image_prefix-worker:latest" "$project_name-worker:latest"
+docker tag "$image_prefix-web:latest" "$project_name-web:latest"
+docker tag "$image_prefix-e2e:latest" "$project_name-e2e:latest"
 
 run_rehearsal() {
   local run_number="$1"
@@ -84,7 +82,7 @@ run_rehearsal() {
     -e INCLUDE_LOCAL_ACCEPTANCE=1 e2e \
     npm run test:e2e -- --project=local-acceptance-restart
 
-  docker compose -p "$project_name" run --rm -v "$evidence_root:$evidence_root" api \
+  docker compose -p "$project_name" run --rm -e COLACCI_EVIDENCE_ROOT="$evidence_root" -v "$evidence_root:$evidence_root" api \
     python scripts/collect_local_acceptance_evidence.py
   docker compose -p "$project_name" run --rm \
     -e COLACCI_EVIDENCE_ROOT="$evidence_root" \
@@ -118,6 +116,7 @@ docker run --rm --network none -v "$repository_root:/workspace:ro" -e PYTHONPATH
   -w /workspace "$project_name-api:latest" python scripts/secret_scan.py >/dev/null
 
 cleanup_all
+trap - EXIT
 if [[ -n "$(docker ps -q --filter "label=com.docker.compose.project=$project_name")" ]]; then
   echo "disposable acceptance stack cleanup failed" >&2
   exit 1

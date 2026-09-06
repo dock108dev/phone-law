@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import os
+import re
 import shutil
 import socket
 import socketserver
@@ -19,9 +20,9 @@ import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-RUNTIME = Path("/tmp/colacci-law-slice7c-runtime")  # noqa: S108  # nosec B108 -- private owner-checked synthetic runtime
-PROJECT = "colacci-law-slice7c"
-PORT = 15176
+RUNTIME = Path(os.environ.get("COLACCI_REVIEW_RUNTIME", "/tmp/colacci-law-slice7c-runtime"))  # noqa: S108  # nosec B108 -- private owner-checked synthetic runtime
+PROJECT = os.environ.get("COLACCI_REVIEW_PROJECT", "colacci-law-slice7c")
+PORT = int(os.environ.get("COLACCI_REVIEW_PORT", "15176"))
 DOCKER = shutil.which("docker") or "docker"
 STOP = RUNTIME / "relay.stop"
 READY = RUNTIME / "relay.ready"
@@ -123,6 +124,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("action", choices=["start", "seed", "restart", "stop", "clean", "relay"])
     action = parser.parse_args().action
+    if not re.fullmatch(r"colacci-law-[a-z0-9-]+", PROJECT):
+        raise ValueError("Use a separately named synthetic review project")
+    if (
+        RUNTIME.parent != Path("/tmp")  # noqa: S108  # nosec B108 -- bounded host runtime
+        or not RUNTIME.name.startswith("colacci-law-")
+        or RUNTIME.name == "colacci-law-slice4-local"
+        or not 1024 <= PORT <= 65535
+    ):
+        raise ValueError("Use a private review runtime and unprivileged loopback port")
     os.umask(0o077)
     RUNTIME.mkdir(mode=0o700, exist_ok=True)
     if (

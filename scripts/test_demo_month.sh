@@ -1,20 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-evidence_directory="${SLICE6C_EVIDENCE_DIR:-/tmp/colacci-law-slice7b-month/evidence}"
-mkdir -p "$evidence_directory"
-chmod 0700 "$(dirname "$evidence_directory")" "$evidence_directory"
+repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+evidence_root="${SLICE6C_EVIDENCE_DIR:-/tmp/colacci-law-slice7b-month/evidence}"
+evidence_directory="$evidence_root"
+project_name="${COMPOSE_PROJECT_NAME:-colacci-law}"
+runtime_root="${SLICE4_RUNTIME_ROOT:-/tmp/colacci-law-month-runtime}"
+export COMPOSE_FILE="$repository_root/docker-compose.yml:$repository_root/infrastructure/local/slice7c-compose.yml"
+export SLICE4_RUNTIME_ROOT="$runtime_root"
 export SLICE6C_EVIDENCE_DIR="$evidence_directory"
+umask 077
+cd "$repository_root"
+source "$repository_root/scripts/campaign_resources.sh"
+campaign_claim
+trap campaign_cleanup EXIT
+if [[ "${COLACCI_RELEASE:-0}" == "1" ]]; then
+  export COLACCI_CANDIDATE_IMAGE_PREFIX="$project_name"
+  COLACCI_CANDIDATE_EVIDENCE_DIR="$evidence_root/candidate" PYTHONPATH=. \
+    python3 scripts/prepare_candidate_images.py
+fi
 
-# This gate must never operate on retained owner resources.
-if [[ "${COMPOSE_PROJECT_NAME:-colacci-law}" == "colacci-law" ]]; then
-  echo "Set a separately named disposable COMPOSE_PROJECT_NAME and isolated COMPOSE_FILE." >&2
-  exit 1
-fi
-if [[ -e "$evidence_directory/seed-run-1.json" ]]; then
-  echo "Evidence directory already used; retain it and choose a fresh attempt directory." >&2
-  exit 1
-fi
 docker compose up -d --wait db
 docker compose run --rm api alembic upgrade head
 docker compose run --rm api python scripts/seed_demo_month.py > "$evidence_directory/seed-run-1.json"

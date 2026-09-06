@@ -29,7 +29,7 @@ from packages.database.review_schema import (
     review_events,
 )
 
-EVIDENCE_ROOT = Path("/tmp/colacci-law-slice6a/evidence")  # nosec B108
+EVIDENCE_ROOT = Path(os.environ.get("COLACCI_EVIDENCE_ROOT", "/tmp/colacci-law-slice6a/evidence"))  # nosec B108
 
 
 def _write(name: str, payload: object) -> None:

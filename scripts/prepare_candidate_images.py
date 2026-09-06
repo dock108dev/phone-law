@@ -165,12 +165,17 @@ def validate_image_observation(
         raise CandidateImageError("candidate image verification failed: " + ",".join(failures))
 
 
+def candidate_image_prefix() -> str:
+    prefix = os.environ.get("COLACCI_CANDIDATE_IMAGE_PREFIX", "colacci-law")
+    if not re.fullmatch(r"colacci-law(?:-[a-z0-9-]+)?", prefix):
+        raise CandidateImageError("invalid candidate image prefix")
+    return prefix
+
+
 def collect_image_observation() -> dict[str, Any]:
     images = {
-        "api": "colacci-law-api:latest",
-        "worker": "colacci-law-worker:latest",
-        "web": "colacci-law-web:latest",
-        "e2e": "colacci-law-e2e:latest",
+        service: f"{candidate_image_prefix()}-{service}:latest"
+        for service in ("api", "worker", "web", "e2e")
     }
     observation: dict[str, Any] = {}
     for service, image in images.items():
@@ -223,6 +228,9 @@ def main() -> None:
     arguments = parser.parse_args()
     contract = declared_runtime_contract()
     identity = candidate_identity(contract)
+    evidence_root = _evidence_root()
+    if (evidence_root / "candidate-images.json").exists():
+        raise CandidateImageError("candidate evidence already exists; choose a fresh path")
     if not arguments.verify_only:
         environment = os.environ.copy()
         environment.update(
@@ -236,6 +244,8 @@ def main() -> None:
             [
                 "docker",
                 "compose",
+                "-p",
+                candidate_image_prefix(),
                 "--profile",
                 "e2e",
                 "build",

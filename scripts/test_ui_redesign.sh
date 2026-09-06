@@ -3,8 +3,9 @@ set -euo pipefail
 
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 evidence_root="${SLICE6D_EVIDENCE_DIR:-/tmp/colacci-law-slice6d/evidence}"
-project_name="colacci-law-slice6d-ui"
-export SLICE4_RUNTIME_ROOT="${SLICE4_RUNTIME_ROOT:-/tmp/colacci-law-ui-runtime}"
+project_name="${COLACCI_UI_PROJECT:-colacci-law-slice6d-ui}"
+runtime_root="${SLICE4_RUNTIME_ROOT:-/tmp/colacci-law-ui-runtime}"
+export SLICE4_RUNTIME_ROOT="$runtime_root"
 
 export COMPOSE_FILE="$repository_root/docker-compose.yml:$repository_root/infrastructure/local/slice6d-compose.yml:$repository_root/infrastructure/local/offline-compose.yml"
 export SLICE4_EVIDENCE_DIR="$evidence_root"
@@ -16,14 +17,11 @@ export INCLUDE_UI_REDESIGN=1
 umask 077
 cd "$repository_root"
 
-cleanup_stack() {
-  docker compose -p "$project_name" --profile e2e down -v --remove-orphans --rmi local >/dev/null 2>&1 || true
-}
+source "$repository_root/scripts/campaign_resources.sh"
+campaign_claim
+cleanup_stack() { campaign_cleanup; }
 trap cleanup_stack EXIT
-
-cleanup_stack
 mkdir -p "$evidence_root/before" "$evidence_root/after"
-chmod 700 "$(dirname "$evidence_root")" "$evidence_root" "$evidence_root/before" "$evidence_root/after"
 
 docker compose -p "$project_name" --profile e2e build api web e2e
 docker compose -p "$project_name" up -d --wait db

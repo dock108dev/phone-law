@@ -4,7 +4,7 @@ set -euo pipefail
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 evidence_root="${SLICE5A_EVIDENCE_DIR:-/tmp/colacci-law-slice5a/evidence}"
 runtime_root="${SLICE5A_RUNTIME_ROOT:-/tmp/colacci-law-slice5a/runtime}"
-project_name="colacci-law-slice5a-proof"
+project_name="${COLACCI_OPERATIONS_PROJECT:-colacci-law-slice5a-proof}"
 
 export COMPOSE_FILE="$repository_root/docker-compose.yml:$repository_root/infrastructure/local/offline-compose.yml:$repository_root/infrastructure/local/slice5a-compose.yml"
 export SLICE4_EVIDENCE_DIR="$evidence_root"
@@ -15,21 +15,9 @@ export CORS_ORIGINS='["http://web:5173"]'
 umask 077
 cd "$repository_root"
 
-remove_runtime() {
-  if [[ "$runtime_root" == /tmp/colacci-law-*/runtime ]]; then
-    rm -rf -- "$runtime_root"
-  fi
-}
-
-cleanup_stack() {
-  docker compose -p "$project_name" --profile e2e down -v --remove-orphans >/dev/null 2>&1 || true
-  remove_runtime
-}
-trap cleanup_stack EXIT
-
-cleanup_stack
-mkdir -p "$evidence_root" "$runtime_root"
-chmod 700 "/tmp/colacci-law-slice5a" "$evidence_root" "$runtime_root"
+source "$repository_root/scripts/campaign_resources.sh"
+campaign_claim
+trap campaign_cleanup EXIT
 
 # Image preparation is outside the focused proof. Every execution below uses
 # an internal Docker network or no network at all.
@@ -64,7 +52,7 @@ docker run --rm --network none \
   "$project_name-api:latest" \
   python scripts/inspect_logs.py /evidence/operations-application.log
 docker compose -p "$project_name" run --rm \
-  -v "$evidence_root:/tmp/colacci-law-slice5a/evidence" \
+  -e COLACCI_EVIDENCE_ROOT=/evidence -v "$evidence_root:/evidence" \
   api \
   python scripts/collect_local_operations_evidence.py
 docker run --rm --network none \
@@ -74,8 +62,8 @@ docker run --rm --network none \
   "$project_name-api:latest" \
   python scripts/secret_scan.py
 
-docker compose -p "$project_name" --profile e2e down -v --remove-orphans
-remove_runtime
+campaign_cleanup
+trap - EXIT
 if [[ -n "$(docker ps -q --filter "label=com.docker.compose.project=$project_name")" ]]; then
   echo "disposable stack cleanup failed" >&2
   exit 1
