@@ -380,12 +380,16 @@ export type DailyBriefing = {
   timezone: string;
   completeness: DailyReport["completeness"] | null;
   coverage_explanation: string;
+  scenario_version: string | null;
+  cutoff_at: string | null;
+  late_calls: DailyReport["late_calls"];
   latest_activity_date: string | null;
   calls: {
     call_id: string;
     synthetic_reference: string;
     occurred_at: string;
     state: "available" | "unavailable";
+    unavailable_reason: string | null;
     detail: CallDetail | null;
     attention: { kind: "caller_request" | "staff_promise" | "analysis_suggestion"; reason: string; evidence: Evidence[] }[];
   }[];

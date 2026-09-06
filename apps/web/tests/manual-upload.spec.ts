@@ -32,6 +32,7 @@ test("manual upload local synthetic audio and transcript bridge", async ({ page 
   });
 
   await page.goto("/uploads");
+  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
   await expect(page.getByRole("alert")).toContainText("Upload access denied");
   const reviewerStatus = await page.evaluate(async () => {
@@ -46,6 +47,7 @@ test("manual upload local synthetic audio and transcript bridge", async ({ page 
   expect(reviewerStatus).toBe(403);
   await page.screenshot({ path: `${evidenceDirectory}/upload-authorization-denial.png`, fullPage: true });
 
+  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-admin");
   await expect(page.getByText("Upload access denied for the reviewer role.")).not.toBeVisible({ timeout: 10_000 });
   await expect(page.getByLabel("Choose one generated audio file")).toBeEnabled();
@@ -94,6 +96,7 @@ test("manual upload local synthetic audio and transcript bridge", async ({ page 
   await expect(page.locator(".review-history")).toContainText("Correct");
 
   await page.goto("/uploads");
+  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-operations");
   await page.getByLabel("Invented transcript JSON").check();
   await page.getByLabel("Choose one invented transcript JSON file").setInputFiles("/synthetic-input/invented-transcript.json");
@@ -105,6 +108,7 @@ test("manual upload local synthetic audio and transcript bridge", async ({ page 
   await page.getByRole("button", { name: "Submit synthetic artifact" }).click();
   await expect(page.locator(".receipt-panel .upload-state")).toHaveText("Analyzed");
   await page.reload();
+  await page.getByText("Demo controls", { exact: true }).click();
   await expect(page.getByRole("combobox", { name: "Demo identity and role" })).toHaveValue("demo-operations");
   await page.getByLabel("Invented transcript JSON").check();
   await page.getByLabel("Choose one invented transcript JSON file").setInputFiles("/synthetic-input/invented-transcript.json");

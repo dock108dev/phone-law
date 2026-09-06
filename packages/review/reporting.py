@@ -274,6 +274,7 @@ def aggregate_daily_report(
     )
     return DailyReport(
         schema_version="daily-report-v1",
+        expected_source_call_ids=expected_source_call_ids,
         report_id=_identifier(str(business_date), fingerprint),
         business_date=business_date,
         timezone="America/New_York",

@@ -24,6 +24,9 @@ make smoke
 make seed-demo-month
 ```
 
+For the revised isolated host-browser rehearsal, use
+[the supported loopback launch](docs/runbooks/local-development.md#isolated-desktop-browser-review-rehearsal).
+
 Open [http://localhost:15173](http://localhost:15173). The UI must always show **Local / synthetic**
 and **No client data or live services**.
 

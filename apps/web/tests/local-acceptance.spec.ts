@@ -39,7 +39,10 @@ test("Slice 6A reviewer, administrator, and operations acceptance journey", asyn
   });
 
   // Reviewer: report reconciliation, eight sections, key examples, evidence, feedback, persistence.
-  await page.goto("/reports/2026-08-17");
+  await page.goto("/briefing/2026-08-17");
+  await expect(page.locator(".briefing-recap")).toHaveCount(11);
+  await page.getByRole("link", { name: "Detailed coverage report" }).click();
+  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
   await expect(page.getByRole("heading", { name: "Coverage is partial." })).toBeVisible();
   const reconciliationCounts: [string, string][] = [["Expected", "11"], ["Received", "11"], ["Analyzed", "10"], ["Failed", "1"], ["Missing", "0"], ["Late", "0"]];
@@ -92,6 +95,7 @@ test("Slice 6A reviewer, administrator, and operations acceptance journey", asyn
   }
 
   // Administrator: inspect audit, create/publish a new version, configure, and preserve provenance.
+  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-admin");
   await page.getByRole("button", { name: "Create synthetic draft" }).click();
   await expect(page.locator(".authorization-message")).toContainText("New synthetic draft created");
@@ -115,6 +119,7 @@ test("Slice 6A reviewer, administrator, and operations acceptance journey", asyn
   expect(await page.locator(".provenance").textContent()).toBe(originalProvenance);
 
   // Operations: content-free triage, retry history, cancellation, recovery, no-op notification.
+  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-operations");
   await page.goto("/failures");
   await expect(page.getByRole("heading", { name: "Synthetic failure queue" })).toBeVisible();

@@ -15,7 +15,7 @@ test("ten-call morning, dates, original evidence and keyboard return", async ({ 
   await expect(page.getByText("Simulated morning: July 16, 2026 — reviewing July 15, 2026.", { exact: true })).toBeVisible();
   await expect(page.locator(".briefing-recap")).toHaveCount(10);
   await expect(page.locator(".briefing-attention-item")).toHaveCount(3);
-  for (const width of [1440, 390]) {
+  for (const width of [1440, 1280, 1024, 768, 390]) {
     await page.setViewportSize({ width, height: 950 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     await expect(page.locator(".recap-summary")).toHaveCount(10);
@@ -59,5 +59,5 @@ test("ten-call morning, dates, original evidence and keyboard return", async ({ 
   }
   expect(external).toEqual([]);
   expect(errors).toEqual([]);
-  await writeFile(`${evidenceDirectory}/morning-browser.json`, JSON.stringify({ received: 10, attention_calls: 3, passage_links_checked: recaps.reduce((sum, recap) => sum + recap.links.length, 0), widths: [1440,390], external_requests: external.length, page_errors: errors, owner_acceptance: false }, null, 2));
+  await writeFile(`${evidenceDirectory}/morning-browser.json`, JSON.stringify({ received: 10, attention_calls: 3, passage_links_checked: recaps.reduce((sum, recap) => sum + recap.links.length, 0), widths: [1440,1280,1024,768,390], external_requests: external.length, page_errors: errors, owner_acceptance: false }, null, 2));
 });

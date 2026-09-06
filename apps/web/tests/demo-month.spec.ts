@@ -79,7 +79,14 @@ test("July month history and representative daily reports remain usable", async 
         for (const uncertainty of call.detail.uncertainty) await expect(rendered).toContainText(uncertainty);
         renderedRecaps++;
       } else {
-        await expect(rendered).toContainText("Result unavailable for this received call. No conversation recap can be provided.");
+        await expect(rendered).toContainText("Result unavailable for this received call.");
+        await expect(rendered).toContainText("No conversation recap can be provided.");
+        if (call.synthetic_reference === "CL-M2-20260707-02") {
+          await expect(rendered).toContainText("No usable transcript or accepted analysis is available.");
+        } else {
+          expect(call.synthetic_reference).toBe("CL-M2-20260727-03");
+          await expect(rendered).toContainText("A transcript was received, but no accepted analysis is available.");
+        }
         unavailableRecaps++;
       }
     }

@@ -1,0 +1,13 @@
+# Host access uses scripts/local_review.py's loopback relay. No service publishes ports.
+services:
+  db:
+    ports: !reset []
+  api:
+    ports: !reset []
+  worker:
+    ports: !reset []
+  web:
+    ports: !reset []
+networks:
+  app:
+    internal: true

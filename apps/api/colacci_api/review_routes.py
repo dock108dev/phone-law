@@ -154,6 +154,8 @@ def create_review(
         )
     try:
         return repository.add_review(analysis_id=analysis_id, request=payload, principal=principal)
+    except ValueError as exc:
+        raise api_error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
     except LookupError as exc:
         raise api_error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
 
@@ -230,6 +232,7 @@ def retry_failure(
         target_id=call_id,
         result=outcome.terminal_state.value.lower(),
     )
+    repository.refresh_coverage_for_call(call_id)
     return RetryResult(
         call_id=call_id,
         result="retry_completed",

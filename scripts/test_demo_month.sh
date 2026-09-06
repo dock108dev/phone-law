@@ -33,7 +33,7 @@ docker compose up -d --wait api web
 docker compose run --rm api python scripts/snapshot_demo_month.py > "$evidence_directory/persisted-restart.json"
 cmp "$evidence_directory/persisted-before.json" "$evidence_directory/persisted-restart.json"
 docker compose run --rm -e SLICE6C_EVIDENCE_DIR=/evidence/restarted -v "$evidence_directory:/evidence" api python scripts/test_demo_month.py > "$evidence_directory/restart-persistence.json"
-INCLUDE_DEMO_MONTH=1 SLICE4_EVIDENCE_DIR="$evidence_directory" docker compose --profile e2e run --rm -e MONTH_V2=1 e2e npm run test:e2e -- --project=demo-month --project=morning-briefing
+INCLUDE_DEMO_MONTH=1 SLICE4_EVIDENCE_DIR="$evidence_directory" docker compose --profile e2e run --rm -e MONTH_V2=1 e2e npm run test:e2e -- --project=demo-month --project=morning-briefing --project=everyday-review
 docker compose logs --no-color api worker > "$evidence_directory/application.log"
 docker compose run --rm --no-deps -v "$evidence_directory:/evidence:ro" api python scripts/inspect_logs.py /evidence/application.log
 docker compose run --rm --no-deps api python scripts/secret_scan.py > "$evidence_directory/secret-scan.txt"

@@ -158,6 +158,7 @@ class ReportSection(StrictModel):
 
 
 class DailyReport(StrictModel):
+    expected_source_call_ids: tuple[OpaqueId, ...] = ()
     schema_version: Literal["daily-report-v1"]
     report_id: OpaqueId
     business_date: date
@@ -258,6 +259,7 @@ class AuditEvent(StrictModel):
 
 
 class ReviewEventCreate(StrictModel):
+    request_id: OpaqueId | None = None
     label: ReviewLabel
     finding_id: OpaqueId | None = None
     note: NonEmptyText | None = None
@@ -385,6 +387,7 @@ class BriefingCall(StrictModel):
     synthetic_reference: OpaqueId
     occurred_at: AwareDatetime
     state: Literal["available", "unavailable"]
+    unavailable_reason: NonEmptyText | None = None
     detail: CallDetail | None = None
     attention: tuple[BriefingAttention, ...] = ()
 
@@ -397,5 +400,7 @@ class DailyBriefing(StrictModel):
     scenario_version: str | None = None
     completeness: ReportCompleteness | None = None
     coverage_explanation: NonEmptyText
+    cutoff_at: AwareDatetime | None = None
+    late_calls: tuple[LateCallMarker, ...] = ()
     latest_activity_date: date | None = None
     calls: tuple[BriefingCall, ...]

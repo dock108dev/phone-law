@@ -134,6 +134,19 @@
           "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
           "title": "Synthetic Reference",
           "type": "string"
+        },
+        "unavailable_reason": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Unavailable Reason"
         }
       },
       "required": [
@@ -656,6 +669,39 @@
         "state"
       ],
       "title": "IdentityClaim",
+      "type": "object"
+    },
+    "LateCallMarker": {
+      "additionalProperties": false,
+      "properties": {
+        "call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Call Id",
+          "type": "string"
+        },
+        "cutoff_at": {
+          "format": "date-time",
+          "title": "Cutoff At",
+          "type": "string"
+        },
+        "received_at": {
+          "format": "date-time",
+          "title": "Received At",
+          "type": "string"
+        },
+        "synthetic_reference": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Synthetic Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "call_id",
+        "synthetic_reference",
+        "received_at",
+        "cutoff_at"
+      ],
+      "title": "LateCallMarker",
       "type": "object"
     },
     "MonetaryFigure": {
@@ -1467,6 +1513,27 @@
       "minLength": 1,
       "title": "Coverage Explanation",
       "type": "string"
+    },
+    "cutoff_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cutoff At"
+    },
+    "late_calls": {
+      "default": [],
+      "items": {
+        "$ref": "#/$defs/LateCallMarker"
+      },
+      "title": "Late Calls",
+      "type": "array"
     },
     "latest_activity_date": {
       "anyOf": [

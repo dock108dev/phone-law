@@ -2,8 +2,8 @@
 set -euo pipefail
 
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-evidence_root="/tmp/colacci-law-slice5a/evidence"
-runtime_root="/tmp/colacci-law-slice5a/runtime"
+evidence_root="${SLICE5A_EVIDENCE_DIR:-/tmp/colacci-law-slice5a/evidence}"
+runtime_root="${SLICE5A_RUNTIME_ROOT:-/tmp/colacci-law-slice5a/runtime}"
 project_name="colacci-law-slice5a-proof"
 
 export COMPOSE_FILE="$repository_root/docker-compose.yml:$repository_root/infrastructure/local/offline-compose.yml:$repository_root/infrastructure/local/slice5a-compose.yml"
@@ -16,7 +16,7 @@ umask 077
 cd "$repository_root"
 
 remove_runtime() {
-  if [[ "$runtime_root" == "/tmp/colacci-law-slice5a/runtime" ]]; then
+  if [[ "$runtime_root" == /tmp/colacci-law-*/runtime ]]; then
     rm -rf -- "$runtime_root"
   fi
 }
@@ -84,7 +84,7 @@ if [[ -e "$runtime_root" ]]; then
   echo "disposable runtime cleanup failed" >&2
   exit 1
 fi
-PYTHONPATH=. python3 scripts/finalize_local_operations_evidence.py
+COLACCI_EVIDENCE_ROOT="$evidence_root" PYTHONPATH=. python3 scripts/finalize_local_operations_evidence.py
 trap - EXIT
 
 echo "local-operations python=passed browser=passed accessibility=passed network=none cleanup=passed"

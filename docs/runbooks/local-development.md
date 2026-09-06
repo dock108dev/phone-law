@@ -30,6 +30,61 @@ resolved lockfile.
 Tests, smoke checks, and migrations use no live AI, telephony, email, cloud, or identity service.
 No external credential is accepted.
 
+## Isolated desktop-browser review rehearsal
+
+Use this supported launch path for the revised morning experience. It leaves any
+retained `colacci-law` owner session untouched. Run from the original repository:
+
+```bash
+python3 scripts/local_review.py start
+python3 scripts/local_review.py seed
+```
+
+Open **http://127.0.0.1:15176** in the host desktop browser. Expect dataset
+`demo-month-2026-07-v2`, simulated morning July 16, reviewing July 15 in
+America/New_York: ten calls and three attention calls. The seed is 20260702 and
+materializer is `authored-month-schedule-v2`. This is engineering rehearsal,
+not owner acceptance. Use the Desktop tracker for current status.
+
+The launcher uses only project `colacci-law-slice7c`, its own database volume,
+and owner-controlled private `/tmp/colacci-law-slice7c-runtime`. It refuses an
+occupied port or an existing relay. Build steps fetch pinned dependencies; running
+product services use internal Docker networks, with no container ports published.
+A host Python TCP relay binds only 127.0.0.1:15176 and forwards bytes through Docker
+stdio to the web container's fixed 127.0.0.1:5173 endpoint. It supports HTTP and Vite
+WebSockets without adding a gateway network, exposing the Docker socket inside
+containers, allowing proxy destinations, or granting product egress. API requests
+use the existing same-origin web proxy. Host Python uses only its standard library.
+Do not manually attach any service to a non-internal network.
+
+```bash
+python3 scripts/local_review.py restart  # preserves saved reviews and database
+python3 scripts/local_review.py stop     # stops relay and stack; retains database
+python3 scripts/local_review.py start    # supported restart after stop
+python3 scripts/local_review.py seed     # idempotent; preserves review events
+python3 scripts/local_review.py clean    # removes only this disposable stack/volume
+```
+
+Keep evidence outside the runtime. `clean` retains private runtime files (including
+relay diagnostics) for inspection; remove only this attempt's files after preserving
+needed evidence. It never deletes owner resources or historical evidence. A failed
+relay start/stop is an error, not a successful launch: retain `relay.log`, inspect
+`relay.ready`, and do not delete the marker or improvise a network connection.
+
+For independent gates, export `COMPOSE_PROJECT_NAME=colacci-law-slice7c`,
+`COMPOSE_FILE=docker-compose.yml:infrastructure/local/slice7c-compose.yml`,
+`SLICE4_RUNTIME_ROOT=/tmp/colacci-law-slice7c-runtime`,
+`COLACCI_FIXTURE_NETWORK=colacci-law-slice7c_fixture`, and
+`COLACCI_FIXTURE_IMAGE=colacci-law-slice7c-api`, and
+`COLACCI_FIXTURE_REPORT_ROOT=/tmp/colacci-law-<attempt>/evidence/fixtures`. Supply a fresh evidence directory
+through each gate's `SLICE6C_EVIDENCE_DIR`, `SLICE6D_EVIDENCE_DIR`,
+`SLICE4_EVIDENCE_DIR`, or `SLICE5A_EVIDENCE_DIR` parameter. Local Operations also
+accepts `SLICE5A_RUNTIME_ROOT=/tmp/colacci-law-<attempt>/runtime`.
+E2E no longer stops or restores its caller's stack. Its separate technical retry
+probe begins in an empty database, preserves a permanent failure, simulates an
+interrupted retryable call, and retains one expected missing call. It is separate
+from both the ordinary v2 month and the exhaustive acceptance fixtures.
+
 ## Routine validation
 
 The complete command, isolation, and evidence matrix is in [Testing](../testing.md).

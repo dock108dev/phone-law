@@ -18,7 +18,10 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
     if (response.status() >= 400) failedRequests.push({ url: response.url(), status: response.status() });
   });
 
-  await page.goto("/reports/2026-08-17");
+  await page.goto("/briefing/2026-08-17");
+  await expect(page.locator(".briefing-recap")).toHaveCount(11);
+  await page.getByRole("link", { name: "Detailed coverage report" }).click();
+  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
   await expect(page.getByRole("heading", { name: "Coverage is partial." })).toBeVisible();
   await expect(page.getByText("Expected").locator("..").getByText("11")).toBeVisible();
@@ -89,6 +92,7 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
     .analyze();
   expect(callAccessibility.violations, JSON.stringify(callAccessibility.violations, null, 2)).toEqual([]);
 
+  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-operations");
   await page.waitForLoadState("networkidle");
   await page.goto("/failures");
@@ -99,11 +103,13 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
   await page.screenshot({ path: `${evidenceDirectory}/failure-queue.png`, fullPage: true });
 
   await page.goto("/playbooks");
+  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
   await page.getByRole("button", { name: "Publish synthetic draft" }).click();
   await expect(page.getByRole("status").filter({ hasText: /administrator/ })).toBeVisible();
   await page.screenshot({ path: `${evidenceDirectory}/playbook-authorization.png`, fullPage: true });
 
+  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
   await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-admin");
   await page.getByRole("button", { name: "Publish synthetic draft" }).click();
   await expect(page.getByText("Synthetic playbook published.", { exact: false })).toBeVisible();

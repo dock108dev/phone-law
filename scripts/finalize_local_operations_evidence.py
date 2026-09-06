@@ -6,7 +6,7 @@ import json
 import os
 from pathlib import Path
 
-EVIDENCE_ROOT = Path("/tmp/colacci-law-slice5a/evidence")  # nosec B108
+EVIDENCE_ROOT = Path(os.environ.get("COLACCI_EVIDENCE_ROOT", "/tmp/colacci-law-slice5a/evidence"))  # nosec B108
 
 
 def main() -> None:

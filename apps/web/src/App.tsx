@@ -26,6 +26,7 @@ import type {
   OperationsOverview,
   Playbook,
   PlaybookDraftCreate,
+  ReviewEvent,
   UploadCapabilities,
   UploadReceipt,
 } from "./types";
@@ -84,6 +85,12 @@ function SyntheticBanner(): ReactNode {
   );
 }
 
+function briefingReturn(): string {
+  if (typeof window === "undefined") return "/";
+  if (window.location.pathname.startsWith("/briefing/")) return window.location.pathname + window.location.hash;
+  return window.sessionStorage.getItem("colacci-briefing-return") ?? "/";
+}
+
 function Header({
   principal,
   setPrincipal,
@@ -103,7 +110,7 @@ function Header({
         <span><b>Colacci Law</b><small>{workArea}{reportDate ? ` · ${reportDate}` : ""}</small></span>
       </a>
       <nav aria-label="Primary navigation">
-        <a className={`nav-link ${path === "/" || path.startsWith("/briefing/") ? "active" : ""}`} href="/">Morning briefing</a>
+        <a className={`nav-link ${path === "/" || path.startsWith("/briefing/") ? "active" : ""}`} href={briefingReturn()}>Morning briefing</a>
         <a className="nav-link" href="/months/2026-07">Month history</a>
         <a className={`nav-link ${path === "/uploads" ? "active" : ""}`} href="/uploads">Manual upload</a>
         <a className={`nav-link ${path === "/failures" ? "active" : ""}`} href="/failures">Failures</a>
@@ -111,8 +118,8 @@ function Header({
         <a className={`nav-link ${path === "/operations" ? "active" : ""}`} href="/operations">Operations</a>
       </nav>
       <SyntheticBanner />
-      <label className="identity-control">
-        <span>Current role</span>
+      <details className="demo-controls"><summary>Demo controls</summary><label className="identity-control">
+        <span>Engineering identity</span>
         <select
           aria-label="Demo identity and role"
           value={principal}
@@ -125,7 +132,7 @@ function Header({
           {principals.map((item) => <option value={item.id} key={item.id}>{item.label}</option>)}
         </select>
         <small>{selectedRole}</small>
-      </label>
+      </label></details>
     </header>
   );
 }
@@ -188,6 +195,7 @@ function BriefingPage({ principal, selectedDate }: { principal: DemoPrincipal; s
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     let active = true;
+    setError(null);
     apiRequest<DailyBriefing>(`/api/briefing${selectedDate ? `?business_date=${selectedDate}` : ""}`, principal)
       .then((result) => { if (active) setBriefing(result); })
       .catch((reason: unknown) => { if (active) setError(reason instanceof Error ? reason.message : "Request failed"); });
@@ -195,6 +203,23 @@ function BriefingPage({ principal, selectedDate }: { principal: DemoPrincipal; s
   }, [principal, selectedDate]);
   useEffect(() => {
     if (briefing && window.location.hash) document.getElementById(window.location.hash.slice(1))?.focus();
+    if (briefing) {
+      window.sessionStorage.setItem("colacci-briefing-return", `/briefing/${briefing.business_date}${window.location.hash}`);
+      const remember = (event: MouseEvent): void => {
+        const link = (event.target as Element).closest("a");
+        const recap = link?.closest(".briefing-recap");
+        const linkedCall = link?.getAttribute("href")?.match(/^\/calls\/([A-Za-z0-9]+)\?briefing=/)?.[1];
+        const recapId = recap?.id ?? (linkedCall ? `call-${linkedCall}` : null);
+        if (recapId) {
+          const target = `/briefing/${briefing.business_date}#${recapId}`;
+          window.sessionStorage.setItem("colacci-briefing-return", target);
+          window.history.replaceState(null, "", target);
+        }
+      };
+      document.addEventListener("click", remember);
+      return () => { document.removeEventListener("click", remember); };
+    }
+    return undefined;
   }, [briefing]);
   if (!briefing || error) return <RequestState loading={!error} error={error} area="morning briefing" />;
   const counts = briefing.completeness?.reconciliation;
@@ -207,14 +232,19 @@ function BriefingPage({ principal, selectedDate }: { principal: DemoPrincipal; s
       <h1>Calls from {longDate(briefing.business_date)}</h1>
       {briefing.simulated_morning && <p>Simulated morning: {longDate(briefing.simulated_morning)} — reviewing {longDate(briefing.business_date)}.</p>}
       <p>America/New_York · Invented conversations for engineering review.</p>
+      {briefing.scenario_version && <small>Dataset: {briefing.scenario_version}</small>}
       <form onSubmit={(event) => { event.preventDefault(); const value = new FormData(event.currentTarget).get("date"); if (typeof value === "string" && value) window.location.assign(`/briefing/${value}`); }}>
         <label htmlFor="briefing-date">Review another date</label>{" "}
         <input id="briefing-date" name="date" type="date" defaultValue={briefing.business_date} required />{" "}<button type="submit">Open day</button>
       </form>
+      <a href={`/months/${briefing.business_date.slice(0, 7)}`}>Browse month history</a>{" · "}<a href={`/reports/${briefing.business_date}`}>Detailed coverage report</a>
     </section>
     <section className="briefing-coverage" aria-label="Call coverage">
       <p><strong>{briefing.calls.length} received {briefing.calls.length === 1 ? "call" : "calls"}.</strong> {briefing.coverage_explanation}</p>
       {counts && <p>{counts.analyzed} analyzed · {counts.failed} received with failed analysis · {counts.missing} expected but missing · {counts.late} late · {counts.duplicate_deliveries} duplicate deliveries counted once.</p>}
+      {!!counts?.missing && <p>Expected input has not arrived. There is no recording to retry and no recap to infer.</p>}
+      {!!counts?.failed && <p>Some received calls have no usable result. <a href="/failures">Inspect processing failures</a> for attempt history and permitted recovery.</p>}
+      {briefing.late_calls.map((late) => <p key={late.call_id}>Late arrival · {late.synthetic_reference}: occurred {new Date(briefing.calls.find((call) => call.call_id === late.call_id)?.occurred_at ?? late.received_at).toLocaleString("en-US", { timeZone: "America/New_York", timeZoneName: "short" })}; arrived {new Date(late.received_at).toLocaleString("en-US", { timeZone: "America/New_York", timeZoneName: "short" })}; coverage cutoff {briefing.cutoff_at && new Date(briefing.cutoff_at).toLocaleString("en-US", { timeZone: "America/New_York", timeZoneName: "short" })}.</p>)}
       {briefing.calls.length === 0 && briefing.latest_activity_date && <a href={`/briefing/${briefing.latest_activity_date}`}>Latest earlier day with activity: {longDate(briefing.latest_activity_date)}</a>}
     </section>
     <section className="briefing-attention" aria-labelledby="briefing-attention-title">
@@ -236,8 +266,9 @@ function BriefingPage({ principal, selectedDate }: { principal: DemoPrincipal; s
           <p className="recap-summary">{call.detail.summary}</p>
           {call.attention.map((item, number) => <p key={number}><strong>{labels[item.kind]}:</strong> {item.reason}</p>)}
           {call.detail.uncertainty.length > 0 && <p><strong>Unclear:</strong> {call.detail.uncertainty.join(" ")}</p>}
+          <p><a href={`/calls/${call.call_id}?briefing=${briefing.business_date}`}>Inspect call and assess findings</a> · {call.detail.review_history.length} saved assessments</p>
           <div className="briefing-evidence">{call.detail.transcript_segments.map((segment, number) => <a key={segment.segment_id} href={evidencePath(call.call_id, segment.segment_id)}>Passage {number + 1} · {humanize(segment.speaker)}</a>)}</div>
-        </> : <p>Result unavailable for this received call. No conversation recap can be provided.</p>}
+        </> : <p>Result unavailable for this received call. {call.unavailable_reason} No conversation recap can be provided.</p>}
       </article>)}
     </section>
   </div>;
@@ -273,8 +304,9 @@ function MonthPage({ principal, monthKey = "2026-07" }: { principal: DemoPrincip
   const leadingBlanks = new Date(`${history.year.toString()}-${history.month.toString().padStart(2, "0")}-01T12:00:00Z`).getUTCDay();
   return (
     <>
+      <a className="back-link" href={briefingReturn()}>← Return to selected briefing</a>
       <section className="month-heading" aria-labelledby="month-title">
-        <div><div className="eyebrow">Full-month synthetic call history</div><h1 id="month-title">{history.label}</h1><p>Every calendar date is visible. Open any day to inspect its complete eight-section report and evidence.</p></div>
+        <div><div className="eyebrow">Full-month synthetic call history</div><h1 id="month-title">{history.label}</h1><p>Every calendar date is visible. Open any day to read its briefing and inspect evidence.</p></div>
         <nav className="month-controls" aria-label="Month controls">
           <a href={history.previous_month_path} aria-label="Previous month">← Previous</a>
           <a href={history.next_month_path} aria-label="Next month">Next →</a>
@@ -291,7 +323,7 @@ function MonthPage({ principal, monthKey = "2026-07" }: { principal: DemoPrincip
         <div className="calendar-grid">
           {Array.from({ length: leadingBlanks }, (_, index) => <span className="calendar-blank" key={`blank-${index.toString()}`} />)}
           {history.days.map((day) => (
-            <a className={`calendar-day state-${day.state}`} href={day.report_path} key={day.business_date} aria-label={`${day.business_date}, ${humanize(day.state)}, expected ${day.expected.toString()}, analyzed ${day.analyzed.toString()}, failed ${day.failed.toString()}, missing ${day.missing.toString()}, late ${day.late.toString()}`}>
+            <a className={`calendar-day state-${day.state}`} href={`/briefing/${day.business_date}`} key={day.business_date} aria-label={`${day.business_date}, ${humanize(day.state)}, expected ${day.expected.toString()}, analyzed ${day.analyzed.toString()}, failed ${day.failed.toString()}, missing ${day.missing.toString()}, late ${day.late.toString()}`}>
               <span className="calendar-date">{Number(day.business_date.slice(-2))}</span><span className="day-state">{humanize(day.state)}</span>
               {day.state === "zero_activity" ? <small>No eligible calls</small> : <><dl><dt>Expected</dt><dd>{day.expected}</dd><dt>Analyzed</dt><dd>{day.analyzed}</dd><dt>Failed</dt><dd>{day.failed}</dd><dt>Missing</dt><dd>{day.missing}</dd><dt>Late</dt><dd>{day.late}</dd></dl>{day.scenarios.some((scenario) => ["duplicate_delivery", "retryable_transcription_failure", "cancellation", "retention_eligibility", "successful_deletion", "retryable_deletion_failure", "terminal_deletion_failed"].includes(scenario)) && <small className="scenario-note">{day.scenarios.filter((scenario) => ["duplicate_delivery", "retryable_transcription_failure", "cancellation", "retention_eligibility", "successful_deletion", "retryable_deletion_failure", "terminal_deletion_failed"].includes(scenario)).map(humanize).join(" · ")}</small>}</>}
             </a>
@@ -429,6 +461,48 @@ function EvidenceButton({ evidence, jump }: { evidence: Evidence; jump: (id: str
   return <button className="evidence-link button-link" type="button" onClick={() => { jump(evidence.segment_id); }}>Jump to {clock(evidence.start_seconds)} · {humanize(evidence.speaker)}</button>;
 }
 
+type ReviewIntent = { request_id: string; label: string; finding_id: string | null; note: string | null };
+
+function useReviewSave(detail: CallDetail, target: string | null, principal: DemoPrincipal, reload: () => Promise<void>): {
+  pending: ReviewIntent | null; working: boolean; message: string; save: (label: string, note: string) => Promise<boolean>;
+} {
+  const storageKey = `colacci-review-intent:${principal}:${detail.analysis_id}:${target ?? "missing"}`;
+  const [pending, setPending] = useState<ReviewIntent | null>(() => {
+    const stored = window.sessionStorage.getItem(storageKey);
+    return stored ? JSON.parse(stored) as ReviewIntent : null;
+  });
+  const lock = useRef(false);
+  const [working, setWorking] = useState(false);
+  const [message, setMessage] = useState(pending ? "Previous save not confirmed. Retry the same assessment to check its persisted result." : "");
+  async function save(label: string, note: string): Promise<boolean> {
+    if (lock.current) return false;
+    lock.current = true;
+    setWorking(true);
+    setMessage("");
+    const intent = pending ?? { request_id: Array.from(crypto.getRandomValues(new Uint8Array(16)), (byte) => byte.toString(16).padStart(2, "0")).join(""), label, finding_id: target, note: note.trim() || null };
+    window.sessionStorage.setItem(storageKey, JSON.stringify(intent));
+    setPending(intent);
+    try {
+      const result = await apiRequest<ReviewEvent>(`/api/analyses/${detail.analysis_id}/reviews`, principal, { method: "POST", body: JSON.stringify(intent) });
+      window.sessionStorage.removeItem(storageKey);
+      setPending(null);
+      try {
+        await reload();
+        setMessage(target ? "Feedback saved as a new review event." : "Missing finding saved as a new review event.");
+      } catch {
+        setMessage(`Assessment saved (${result.event_id}). History could not refresh; reload to see the persisted result.`);
+      }
+      return true;
+    } catch (reason) {
+      const denied = reason instanceof ApiRequestError && [400, 403, 404, 409, 422].includes(reason.status);
+      if (denied) { window.sessionStorage.removeItem(storageKey); setPending(null); }
+      setMessage(`${denied ? "Assessment was not saved." : "Save not confirmed. Retry the same assessment; it will not create a duplicate."} ${reason instanceof Error ? reason.message : "Local service unavailable."}`);
+      return false;
+    } finally { lock.current = false; setWorking(false); }
+  }
+  return { pending, working, message, save };
+}
+
 function FindingFeedback({
   finding,
   detail,
@@ -442,9 +516,9 @@ function FindingFeedback({
   jump: (id: string) => void;
   reload: () => Promise<void>;
 }): ReactNode {
-  const [label, setLabel] = useState("");
-  const [note, setNote] = useState("");
-  const [message, setMessage] = useState("");
+  const { pending, working, message, save } = useReviewSave(detail, finding.finding_id, principal, reload);
+  const [label, setLabel] = useState(pending?.label ?? "");
+  const [note, setNote] = useState(pending?.note ?? "");
   const messageRef = useRef<HTMLAnchorElement>(null);
   useEffect(() => {
     if (!message) return undefined;
@@ -455,19 +529,7 @@ function FindingFeedback({
   }, [message]);
   async function submit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
-    setMessage("");
-    try {
-      await apiRequest(`/api/analyses/${detail.analysis_id}/reviews`, principal, {
-        method: "POST",
-        body: JSON.stringify({ label, finding_id: finding.finding_id, note: note || null }),
-      });
-      setLabel("");
-      setNote("");
-      await reload();
-      setMessage("Feedback saved as a new review event.");
-    } catch (reason) {
-      setMessage(reason instanceof Error ? reason.message : "Feedback could not be saved.");
-    }
+    if (await save(label, note)) { setLabel(""); setNote(""); }
   }
   return (
     <article className="finding-card">
@@ -476,8 +538,9 @@ function FindingFeedback({
       <h3>{finding.statement}</h3>
       <div className="evidence-list">{finding.evidence.map((evidence) => <EvidenceButton evidence={evidence} jump={jump} key={evidence.segment_id} />)}</div>
       <form className="feedback-form" onSubmit={(event) => void submit(event)}>
-        <fieldset>
-          <legend>Record human feedback</legend>
+        <fieldset disabled={working || !!pending}>
+          <legend>Assess the finding above</legend>
+          <p>Correct confirms this analysis; Incorrect rejects it. Neither completes any real-world action.</p>
           <div className="feedback-options">
             {feedbackLabels.map((value) => (
               <label key={value}>
@@ -487,8 +550,8 @@ function FindingFeedback({
             ))}
           </div>
         </fieldset>
-        <label className="note-field"><span>Reviewer note <small>(optional)</small></span><textarea value={note} onChange={(event) => { setNote(event.target.value); }} rows={2} /></label>
-        <button className="primary-button" disabled={!label} type="submit">Save feedback</button>
+        <label className="note-field"><span>Reviewer note <small>(optional)</small></span><textarea disabled={working || !!pending} value={note} onChange={(event) => { setNote(event.target.value); }} rows={2} /></label>
+        <button className="primary-button" disabled={working || (!label && !pending)} type="submit">{working ? "Saving assessment…" : pending ? "Retry same assessment" : "Save feedback"}</button>
         <div aria-live="polite">
           {message ? <a className="form-message" ref={messageRef} href="#review-history-title" autoFocus>{message}</a> : <p className="form-message" />}
         </div>
@@ -498,8 +561,8 @@ function FindingFeedback({
 }
 
 function MissingFeedback({ detail, principal, reload }: { detail: CallDetail; principal: DemoPrincipal; reload: () => Promise<void> }): ReactNode {
-  const [note, setNote] = useState("");
-  const [message, setMessage] = useState("");
+  const { pending, working, message, save } = useReviewSave(detail, null, principal, reload);
+  const [note, setNote] = useState(pending?.note ?? "");
   const messageRef = useRef<HTMLAnchorElement>(null);
   useEffect(() => {
     if (!message) return undefined;
@@ -510,25 +573,15 @@ function MissingFeedback({ detail, principal, reload }: { detail: CallDetail; pr
   }, [message]);
   async function submit(event: SubmitEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
-    try {
-      await apiRequest(`/api/analyses/${detail.analysis_id}/reviews`, principal, {
-        method: "POST",
-        body: JSON.stringify({ label: "missing", finding_id: null, note }),
-      });
-      setNote("");
-      await reload();
-      setMessage("Missing finding saved as a new review event.");
-    } catch (reason) {
-      setMessage(reason instanceof Error ? reason.message : "Feedback could not be saved.");
-    }
+    if (await save("missing", note)) setNote("");
   }
   return (
     <form className="missing-form" onSubmit={(event) => void submit(event)}>
       <div className="content-origin human-origin">Human review</div>
       <h3>Add a missing finding</h3>
       <p>Record an omission without changing the original analysis or playbook.</p>
-      <label className="note-field"><span>What is missing? <b>(required)</b></span><textarea required value={note} onChange={(event) => { setNote(event.target.value); }} rows={3} /></label>
-      <button className="secondary-button" type="submit">Add missing finding</button>
+      <label className="note-field"><span>What is missing? <b>(required)</b></span><textarea disabled={working || !!pending} required value={note} onChange={(event) => { setNote(event.target.value); }} rows={3} /></label>
+      <button className="secondary-button" disabled={working} type="submit">{working ? "Saving assessment…" : pending ? "Retry same assessment" : "Add missing finding"}</button>
       <div aria-live="polite">
         {message ? <a className="form-message" ref={messageRef} href="#review-history-title" autoFocus>{message}</a> : <p className="form-message" />}
       </div>
@@ -563,7 +616,7 @@ function CallPage({ callId, principal }: { callId: string; principal: DemoPrinci
     setHighlighted(segmentId);
     window.history.replaceState(null, "", `#${segmentId}`);
     window.setTimeout(() => {
-      document.getElementById(segmentId)?.scrollIntoView({ block: "center", behavior: "smooth" });
+      document.getElementById(segmentId)?.scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
       document.getElementById(segmentId)?.focus();
     }, 0);
   }
@@ -609,10 +662,10 @@ function CallPage({ callId, principal }: { callId: string; principal: DemoPrinci
             <div className="panel-title"><div><span className="content-origin inference-origin">Fixture/model inference</span><h2 id="findings-title">Structured findings</h2></div><span>{humanize(detail.confidence)} confidence</span></div>
             {detail.uncertainty.length > 0 && <div className="uncertainty"><b>Uncertainty remains</b><ul>{detail.uncertainty.map((item) => <li key={item}>{item}</li>)}</ul></div>}
             <div className="finding-list">
-              {detail.findings.map((finding) => <FindingFeedback finding={finding} detail={detail} principal={principal} jump={jump} reload={load} key={finding.finding_id} />)}
+              {detail.findings.map((finding) => <FindingFeedback finding={finding} detail={detail} principal={principal} jump={jump} reload={load} key={`${principal}:${finding.finding_id}`} />)}
               {detail.findings.length === 0 && <div className="empty-section">No original finding was produced. Use the missing-finding control when needed.</div>}
             </div>
-            <MissingFeedback detail={detail} principal={principal} reload={load} />
+            <MissingFeedback key={principal} detail={detail} principal={principal} reload={load} />
           </section>
 
           <section className="detail-panel" aria-labelledby="transcript-title">
@@ -645,8 +698,8 @@ function CallPage({ callId, principal }: { callId: string; principal: DemoPrinci
 
       <section className="review-history" aria-labelledby="review-history-title">
         <div className="content-origin human-origin">Human review</div>
-        <h2 id="review-history-title">Append-only review history</h2>
-        {detail.review_history.length === 0 ? <p>No feedback recorded yet.</p> : <ol>{detail.review_history.map((event) => <li key={event.event_id}><b>{humanize(event.label)}</b><span>{event.finding_id ?? "Analysis-level missing finding"}</span>{event.note && <p>{event.note}</p>}<small>{event.principal.principal_id} · {new Date(event.created_at).toLocaleString()}</small></li>)}</ol>}
+        <h2 id="review-history-title" tabIndex={-1}>Append-only review history</h2>
+        {detail.review_history.length === 0 ? <p>No feedback recorded yet.</p> : <ol>{detail.review_history.map((event) => <li key={event.event_id}><b>{humanize(event.label)}</b><span>{detail.findings.find((finding) => finding.finding_id === event.finding_id)?.statement ?? event.finding_id ?? "Analysis-level missing finding"}</span>{event.note && <p>{event.note}</p>}<small>{event.principal.principal_id} · {new Date(event.created_at).toLocaleString()}</small></li>)}</ol>}
       </section>
     </>
   );
@@ -654,16 +707,20 @@ function CallPage({ callId, principal }: { callId: string; principal: DemoPrinci
 
 function FailureCard({ item, principal, reload }: { item: FailureItem; principal: DemoPrincipal; reload: () => Promise<void> }): ReactNode {
   const [message, setMessage] = useState("");
+  const [working, setWorking] = useState(false);
+  const lock = useRef(false);
   async function retry(): Promise<void> {
+    if (lock.current) return;
+    lock.current = true; setWorking(true);
     try {
       await apiRequest(`/api/failures/${item.call_id}/retry`, principal, { method: "POST" });
-      setMessage("Retry completed.");
       await reload();
+      setMessage("Processing attempt recorded. Check the current state and preserved history below.");
     } catch (reason) {
-      setMessage(reason instanceof Error ? reason.message : "Retry could not be completed.");
-    }
+      setMessage(`Retry outcome could not be confirmed. Reload the queue before another attempt. ${reason instanceof Error ? reason.message : "Local service unavailable."}`);
+    } finally { lock.current = false; setWorking(false); }
   }
-  return <article className="failure-card"><div className="item-topline"><h3>{item.synthetic_reference}</h3><span className={item.resolved ? "resolved-badge" : "failure-badge"}>{item.resolved ? "Resolved" : "Current failure"}</span></div><dl className="failure-meta"><dt>Failed stage</dt><dd>{item.failed_stage}</dd><dt>Diagnostic code</dt><dd>{item.diagnostic_code}</dd><dt>First attempt</dt><dd>{new Date(item.first_attempt_at).toLocaleString()}</dd><dt>Latest attempt</dt><dd>{new Date(item.latest_attempt_at).toLocaleString()}</dd><dt>Attempts</dt><dd>{item.attempt_count}</dd><dt>Terminal state</dt><dd>{item.current_terminal_state}</dd></dl><ol className="attempt-list">{item.attempt_history.map((attempt) => <li key={attempt.attempt_id}><b>Attempt {attempt.attempt_number}</b><span>{attempt.state}</span>{attempt.diagnostic_code && <small>{attempt.diagnostic_code}</small>}</li>)}</ol>{!item.resolved && <button type="button" className="secondary-button" disabled={!item.retryable} onClick={() => void retry()}>{item.retryable ? "Retry synthetic processing" : "Permanent failure · Retry unavailable"}</button>}<p className="form-message" aria-live="polite">{message}</p></article>;
+  return <article className="failure-card"><div className="item-topline"><h3>{item.synthetic_reference}</h3><span className={item.resolved ? "resolved-badge" : "failure-badge"}>{item.resolved ? "Resolved" : "Current failure"}</span></div><dl className="failure-meta"><dt>Failed stage</dt><dd>{item.failed_stage}</dd><dt>Diagnostic code</dt><dd>{item.diagnostic_code}</dd><dt>First attempt</dt><dd>{new Date(item.first_attempt_at).toLocaleString()}</dd><dt>Latest attempt</dt><dd>{new Date(item.latest_attempt_at).toLocaleString()}</dd><dt>Attempts</dt><dd>{item.attempt_count}</dd><dt>Terminal state</dt><dd>{item.current_terminal_state}</dd></dl><ol className="attempt-list">{item.attempt_history.map((attempt) => <li key={attempt.attempt_id}><b>Attempt {attempt.attempt_number}</b><span>{attempt.state}</span>{attempt.diagnostic_code && <small>{attempt.diagnostic_code}</small>}</li>)}</ol>{!item.resolved && <button type="button" className="secondary-button" disabled={working || !item.retryable} onClick={() => void retry()}>{item.retryable ? "Retry synthetic processing" : "Permanent failure · Retry unavailable"}</button>}<p className="form-message" aria-live="polite">{message}</p></article>;
 }
 
 function FailurePage({ principal }: { principal: DemoPrincipal }): ReactNode {

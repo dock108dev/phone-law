@@ -8,11 +8,12 @@ from calendar import month_name, monthrange
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import cast
-from uuid import uuid4
+from uuid import NAMESPACE_URL, uuid4, uuid5
 from zoneinfo import ZoneInfo
 
 import sqlalchemy as sa
 from sqlalchemy import Engine
+from sqlalchemy.dialects.postgresql import insert
 
 from packages.contracts.report import (
     AuditEvent,
@@ -211,6 +212,7 @@ class ReviewExperienceRepository:
                 "business_date": str(business_date),
                 "cutoff_at": cutoff_at.isoformat(),
                 "expected": sorted(expected_source_call_ids),
+                "projection": "review-loop-v1",
                 "duplicates": duplicates,
                 "calls": sorted(fingerprint_rows, key=lambda item: str(item["source_call_id"])),
             }
@@ -286,7 +288,7 @@ class ReviewExperienceRepository:
         timezone = ZoneInfo("America/New_York")
         with self.engine.connect() as connection:
             rows = connection.execute(
-                sa.select(calls.c.id, calls.c.fixture_id, calls.c.occurred_at)
+                sa.select(calls.c.id, calls.c.fixture_id, calls.c.occurred_at, calls.c.state)
                 .where(calls.c.is_synthetic.is_(True))
                 .order_by(calls.c.occurred_at, calls.c.id)
             ).all()
@@ -310,12 +312,23 @@ class ReviewExperienceRepository:
         )
         day_rows = [row for row in rows if row.occurred_at.astimezone(timezone).date() == selected]
         report = self.report(selected)
+        details = {str(row.id): self.call_detail(str(row.id)) for row in day_rows}
         projected = tuple(
             briefing_call(
                 call_id=str(row.id),
                 synthetic_reference=str(row.fixture_id),
                 occurred_at=row.occurred_at,
-                detail=self.call_detail(str(row.id)),
+                detail=details[str(row.id)],
+            ).model_copy(
+                update={
+                    "unavailable_reason": (
+                        "A transcript was received, but no accepted analysis is available."
+                        if row.state in {"ANALYSIS_FAILED", "OUTPUT_VALIDATION_FAILED"}
+                        else "No usable transcript or accepted analysis is available."
+                    )
+                    if details[str(row.id)] is None
+                    else None
+                }
             )
             for row in day_rows
         )
@@ -349,9 +362,25 @@ class ReviewExperienceRepository:
             scenario_version=scenario.version if simulated else None,
             completeness=completeness,
             coverage_explanation=explanation,
+            cutoff_at=report.cutoff_at if report else None,
+            late_calls=report.late_calls if report else (),
             latest_activity_date=max(earlier) if earlier else None,
             calls=projected,
         )
+
+    def refresh_coverage_for_call(self, call_id: str) -> None:
+        with self.engine.connect() as connection:
+            occurred_at = connection.execute(
+                sa.select(calls.c.occurred_at).where(calls.c.id == call_id)
+            ).scalar_one()
+        business_date = occurred_at.astimezone(ZoneInfo("America/New_York")).date()
+        report = self.report(business_date)
+        if report is not None and report.expected_source_call_ids:
+            self.generate_report(
+                business_date=business_date,
+                cutoff_at=report.cutoff_at,
+                expected_source_call_ids=report.expected_source_call_ids,
+            )
 
     def report_dates(self) -> tuple[date, ...]:
         with self.engine.connect() as connection:
@@ -617,7 +646,13 @@ class ReviewExperienceRepository:
         now = datetime.now(UTC)
         event = ReviewEvent(
             schema_version="review-event-v1",
-            event_id=_id(),
+            event_id=(
+                uuid5(
+                    NAMESPACE_URL, f"colacci-review:{principal.principal_id}:{request.request_id}"
+                ).hex
+                if request.request_id
+                else _id()
+            ),
             analysis_id=analysis_id,
             finding_id=request.finding_id,
             label=request.label,
@@ -643,8 +678,9 @@ class ReviewExperienceRepository:
             }
             if request.finding_id is not None and request.finding_id not in findings:
                 raise LookupError("finding_not_found")
-            connection.execute(
-                review_events.insert().values(
+            inserted = connection.execute(
+                insert(review_events)
+                .values(
                     id=event.event_id,
                     analysis_id=analysis_id,
                     finding_id=event.finding_id,
@@ -654,7 +690,30 @@ class ReviewExperienceRepository:
                     role=principal.role.value,
                     created_at=now,
                 )
-            )
+                .on_conflict_do_nothing(index_elements=[review_events.c.id])
+                .returning(review_events.c.id)
+            ).scalar_one_or_none()
+            if inserted is None:
+                existing = (
+                    connection.execute(
+                        sa.select(review_events).where(review_events.c.id == event.event_id)
+                    )
+                    .mappings()
+                    .one()
+                )
+                if any(
+                    existing[key] != value
+                    for key, value in {
+                        "analysis_id": analysis_id,
+                        "finding_id": event.finding_id,
+                        "label": event.label.value,
+                        "note": event.note,
+                        "principal_id": principal.principal_id.value,
+                        "role": principal.role.value,
+                    }.items()
+                ):
+                    raise ValueError("review_request_conflict")
+                return event.model_copy(update={"created_at": existing["created_at"]})
             self._insert_audit(
                 connection,
                 principal=principal,

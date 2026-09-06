@@ -326,3 +326,26 @@ h2, h3 { color: var(--firm-ink); }
 .language-note { color: #435466; font-style: italic; }
 .briefing-recap:focus { outline: 3px solid #296d9b; outline-offset: 3px; }
 @media (max-width: 480px) { .briefing-recap, .briefing-attention { padding: 1rem; } }
+
+.demo-controls { position: relative; font-size: .85rem; }
+.demo-controls summary { cursor: pointer; padding: .5rem; }
+.demo-controls[open] .identity-control { padding: .5rem; }
+.briefing-coverage p { overflow-wrap: anywhere; }
+.review-history li > span { display: block; overflow-wrap: anywhere; }
+
+/* Size the review from available space, including browser/text zoom. */
+main { container: review-main / inline-size; }
+.site-header { flex-wrap: wrap; }
+.site-header nav { max-width: 100%; overflow-x: auto; }
+@container review-main (max-width: 780px) {
+  .analysis-layout { grid-template-columns: minmax(0, 1fr); }
+  .analysis-main > .detail-panel:first-child,
+  .analysis-main > .detail-panel:nth-child(2),
+  .analysis-side { grid-column: 1; grid-row: auto; min-width: 0; }
+  .analysis-main > .detail-panel:first-child { order: 1; }
+  .analysis-main > .detail-panel:nth-child(2) { order: 2; }
+  .analysis-side { order: 3; }
+  .metadata-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .review-history li { grid-template-columns: minmax(0, 1fr); }
+  .call-heading { flex-direction: column; align-items: flex-start; }
+}

@@ -2,8 +2,9 @@
 set -euo pipefail
 
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-export COMPOSE_FILE="$repository_root/docker-compose.yml:$repository_root/infrastructure/local/offline-compose.yml"
-export SLICE4_EVIDENCE_DIR="/tmp/colacci-law-slice4-local/evidence"
+export COMPOSE_FILE="$repository_root/docker-compose.yml:$repository_root/infrastructure/local/offline-compose.yml:$repository_root/infrastructure/local/slice5a-compose.yml"
+export SLICE4_EVIDENCE_DIR="${SLICE4_EVIDENCE_DIR:-/tmp/colacci-law-manual-evidence}"
+export SLICE4_RUNTIME_ROOT="${SLICE4_RUNTIME_ROOT:-/tmp/colacci-law-manual-runtime}"
 export PLAYWRIGHT_GREP="manual upload"
 export COLLECT_SLICE4="1"
 export MANUAL_UPLOAD_OFFLINE="1"
@@ -17,6 +18,7 @@ cleanup_manual_stack() {
 trap cleanup_manual_stack EXIT
 
 PYTHONPATH=. python3 scripts/generate_manual_upload_assets.py
+docker compose -p colacci-law-manual build api
 docker compose -p colacci-law-manual up -d --wait db
 docker compose -p colacci-law-manual exec -T db psql -v ON_ERROR_STOP=1 \
   -U colacci_demo -d postgres -f /docker-entrypoint-initdb.d/001-init-databases.sql

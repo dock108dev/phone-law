@@ -4,6 +4,7 @@ set -euo pipefail
 repository_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 evidence_root="${SLICE6D_EVIDENCE_DIR:-/tmp/colacci-law-slice6d/evidence}"
 project_name="colacci-law-slice6d-ui"
+export SLICE4_RUNTIME_ROOT="${SLICE4_RUNTIME_ROOT:-/tmp/colacci-law-ui-runtime}"
 
 export COMPOSE_FILE="$repository_root/docker-compose.yml:$repository_root/infrastructure/local/slice6d-compose.yml:$repository_root/infrastructure/local/offline-compose.yml"
 export SLICE4_EVIDENCE_DIR="$evidence_root"
@@ -32,8 +33,8 @@ docker compose -p "$project_name" up -d --wait api web
 docker compose -p "$project_name" --profile e2e run --rm e2e npm run test:e2e -- --project=ui-redesign
 docker compose -p "$project_name" run --rm api alembic downgrade base
 docker compose -p "$project_name" run --rm api alembic upgrade head
-docker compose -p "$project_name" run --rm api python scripts/seed_demo_month.py --manifest fixtures/demo-month/morning-v1.json > "$evidence_root/morning-seed.json"
-docker compose -p "$project_name" --profile e2e run --rm e2e npm run test:e2e -- --project=morning-briefing
+docker compose -p "$project_name" run --rm api python scripts/seed_demo_month.py --manifest fixtures/demo-month/manifest-v2.json > "$evidence_root/morning-seed.json"
+docker compose -p "$project_name" --profile e2e run --rm -e MONTH_V2=1 e2e npm run test:e2e -- --project=morning-briefing --project=everyday-review
 docker compose -p "$project_name" logs --no-color api worker > "$evidence_root/application.log"
 docker compose -p "$project_name" run --rm --no-deps -v "$evidence_root:/evidence:ro" api python scripts/inspect_logs.py /evidence/application.log
 docker compose -p "$project_name" run --rm --no-deps api python scripts/secret_scan.py > "$evidence_root/secret-scan.txt"

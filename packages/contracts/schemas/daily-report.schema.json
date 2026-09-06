@@ -696,6 +696,15 @@
       "title": "Cutoff At",
       "type": "string"
     },
+    "expected_source_call_ids": {
+      "default": [],
+      "items": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+        "type": "string"
+      },
+      "title": "Expected Source Call Ids",
+      "type": "array"
+    },
     "generated_at": {
       "format": "date-time",
       "title": "Generated At",

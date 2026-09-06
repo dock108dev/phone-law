@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import json
+import os
 import stat
 from pathlib import Path
 
-ROOT = Path("/tmp/colacci-law-slice4-local")  # nosec B108
+ROOT = Path(os.environ.get("SLICE4_RUNTIME_ROOT", "/tmp/colacci-law-slice4-local"))  # nosec B108
 GENERATED = ROOT / "generated"
 MANIFEST = ROOT / "synthetic-manifest.json"
 OBJECTS = ROOT / "objects"

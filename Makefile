@@ -120,7 +120,7 @@ test-integration:
 test-fixtures:
 	$(COMPOSE) up -d --wait db
 	$(COMPOSE) exec -T db psql -v ON_ERROR_STOP=1 -U colacci_demo -d postgres -f /docker-entrypoint-initdb.d/001-init-databases.sql
-	docker run --rm --network $${COLACCI_FIXTURE_NETWORK:-colacci-law_fixture} -v "$(CURDIR):/workspace:ro" -v /tmp/colacci-law-fixtures:/tmp/colacci-law-fixtures -w /workspace -e APP_PROFILE=test -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test -e PYTHONPATH=/workspace $${COLACCI_FIXTURE_IMAGE:-colacci-law-api:latest} python scripts/evaluate_fixtures.py
+	docker run --rm --network $${COLACCI_FIXTURE_NETWORK:-colacci-law_fixture} -v "$(CURDIR):/workspace:ro" -v "$${COLACCI_FIXTURE_REPORT_ROOT:-/tmp/colacci-law-fixtures}:/tmp/colacci-law-fixtures" -w /workspace -e APP_PROFILE=test -e DATABASE_URL=postgresql+psycopg://colacci_demo:local-demo-only-password@db:5432/colacci_test -e PYTHONPATH=/workspace $${COLACCI_FIXTURE_IMAGE:-colacci-law-api:latest} python scripts/evaluate_fixtures.py
 
 test-e2e:
 	./scripts/test_e2e.sh

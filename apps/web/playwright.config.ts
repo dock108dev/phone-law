@@ -21,6 +21,8 @@ export default defineConfig({
   reporter: "line",
   grep: process.env.PLAYWRIGHT_GREP ? new RegExp(process.env.PLAYWRIGHT_GREP) : undefined,
   projects: [
+    { name: "recovery-probe", testMatch: "recovery-probe.spec.ts" },
+    { name: "everyday-review", testMatch: "everyday-review.spec.ts" },
     { name: "morning-briefing", testMatch: "morning-briefing.spec.ts" },
     { name: "review-flow", testMatch: "review-flow.spec.ts" },
     {

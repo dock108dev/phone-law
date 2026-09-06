@@ -273,6 +273,36 @@ def test_demo_api_role_matrix_and_safe_errors(
             json={"label": "correct", "finding_id": "fx002-finding-commitment", "note": None},
         )
         assert reviewer_feedback.status_code == 201
+        intent = {
+            "request_id": "engineering-repeat-001",
+            "label": "incorrect",
+            "finding_id": "fx002-finding-commitment",
+            "note": "Engineering rejection",
+        }
+        first = client.post(
+            f"/api/analyses/{detail.analysis_id}/reviews",
+            headers={"X-Demo-Principal": "demo-reviewer"},
+            json=intent,
+        )
+        repeated = client.post(
+            f"/api/analyses/{detail.analysis_id}/reviews",
+            headers={"X-Demo-Principal": "demo-reviewer"},
+            json=intent,
+        )
+        assert first.status_code == repeated.status_code == 201
+        assert first.json() == repeated.json()
+        conflict = client.post(
+            f"/api/analyses/{detail.analysis_id}/reviews",
+            headers={"X-Demo-Principal": "demo-reviewer"},
+            json={**intent, "label": "correct"},
+        )
+        assert conflict.status_code == 409
+        denied_repeat = client.post(
+            f"/api/analyses/{detail.analysis_id}/reviews",
+            headers={"X-Demo-Principal": "demo-operations"},
+            json=intent,
+        )
+        assert denied_repeat.status_code == 403
         denied_publish = client.post(
             "/api/playbooks/synthetic-draft-v1/publish",
             headers={"X-Demo-Principal": "demo-reviewer"},
@@ -326,3 +356,46 @@ def test_briefing_unique_received_failure_missing_and_date_coverage(
     assert sunday.completeness is not None and sunday.completeness.status.value == "zero_activity"
     assert sunday.latest_activity_date == date(2026, 8, 17)
     assert sunday.simulated_morning is None
+
+
+def test_interrupted_recovery_failed_retry_preserves_coverage() -> None:
+    from unittest.mock import patch
+
+    from packages.review.fixtures import FixtureAdapterError, FixtureTranscriber
+    from scripts.seed_recovery_probe import main as seed_recovery_probe
+
+    settings = Settings(_env_file=None, app_profile="test")
+    assert settings.sqlalchemy_database_url.endswith("_test")
+    alembic = Config("alembic.ini")
+    alembic.set_main_option("sqlalchemy.url", settings.sqlalchemy_database_url)
+    command.downgrade(alembic, "base")
+    command.upgrade(alembic, "head")
+    seed_recovery_probe()
+    with TestClient(create_app(settings)) as client:
+        headers = {"X-Demo-Principal": "demo-operations"}
+        queue = client.get("/api/failures", headers=headers).json()
+        item = next(row for row in queue["current"] if row["synthetic_reference"] == "CL-FX-010")
+        target = f"/api/failures/{item['call_id']}/retry"
+        assert client.post(target, headers={"X-Demo-Principal": "demo-reviewer"}).status_code == 403
+        with patch.object(
+            FixtureTranscriber,
+            "transcribe",
+            side_effect=FixtureAdapterError(
+                failure_class="transcriber_unavailable",
+                terminal_state="TRANSCRIPTION_FAILED",
+                diagnostic_code="engineering_retry_failed",
+                retryable=False,
+            ),
+        ):
+            result = client.post(target, headers=headers)
+        assert result.status_code == 200
+        assert result.json()["terminal_state"] == "TRANSCRIPTION_FAILED"
+        queue = client.get("/api/failures", headers=headers).json()
+        item = next(row for row in queue["current"] if row["synthetic_reference"] == "CL-FX-010")
+        assert item["attempt_count"] == 2
+        assert len(item["attempt_history"]) == 2
+        briefing = client.get("/api/briefing?business_date=2026-08-17", headers=headers).json()
+        assert len(briefing["calls"]) == 2
+        assert briefing["completeness"]["reconciliation"]["missing"] == 1
+        assert briefing["completeness"]["reconciliation"]["failed"] == 2
+        assert client.post(target, headers=headers).status_code == 409
