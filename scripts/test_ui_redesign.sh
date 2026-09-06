@@ -27,7 +27,7 @@ chmod 700 "$(dirname "$evidence_root")" "$evidence_root" "$evidence_root/before"
 docker compose -p "$project_name" --profile e2e build api web e2e
 docker compose -p "$project_name" up -d --wait db
 docker compose -p "$project_name" run --rm api alembic upgrade head
-docker compose -p "$project_name" run --rm api python scripts/seed_demo_month.py > "$evidence_root/seed-result.json"
+docker compose -p "$project_name" run --rm api python scripts/seed_demo_month.py --manifest fixtures/demo-month/manifest.json > "$evidence_root/seed-result.json"
 docker compose -p "$project_name" up -d --wait api web
 docker compose -p "$project_name" --profile e2e run --rm e2e npm run test:e2e -- --project=ui-redesign
 docker compose -p "$project_name" run --rm api alembic downgrade base

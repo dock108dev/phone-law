@@ -290,10 +290,18 @@ class ReviewExperienceRepository:
                 .where(calls.c.is_synthetic.is_(True))
                 .order_by(calls.c.occurred_at, calls.c.id)
             ).all()
-        scenario = DemoMonthManifest(
-            Path(__file__).parents[2] / "fixtures/demo-month/morning-v1.json"
+        scenario = (
+            DemoMonthManifest()
+            if any(str(row.fixture_id).startswith("CL-M2-") for row in rows)
+            else DemoMonthManifest(
+                Path(__file__).parents[2] / "fixtures/demo-month/morning-v1.json"
+            )
         )
-        scenario_ids = {item["fixture_id"] for item in scenario.entries()}
+        scenario_ids = {
+            item["fixture_id"]
+            for item in scenario.entries()
+            if "representative_morning" in item["scenarios"]
+        }
         scenario_present = scenario_ids.issubset({str(row.fixture_id) for row in rows})
         selected = business_date or (
             date.fromisoformat(scenario.contract["scenario"]["review_date"])
@@ -411,7 +419,17 @@ class ReviewExperienceRepository:
         previous_year, previous_month = (year - 1, 12) if month == 1 else (year, month - 1)
         next_year, next_month = (year + 1, 1) if month == 12 else (year, month + 1)
         days: list[MonthDaySummary] = []
-        demo_manifest = DemoMonthManifest() if (year, month) == (2026, 7) else None
+        demo_manifest = None
+        if (year, month) == (2026, 7):
+            with self.engine.connect() as connection:
+                fixture_ids = set(connection.execute(sa.select(calls.c.fixture_id)).scalars())
+            candidate_manifest = DemoMonthManifest()
+            if any(str(value).startswith("CL-M2-") for value in fixture_ids):
+                demo_manifest = candidate_manifest
+            elif any(str(value).startswith("CL-MONTH-") for value in fixture_ids):
+                demo_manifest = DemoMonthManifest(
+                    Path(__file__).parents[2] / "fixtures/demo-month/manifest.json"
+                )
         for report in reports:
             counts = report.completeness.reconciliation
             if report.completeness.status is ReportStatus.ZERO_ACTIVITY:

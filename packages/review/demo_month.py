@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import random
 from collections import Counter
@@ -12,7 +13,7 @@ from zoneinfo import ZoneInfo
 
 from packages.contracts.review import IngestionEvent
 
-MANIFEST_PATH = Path(__file__).parents[2] / "fixtures" / "demo-month" / "manifest.json"
+MANIFEST_PATH = Path(__file__).parents[2] / "fixtures" / "demo-month" / "manifest-v2.json"
 
 
 class DemoMonthManifest:
@@ -20,13 +21,27 @@ class DemoMonthManifest:
 
     def __init__(self, path: Path = MANIFEST_PATH) -> None:
         self.contract = cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
+        self.manifest_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
+        for name, expected_digest in self.contract.get("content_sha256", {}).items():
+            content = path.parent / name
+            if (
+                content.parent != path.parent
+                or hashlib.sha256(content.read_bytes()).hexdigest() != expected_digest
+            ):
+                raise ValueError("demo month referenced content digest mismatch")
         self.version = cast(str, self.contract["manifest_version"])
         self.seed = int(self.contract["seed"])
         self._entries = (
             cast(list[dict[str, Any]], self.contract["entries"])
             if "entries" in self.contract
+            else []
+            if "entry_file" in self.contract
             else self._build_entries()
         )
+        if "entry_file" in self.contract:
+            self._entries = json.loads((path.parent / self.contract["entry_file"]).read_text())[
+                "entries"
+            ]
         self._validate_contract()
 
     def entries(self) -> tuple[dict[str, Any], ...]:
@@ -46,6 +61,8 @@ class DemoMonthManifest:
 
     def summary(self) -> dict[str, object]:
         return {
+            "manifest_sha256": self.manifest_sha256,
+            "content_sha256": self.contract.get("content_sha256", {}),
             "manifest_version": self.version,
             "generator_version": self.contract["generator_version"],
             "seed": self.seed,
@@ -444,6 +461,32 @@ class DemoMonthManifest:
         }
 
     def _validate_contract(self) -> None:
+        identities = [item["fixture_id"] for item in self._entries]
+        if len(set(identities)) != len(identities):
+            raise ValueError("duplicate fixture identity")
+        for key in ("source_call_id", "source_event_id"):
+            values = [item["event"]["call"][key] for item in self._entries]
+            if len(values) != len(set(values)):
+                raise ValueError("duplicate source identity")
+        if "daily_schedule" in self.contract:
+            schedule = self.contract["daily_schedule"]
+            if [item["date"] for item in schedule] != [f"2026-07-{day:02}" for day in range(1, 32)]:
+                raise ValueError("month schedule must cover all 31 dates exactly once")
+            for day in schedule:
+                entries = self.expected_entries(date.fromisoformat(day["date"]))
+                actual = {
+                    "expected": len(entries),
+                    "received": sum(e["outcome"] != "missing" for e in entries),
+                    "analyzed": sum(e["outcome"] == "analyzed" for e in entries),
+                    "failed": sum(e["outcome"] == "failed" for e in entries),
+                    "missing": sum(e["outcome"] == "missing" for e in entries),
+                    "late": sum("late_delivery" in e["scenarios"] for e in entries),
+                    "duplicate_deliveries": sum(
+                        "duplicate_delivery" in e["scenarios"] for e in entries
+                    ),
+                }
+                if any(day[key] != count for key, count in actual.items()):
+                    raise ValueError("authored daily schedule does not reconcile")
         totals = cast(dict[str, int], self.contract["totals"])
         if len(self._entries) != totals["expected"]:
             raise ValueError("demo month expected total does not match generated entries")
@@ -470,6 +513,7 @@ class DemoMonthCallSource:
 
     def __init__(self, manifest: DemoMonthManifest | None = None) -> None:
         self.manifest = manifest or DemoMonthManifest()
+        self.adapter_version = str(self.manifest.contract["generator_version"])
 
     def events(self, fixture_id: str | None = None) -> tuple[IngestionEvent, ...]:
         entries = (

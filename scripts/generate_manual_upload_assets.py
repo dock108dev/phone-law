@@ -11,7 +11,7 @@ import struct
 import wave
 from pathlib import Path
 
-ROOT = Path("/tmp/colacci-law-slice4-local")  # nosec B108
+ROOT = Path(os.environ.get("SLICE4_RUNTIME_ROOT", "/tmp/colacci-law-slice4-local"))  # nosec B108
 GENERATED = ROOT / "generated"
 MANIFEST = ROOT / "synthetic-manifest.json"
 SAMPLE_RATE = 16000
@@ -38,7 +38,7 @@ def write_tone(path: Path, frequency: float) -> str:
 
 
 def main() -> None:
-    if Path("/tmp/colacci-law-slice4-local") != ROOT:  # nosec B108
+    if ROOT.parent != Path("/tmp") or not ROOT.name.startswith("colacci-law-") or ROOT.is_symlink():  # nosec B108
         raise SystemExit("unsafe manual-upload generation root")
     # Preserve the evidence bundle across later full-suite runs while replacing
     # every generated input and transient object from the prior run.

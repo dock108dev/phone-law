@@ -1,5 +1,6 @@
 from collections import Counter
 from datetime import date
+from pathlib import Path
 
 from packages.contracts.review import Provenance
 from packages.review.demo_month import DemoMonthCallSource, DemoMonthManifest
@@ -7,7 +8,7 @@ from packages.review.fixtures import FixtureAnalyzer, FixtureTranscriber
 
 
 def test_demo_month_manifest_reconciles_exact_contract() -> None:
-    manifest = DemoMonthManifest()
+    manifest = DemoMonthManifest(Path("fixtures/demo-month/manifest.json"))
 
     assert manifest.version == "demo-month-2026-07-v1"
     assert manifest.seed == 60819
@@ -30,7 +31,7 @@ def test_demo_month_manifest_reconciles_exact_contract() -> None:
 
 
 def test_demo_month_events_are_stable_transcript_only_artifacts() -> None:
-    manifest = DemoMonthManifest()
+    manifest = DemoMonthManifest(Path("fixtures/demo-month/manifest.json"))
     source = DemoMonthCallSource(manifest)
     events = source.events()
 
@@ -47,7 +48,7 @@ def test_demo_month_events_are_stable_transcript_only_artifacts() -> None:
 
 
 def test_spanish_and_unverified_date_content_survive_fixture_adapters() -> None:
-    manifest = DemoMonthManifest()
+    manifest = DemoMonthManifest(Path("fixtures/demo-month/manifest.json"))
     source = DemoMonthCallSource(manifest)
     transcriber = FixtureTranscriber(manifest)  # type: ignore[arg-type]
     analyzer = FixtureAnalyzer(manifest)  # type: ignore[arg-type]

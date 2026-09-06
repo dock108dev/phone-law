@@ -16,7 +16,7 @@ ROOT = Path(
 
 def main() -> None:
     browser = json.loads((ROOT / "browser-results.json").read_text(encoding="utf-8"))
-    validation = json.loads((ROOT / "validation-results.json").read_text(encoding="utf-8"))
+    validation = json.loads((ROOT / "initial/validation-results.json").read_text(encoding="utf-8"))
     expected_files = (
         "application.log",
         "browser-results.json",
@@ -29,14 +29,21 @@ def main() -> None:
         "secret-scan.txt",
         "spanish-call.png",
         "test-output.json",
-        "validation-results.json",
+        "initial/validation-results.json",
+        "persisted-before.json",
+        "persisted-reseed.json",
+        "persisted-restart.json",
+        "morning-browser.json",
     )
     missing = [name for name in expected_files if not (ROOT / name).is_file()]
     if missing:
         raise SystemExit(f"missing Slice 6C evidence: {','.join(missing)}")
     output = {
-        "slice": "6C",
+        "slice": "7B",
         "decision": "passed",
+        "manifest_sha256": validation["manifest"]["manifest_sha256"],
+        "content_sha256": validation["manifest"]["content_sha256"],
+        "conversation_reviews": len(validation["conversation_reviews"]),
         "manifest_version": validation["manifest"]["manifest_version"],
         "seed": validation["manifest"]["seed"],
         "monthly_reconciliation": validation["monthly_reconciliation"],

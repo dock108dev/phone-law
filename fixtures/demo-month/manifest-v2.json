@@ -1,0 +1,490 @@
+{
+  "manifest_version": "demo-month-2026-07-v2",
+  "generator_version": "authored-month-schedule-v2",
+  "seed": 20260702,
+  "business_month": "2026-07",
+  "timezone": "America/New_York",
+  "design_assumptions": "Invented design schedule for one lawyer; not measured firm statistics. Ordinary active days six to fourteen calls, weekends and July 3 closed. Totals derive from authored entries, not a volume target.",
+  "coverage_dates": [
+    "2026-07-01",
+    "2026-07-02",
+    "2026-07-03",
+    "2026-07-04",
+    "2026-07-05",
+    "2026-07-06",
+    "2026-07-07",
+    "2026-07-08",
+    "2026-07-09",
+    "2026-07-10",
+    "2026-07-11",
+    "2026-07-12",
+    "2026-07-13",
+    "2026-07-14",
+    "2026-07-15",
+    "2026-07-16",
+    "2026-07-17",
+    "2026-07-18",
+    "2026-07-19",
+    "2026-07-20",
+    "2026-07-21",
+    "2026-07-22",
+    "2026-07-23",
+    "2026-07-24",
+    "2026-07-25",
+    "2026-07-26",
+    "2026-07-27",
+    "2026-07-28",
+    "2026-07-29",
+    "2026-07-30",
+    "2026-07-31"
+  ],
+  "daily_schedule": [
+    {
+      "date": "2026-07-01",
+      "expected": 8,
+      "design_note": "invented ordinary working day",
+      "received": 8,
+      "analyzed": 8,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-02",
+      "expected": 10,
+      "design_note": "invented ordinary working day",
+      "received": 10,
+      "analyzed": 10,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 1
+    },
+    {
+      "date": "2026-07-03",
+      "expected": 0,
+      "design_note": "invented holiday closure",
+      "received": 0,
+      "analyzed": 0,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-04",
+      "expected": 0,
+      "design_note": "weekend closure",
+      "received": 0,
+      "analyzed": 0,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-05",
+      "expected": 0,
+      "design_note": "weekend closure",
+      "received": 0,
+      "analyzed": 0,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-06",
+      "expected": 9,
+      "design_note": "invented ordinary working day",
+      "received": 9,
+      "analyzed": 9,
+      "failed": 0,
+      "missing": 0,
+      "late": 1,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-07",
+      "expected": 12,
+      "design_note": "invented ordinary working day",
+      "received": 12,
+      "analyzed": 11,
+      "failed": 1,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-08",
+      "expected": 10,
+      "design_note": "invented ordinary working day",
+      "received": 10,
+      "analyzed": 10,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-09",
+      "expected": 8,
+      "design_note": "invented ordinary working day",
+      "received": 8,
+      "analyzed": 8,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-10",
+      "expected": 14,
+      "design_note": "busier day",
+      "received": 14,
+      "analyzed": 14,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-11",
+      "expected": 0,
+      "design_note": "weekend closure",
+      "received": 0,
+      "analyzed": 0,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-12",
+      "expected": 0,
+      "design_note": "weekend closure",
+      "received": 0,
+      "analyzed": 0,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-13",
+      "expected": 10,
+      "design_note": "invented ordinary working day",
+      "received": 10,
+      "analyzed": 10,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-14",
+      "expected": 12,
+      "design_note": "invented ordinary working day",
+      "received": 12,
+      "analyzed": 12,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-15",
+      "expected": 10,
+      "design_note": "invented ordinary working day",
+      "received": 10,
+      "analyzed": 10,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-16",
+      "expected": 9,
+      "design_note": "invented ordinary working day",
+      "received": 9,
+      "analyzed": 9,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-17",
+      "expected": 13,
+      "design_note": "invented ordinary working day",
+      "received": 13,
+      "analyzed": 13,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 1
+    },
+    {
+      "date": "2026-07-18",
+      "expected": 0,
+      "design_note": "weekend closure",
+      "received": 0,
+      "analyzed": 0,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-19",
+      "expected": 0,
+      "design_note": "weekend closure",
+      "received": 0,
+      "analyzed": 0,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-20",
+      "expected": 6,
+      "design_note": "quieter day",
+      "received": 6,
+      "analyzed": 6,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-21",
+      "expected": 14,
+      "design_note": "busier day",
+      "received": 14,
+      "analyzed": 14,
+      "failed": 0,
+      "missing": 0,
+      "late": 1,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-22",
+      "expected": 10,
+      "design_note": "invented ordinary working day",
+      "received": 10,
+      "analyzed": 10,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-23",
+      "expected": 11,
+      "design_note": "invented ordinary working day",
+      "received": 10,
+      "analyzed": 10,
+      "failed": 0,
+      "missing": 1,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-24",
+      "expected": 8,
+      "design_note": "invented ordinary working day",
+      "received": 8,
+      "analyzed": 8,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-25",
+      "expected": 0,
+      "design_note": "weekend closure",
+      "received": 0,
+      "analyzed": 0,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-26",
+      "expected": 0,
+      "design_note": "weekend closure",
+      "received": 0,
+      "analyzed": 0,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-27",
+      "expected": 12,
+      "design_note": "invented ordinary working day",
+      "received": 12,
+      "analyzed": 11,
+      "failed": 1,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-28",
+      "expected": 10,
+      "design_note": "invented ordinary working day",
+      "received": 10,
+      "analyzed": 10,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 1
+    },
+    {
+      "date": "2026-07-29",
+      "expected": 9,
+      "design_note": "invented ordinary working day",
+      "received": 9,
+      "analyzed": 9,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-30",
+      "expected": 12,
+      "design_note": "invented ordinary working day",
+      "received": 12,
+      "analyzed": 12,
+      "failed": 0,
+      "missing": 0,
+      "late": 1,
+      "duplicate_deliveries": 0
+    },
+    {
+      "date": "2026-07-31",
+      "expected": 10,
+      "design_note": "invented ordinary working day",
+      "received": 10,
+      "analyzed": 10,
+      "failed": 0,
+      "missing": 0,
+      "late": 0,
+      "duplicate_deliveries": 0
+    }
+  ],
+  "scenario": {
+    "simulated_morning": "2026-07-16",
+    "review_date": "2026-07-15",
+    "timezone": "America/New_York"
+  },
+  "morning_identity_mapping": [
+    {
+      "morning_fixture_id": "CL-AM-20260715-01",
+      "month_fixture_id": "CL-AM-20260715-01",
+      "segment_ids_unchanged": true
+    },
+    {
+      "morning_fixture_id": "CL-AM-20260715-02",
+      "month_fixture_id": "CL-AM-20260715-02",
+      "segment_ids_unchanged": true
+    },
+    {
+      "morning_fixture_id": "CL-AM-20260715-03",
+      "month_fixture_id": "CL-AM-20260715-03",
+      "segment_ids_unchanged": true
+    },
+    {
+      "morning_fixture_id": "CL-AM-20260715-04",
+      "month_fixture_id": "CL-AM-20260715-04",
+      "segment_ids_unchanged": true
+    },
+    {
+      "morning_fixture_id": "CL-AM-20260715-05",
+      "month_fixture_id": "CL-AM-20260715-05",
+      "segment_ids_unchanged": true
+    },
+    {
+      "morning_fixture_id": "CL-AM-20260715-06",
+      "month_fixture_id": "CL-AM-20260715-06",
+      "segment_ids_unchanged": true
+    },
+    {
+      "morning_fixture_id": "CL-AM-20260715-07",
+      "month_fixture_id": "CL-AM-20260715-07",
+      "segment_ids_unchanged": true
+    },
+    {
+      "morning_fixture_id": "CL-AM-20260715-08",
+      "month_fixture_id": "CL-AM-20260715-08",
+      "segment_ids_unchanged": true
+    },
+    {
+      "morning_fixture_id": "CL-AM-20260715-09",
+      "month_fixture_id": "CL-AM-20260715-09",
+      "segment_ids_unchanged": true
+    },
+    {
+      "morning_fixture_id": "CL-AM-20260715-10",
+      "month_fixture_id": "CL-AM-20260715-10",
+      "segment_ids_unchanged": true
+    }
+  ],
+  "entry_file": "month-entries-v2.json",
+  "content_sha256": {
+    "month-transcripts-v2.json": "0c57c13c7d95d20e37fa1a70ecf161091939e805d829f98f5c34aaee6ea12039",
+    "month-expectations-v2.json": "f422281236bbe19fe493cd5f66f36f5e110a0b407b08cfec9cbd1e157c120006",
+    "month-entries-v2.json": "276601aa557c1d652477baa6387ea699e4f64f541f9aa59b1733c77dca4eb219",
+    "morning-v1.json": "37b6384dfe6e737ca653bba951e579d39ff5d7fed4b3652779403a27766d007e",
+    "morning-transcripts-v1.json": "14ea1891d1f659c341f6e6cdccf1eb176c9594ad0532620bbd012fe462b31108",
+    "morning-expectations-v1.json": "5e26c8f7591d6ad9263100d8e18147652eb7b61ed66038747c884006f53a11a7"
+  },
+  "totals": {
+    "expected": 227,
+    "received": 226,
+    "analyzed": 224,
+    "failed": 2,
+    "missing": 1,
+    "late": 3,
+    "duplicate_deliveries": 3
+  },
+  "categories": {
+    "new_intake": 20,
+    "administrative": 131,
+    "existing_client_follow_up": 40,
+    "routine_no_action": 33,
+    "unknown": 3
+  },
+  "languages": {
+    "en": 195,
+    "es": 32
+  },
+  "scenario_contract": [
+    "representative_morning",
+    "late_delivery",
+    "duplicate_delivery",
+    "missing_expected_call",
+    "unusable_transcript",
+    "failed_analysis",
+    "spanish_conversation"
+  ],
+  "validation_dates": {
+    "quiet": "2026-07-20",
+    "busy": "2026-07-21",
+    "late": "2026-07-06",
+    "failed": "2026-07-07",
+    "missing": "2026-07-23",
+    "duplicate": "2026-07-02",
+    "zero": "2026-07-03",
+    "spanish": "2026-07-01",
+    "spanish_fixture": "CL-M2-20260701-08"
+  }
+}

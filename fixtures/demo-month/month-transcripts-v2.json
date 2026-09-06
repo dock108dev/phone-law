@@ -1,0 +1,4487 @@
+{
+  "description": "Original invented conversations. No source client records or audio. Morning original is separately preserved byte-for-byte.",
+  "calls": [
+    {
+      "fixture_id": "CL-M2-20260701-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0101-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "Can I ask about a consultation over a lease deposit before I send any papers?"
+        },
+        {
+          "segment_id": "j0101-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 13.6,
+          "text": "Yes. Reception can explain how to request one; please do not send papers yet."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260701-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0102-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "My reminder has no floor number. Where should I go?"
+        },
+        {
+          "segment_id": "j0102-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 11.399999999999999,
+          "text": "Reception is on the second floor. The entrance has the office name beside it."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260701-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0103-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "I mailed an envelope yesterday. Can you see it?"
+        },
+        {
+          "segment_id": "j0103-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 11.9,
+          "text": "It is not in today's reception log. That does not tell us where the mail is."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260701-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0104-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Do I need an appointment just to collect a blank intake form?"
+        },
+        {
+          "segment_id": "j0104-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 11.0,
+          "text": "You may collect a blank form at reception during opening hours."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260701-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0105-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "The form asks for a middle name, but I don't have one."
+        },
+        {
+          "segment_id": "j0105-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 11.9,
+          "text": "Leave that space blank rather than adding a name you do not use."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260701-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0106-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "Is this the county clerk?"
+        },
+        {
+          "segment_id": "j0106-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 10.1,
+          "text": "No, this is a private law office. We cannot check the clerk's records here."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260701-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0107-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I am Nora Bell. Is the side entrance the public one?"
+        },
+        {
+          "segment_id": "j0107-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 10.6,
+          "text": "Please use the front entrance; the side door is for deliveries."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260701-08",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j0108-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "¿Puedo pedir información sin dar mi número de expediente?"
+        },
+        {
+          "segment_id": "j0108-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 9.7,
+          "text": "Sí, para explicar cómo solicitar una cita no necesitamos ese número."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260702-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0201-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I am Evan Reed. Is an initial appointment automatically an agreement to take my matter?"
+        },
+        {
+          "segment_id": "j0201-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 14.0,
+          "text": "No. Asking for an appointment does not establish that the lawyer will take a matter."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260702-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0202-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "Can I bring my notes on paper instead of emailing them?"
+        },
+        {
+          "segment_id": "j0202-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 11.0,
+          "text": "You can bring paper notes to your consultation. Keep your own copy."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260702-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0203-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.5,
+          "text": "I cannot open the attachment with the directions."
+        },
+        {
+          "segment_id": "j0203-s2",
+          "speaker": "staff",
+          "start_seconds": 4.5,
+          "end_seconds": 10.6,
+          "text": "The street entrance is beside the blue awning. I can read the directions now."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260702-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0204-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Is a bank statement the same as the receipt you asked for?"
+        },
+        {
+          "segment_id": "j0204-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 12.7,
+          "text": "I cannot determine which document the lawyer meant without the request in front of us."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260702-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0205-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "The message says to call reception. Does that mean there is a problem?"
+        },
+        {
+          "segment_id": "j0205-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 13.2,
+          "text": "That wording alone does not explain the reason. I do not have another note here."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260702-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0206-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "My name is Tessa Vale. Please ask the lawyer to call about the draft."
+        },
+        {
+          "segment_id": "j0206-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 10.1,
+          "text": "What question should the message include?"
+        },
+        {
+          "segment_id": "j0206-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 11.1,
+          "end_seconds": 18.1,
+          "text": "Whether the last paragraph reflects what we discussed. I am not asking you to change it."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260702-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0207-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "Do you have evening appointments listed today?"
+        },
+        {
+          "segment_id": "j0207-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 8.3,
+          "text": "The list available to reception has no evening slot today."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260702-08",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j0208-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Soy Ana Cruz. ¿La cita por teléfono necesita una aplicación?"
+        },
+        {
+          "segment_id": "j0208-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 11.8,
+          "text": "No para una llamada telefónica normal; esta conversación no confirma qué formato tiene su cita."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260702-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0209-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Can my sister pick up a sealed envelope for me?"
+        },
+        {
+          "segment_id": "j0209-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 11.8,
+          "text": "Reception needs to check the collection authorization first. I cannot approve that from this call."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260702-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0210-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "I found the office hours on the door. Are those the reception hours?"
+        },
+        {
+          "segment_id": "j0210-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 10.6,
+          "text": "Yes, those are the hours for the reception desk."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260706-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0601-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I saved the appointment message but not the address. Can you read it to me?"
+        },
+        {
+          "segment_id": "j0601-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 14.0,
+          "text": "The address is printed at the top of the message; look above the appointment line."
+        },
+        {
+          "segment_id": "j0601-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 15.0,
+          "end_seconds": 18.0,
+          "text": "I see it now."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260706-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0602-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "The questionnaire won't let me type an accent in my name."
+        },
+        {
+          "segment_id": "j0602-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 12.8,
+          "text": "Write your name correctly on the printed copy and mention the electronic form issue at reception."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260706-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0603-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Does dropping off a document mean it has been reviewed that day?"
+        },
+        {
+          "segment_id": "j0603-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 10.5,
+          "text": "No. Reception can record receipt, but cannot confirm legal review."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260706-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0604-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I have two copies with different dates. Which should I bring?"
+        },
+        {
+          "segment_id": "j0604-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 12.8,
+          "text": "Bring both if you want the lawyer to compare them. I cannot decide which is controlling."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260706-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0605-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "Was the office closed July third for the holiday?"
+        },
+        {
+          "segment_id": "j0605-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 8.8,
+          "text": "The synthetic office schedule marks July third as closed."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260706-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0606-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "I am Colin Webb. The receipt lists two pages, but I left three."
+        },
+        {
+          "segment_id": "j0606-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 12.4,
+          "text": "I will ask reception to check the page count against the envelope log."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260706-07",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j0607-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "¿Puedo llevar mis preguntas escritas en español?"
+        },
+        {
+          "segment_id": "j0607-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 9.7,
+          "text": "Sí, puede llevarlas. Eso no confirma la disponibilidad de interpretación para una cita."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260706-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0608-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "I accidentally called the number on an old business card. Is reception still here?"
+        },
+        {
+          "segment_id": "j0608-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 10.1,
+          "text": "You have reached reception for this office."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260706-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0609-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Could you tell me what a consultation about a simple will costs?"
+        },
+        {
+          "segment_id": "j0609-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 14.899999999999999,
+          "text": "I do not have an approved fee quote for your proposed appointment. I cannot give a price on this call."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260707-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0701-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I need to reschedule but don't know my work shifts yet."
+        },
+        {
+          "segment_id": "j0701-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 13.6,
+          "text": "Call when you know the times you can attend; we have not changed your appointment in this conversation."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260707-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0703-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 8.3,
+          "text": "My name is Willa Kent. I found the receipt, so there is no need to look for another copy."
+        },
+        {
+          "segment_id": "j0703-s2",
+          "speaker": "staff",
+          "start_seconds": 9.3,
+          "end_seconds": 14.100000000000001,
+          "text": "Understood. You are saying the copy request is no longer needed."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260707-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0704-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "Can I leave papers through the door after closing?"
+        },
+        {
+          "segment_id": "j0704-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 11.9,
+          "text": "There is no reception handover after closing. Please arrange a drop-off while the desk is open."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260707-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0705-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "The intake sheet asks for a case number I don't have."
+        },
+        {
+          "segment_id": "j0705-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 11.0,
+          "text": "Do not guess a number. You can mark that field as unknown."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260707-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0706-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "I got a voicemail but only heard the end."
+        },
+        {
+          "segment_id": "j0706-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 12.3,
+          "text": "I cannot reconstruct the missing part from what you heard. Do you have the original message saved?"
+        },
+        {
+          "segment_id": "j0706-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 13.3,
+          "end_seconds": 16.3,
+          "text": "No, I deleted it."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260707-07",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j0707-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Soy Bruno Díaz. ¿Recibir un documento significa que ya aceptaron mi asunto?"
+        },
+        {
+          "segment_id": "j0707-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 11.9,
+          "text": "No, la recepción del documento no confirma que el abogado acepte el asunto."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260707-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0708-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Can I pay a consultation fee in advance by this phone call?"
+        },
+        {
+          "segment_id": "j0708-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 12.3,
+          "text": "Reception cannot collect payment details on this line. We have not taken a payment."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260707-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0709-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "I am June Ellis. Please have the lawyer explain a phrase in the letter."
+        },
+        {
+          "segment_id": "j0709-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 10.1,
+          "text": "Which phrase?"
+        },
+        {
+          "segment_id": "j0709-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 11.1,
+          "end_seconds": 17.6,
+          "text": "The part about returning a signed copy. I don't know whether it applies to me."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260707-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0710-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "Is a photograph of the envelope useful, or only the letter?"
+        },
+        {
+          "segment_id": "j0710-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 10.6,
+          "text": "Keep both available for the lawyer to decide what is needed."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260707-11",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0711-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "My appointment card has a handwritten correction. Can reception verify it?"
+        },
+        {
+          "segment_id": "j0711-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 14.100000000000001,
+          "text": "I cannot read that correction over the phone. Bring the card when you ask us to check the list."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260707-12",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0712-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I received the new directions. That is all I was waiting for."
+        },
+        {
+          "segment_id": "j0712-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 9.2,
+          "text": "Good, you have the directions now."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260708-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0801-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Do you notarize documents for people who are not clients?"
+        },
+        {
+          "segment_id": "j0801-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 10.1,
+          "text": "I cannot confirm that service from the reception information available today."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260708-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0802-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "The appointment email says to arrive early. How early?"
+        },
+        {
+          "segment_id": "j0802-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 11.0,
+          "text": "It gives no number of minutes, so I cannot infer one from that sentence."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260708-03",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j0803-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "¿Puedo pedir una copia en papel de las instrucciones?"
+        },
+        {
+          "segment_id": "j0803-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 8.8,
+          "text": "En recepción hay instrucciones impresas; puede recoger una copia."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260708-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0804-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I am Priya Shah. The attachment arrived this time and opens correctly."
+        },
+        {
+          "segment_id": "j0804-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 10.5,
+          "text": "Thank you for confirming; you are not requesting another resend."
+        },
+        {
+          "segment_id": "j0804-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 11.5,
+          "end_seconds": 14.5,
+          "text": "Correct."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260708-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0805-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "Can reception tell me whether the lawyer has read my note?"
+        },
+        {
+          "segment_id": "j0805-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 10.6,
+          "text": "The delivery log shows arrival only. It has no review status."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260708-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0806-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "My printer cuts off the signature line. Is the partial page enough?"
+        },
+        {
+          "segment_id": "j0806-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 13.600000000000001,
+          "text": "I cannot approve a cut-off page. Try printing the complete page before asking the lawyer about signing."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260708-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0807-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Is there a place to sit while I wait for my appointment?"
+        },
+        {
+          "segment_id": "j0807-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 9.2,
+          "text": "There are seats in reception."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260708-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0808-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I am Felix Shaw. You said the envelope was ready, but I did not collect it."
+        },
+        {
+          "segment_id": "j0808-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 15.4,
+          "text": "I will check whether it is still held at reception and leave a note for the lawyer."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260708-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0809-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "Can a consultation about a contractor invoice happen by telephone if I cannot travel?"
+        },
+        {
+          "segment_id": "j0809-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 12.8,
+          "text": "You can request that format. We have not confirmed a telephone appointment here."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260708-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0810-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "I have the wrong extension. Could you give legal advice about a traffic ticket?"
+        },
+        {
+          "segment_id": "j0810-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 13.2,
+          "text": "Reception cannot give legal advice. This call has not been transferred to a lawyer."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260709-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0901-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "The envelope label has my old surname. Will that prevent a receipt?"
+        },
+        {
+          "segment_id": "j0901-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 12.3,
+          "text": "Tell reception both names at handover so the receipt can identify what was delivered."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260709-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0902-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "I am Dana Pike. Please call me about whether another appointment is needed."
+        },
+        {
+          "segment_id": "j0902-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 12.8,
+          "text": "I can take that question, but I cannot answer it from the calendar alone."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260709-03",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j0903-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "¿Hay que enviar originales para preguntar por una consulta?"
+        },
+        {
+          "segment_id": "j0903-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 9.2,
+          "text": "No envíe originales solo para preguntar cómo pedir una consulta."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260709-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0904-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "I called earlier about the office sign. I have found the entrance now."
+        },
+        {
+          "segment_id": "j0904-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 9.7,
+          "text": "Then the entrance question is resolved."
+        },
+        {
+          "segment_id": "j0904-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 10.7,
+          "end_seconds": 13.7,
+          "text": "Yes, I am at reception."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260709-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0905-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "The automated reminder repeated twice. Do I have two appointments?"
+        },
+        {
+          "segment_id": "j0905-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 12.7,
+          "text": "Two reminders alone do not establish two bookings. I cannot verify your calendar entry without your details."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260709-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0906-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "My name is Leo Finch. May I ask for a fresh copy of the blank questionnaire?"
+        },
+        {
+          "segment_id": "j0906-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 14.1,
+          "text": "Blank copies are at reception; this is not a completed copy from your file."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260709-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0907-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I want to cancel an inquiry I left, not an appointment."
+        },
+        {
+          "segment_id": "j0907-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 11.5,
+          "text": "Those are different requests. You have not identified an appointment to cancel here."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260709-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j0908-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I am Ruth Ellis. The envelope receipt is enough for my records."
+        },
+        {
+          "segment_id": "j0908-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 10.5,
+          "text": "Understood; you are not asking us to certify its contents."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1001-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "Can I record the consultation on my own phone?"
+        },
+        {
+          "segment_id": "j1001-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 11.0,
+          "text": "You would need to ask the lawyer before any recording. Reception cannot approve it."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1002-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "The form asks for employer details but I am retired."
+        },
+        {
+          "segment_id": "j1002-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 12.7,
+          "text": "You can state that you are retired; do not supply a current employer you do not have."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-03",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j1003-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Soy Elena Paz. No encuentro el enlace de mi cita."
+        },
+        {
+          "segment_id": "j1003-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 11.399999999999999,
+          "text": "No puedo confirmar el enlace sin saber si la cita es presencial o remota."
+        },
+        {
+          "segment_id": "j1003-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 12.399999999999999,
+          "end_seconds": 15.399999999999999,
+          "text": "No recuerdo el formato."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1004-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 8.3,
+          "text": "I am Grant Hale. Would the lawyer call about the document title that does not match the cover note?"
+        },
+        {
+          "segment_id": "j1004-s2",
+          "speaker": "staff",
+          "start_seconds": 9.3,
+          "end_seconds": 12.3,
+          "text": "Tell me the two titles."
+        },
+        {
+          "segment_id": "j1004-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 13.3,
+          "end_seconds": 19.0,
+          "text": "I do not have the papers here; I can explain when he calls."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1005-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Can I ask where to put the attention line on an envelope?"
+        },
+        {
+          "segment_id": "j1005-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 11.0,
+          "text": "Put it above the office address so reception can see it."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1006-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "Does reception accept a courier signature?"
+        },
+        {
+          "segment_id": "j1006-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 11.0,
+          "text": "Reception can acknowledge a physical delivery; that does not acknowledge any legal meaning of its contents."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1007-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I wrote the wrong month on my notes. Should I erase it?"
+        },
+        {
+          "segment_id": "j1007-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 12.3,
+          "text": "Keep the original note and make the correction visible for the lawyer to understand."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1008-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "My email says the meeting is provisional. Is it confirmed?"
+        },
+        {
+          "segment_id": "j1008-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 11.0,
+          "text": "Provisional is not confirmation. I cannot turn that wording into a confirmed booking."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1009-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I am Mae Rowan. Please ask whether the lawyer received my question about the second page."
+        },
+        {
+          "segment_id": "j1009-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 15.8,
+          "text": "Reception has your question in the message log, but that does not establish that the lawyer read it."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-10",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j1010-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "¿Puedo recoger el formulario sin completarlo allí?"
+        },
+        {
+          "segment_id": "j1010-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 8.3,
+          "text": "Sí, puede llevarse el formulario en blanco y completarlo después."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-11",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1011-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I only need to know whether reception is open at lunch."
+        },
+        {
+          "segment_id": "j1011-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 10.6,
+          "text": "The posted reception schedule does not list a separate lunch closure."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-12",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1012-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I am Owen Park. Could I have the appointment date read slowly?"
+        },
+        {
+          "segment_id": "j1012-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 9.7,
+          "text": "The card you are reading says July twenty-second."
+        },
+        {
+          "segment_id": "j1012-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 10.7,
+          "end_seconds": 14.6,
+          "text": "Thank you, I can make out that date now."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-13",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1013-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I found a loose page in the envelope. Can you identify it from the heading?"
+        },
+        {
+          "segment_id": "j1013-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 14.5,
+          "text": "A heading alone may not identify the document. Keep the page with the envelope for review."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260710-14",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1014-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "Does completing the questionnaire reserve an appointment?"
+        },
+        {
+          "segment_id": "j1014-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 8.8,
+          "text": "No appointment has been reserved just by filling out that form."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260713-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1301-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I am Iris Glen. I need the lawyer to call about a message I cannot understand."
+        },
+        {
+          "segment_id": "j1301-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 11.0,
+          "text": "Which part is unclear?"
+        },
+        {
+          "segment_id": "j1301-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 12.0,
+          "end_seconds": 17.7,
+          "text": "Whether I should bring the old version as well as the new one."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260713-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1302-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "The photocopier made everything double-sided. Is that a problem for drop-off?"
+        },
+        {
+          "segment_id": "j1302-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 13.2,
+          "text": "Reception can receive the pages, but cannot decide whether the format is suitable for the lawyer's purpose."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260713-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1303-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "Is there a deadline hidden in the appointment reminder?"
+        },
+        {
+          "segment_id": "j1303-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 9.2,
+          "text": "I cannot infer a legal deadline from an appointment reminder."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260713-04",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j1304-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "Soy Marta León. Ya encontré la copia que buscaba."
+        },
+        {
+          "segment_id": "j1304-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 7.9,
+          "text": "Entonces no necesita que recepción busque otra."
+        },
+        {
+          "segment_id": "j1304-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 8.9,
+          "end_seconds": 11.9,
+          "text": "Exacto, solo llamaba para aclararlo."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260713-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1305-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I want to bring a support person. Is that allowed automatically?"
+        },
+        {
+          "segment_id": "j1305-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 10.6,
+          "text": "Please raise that before the consultation; reception cannot give automatic permission."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260713-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1306-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "My name is Simon Oak. I left a folder with a green elastic band."
+        },
+        {
+          "segment_id": "j1306-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 13.6,
+          "text": "I will check the reception shelf against the handover log before giving a collection answer."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260713-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1307-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.8,
+          "text": "Can I ask for a consultation about a fence dispute if I don't know the other person's address?"
+        },
+        {
+          "segment_id": "j1307-s2",
+          "speaker": "staff",
+          "start_seconds": 8.8,
+          "end_seconds": 15.8,
+          "text": "You may ask how to request a consultation; do not invent missing details on the form."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260713-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1308-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "The desk told me to keep the receipt. Do you mean the postage receipt?"
+        },
+        {
+          "segment_id": "j1308-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 12.3,
+          "text": "I cannot tell which receipt that earlier speaker meant from this description."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260713-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1309-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "I am Bea Frost. The message was for someone else with a similar name."
+        },
+        {
+          "segment_id": "j1309-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 12.8,
+          "text": "Thank you for telling reception. We cannot discuss another person's message with you."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260713-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1310-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "Do you accept walk-ins for legal questions?"
+        },
+        {
+          "segment_id": "j1310-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 8.8,
+          "text": "Reception cannot promise access to the lawyer without an arranged appointment."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1401-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Could you spell the word questionnaire on the form title?"
+        },
+        {
+          "segment_id": "j1401-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 8.3,
+          "text": "Q-u-e-s-t-i-o-n-n-a-i-r-e."
+        },
+        {
+          "segment_id": "j1401-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 9.3,
+          "end_seconds": 12.3,
+          "text": "That matches the form I have."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-02",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j1402-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.5,
+          "text": "¿El recibo indica que revisaron todas las páginas?"
+        },
+        {
+          "segment_id": "j1402-s2",
+          "speaker": "staff",
+          "start_seconds": 4.5,
+          "end_seconds": 8.0,
+          "text": "No, indica recepción, no revisión de cada página."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1403-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I am Nina Brook. Please ask the lawyer to explain why there are two signature boxes."
+        },
+        {
+          "segment_id": "j1403-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 13.7,
+          "text": "I can record that question. I cannot say which box you should sign."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1404-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I received a reminder while I was away. Is it okay to reply with my availability?"
+        },
+        {
+          "segment_id": "j1404-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 15.0,
+          "text": "You can give reception your available times, but a reply alone is not a confirmed reschedule."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1405-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "Does the blank form need blue ink?"
+        },
+        {
+          "segment_id": "j1405-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 8.8,
+          "text": "No ink-color instruction is shown on the blank form available here."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1406-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I have a question about an invoice number, but I have not brought the invoice."
+        },
+        {
+          "segment_id": "j1406-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 13.6,
+          "text": "Without the invoice number we cannot identify which invoice you mean in this call."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1407-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I am Paul Alder. The scanned page is sideways, not missing."
+        },
+        {
+          "segment_id": "j1407-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 11.899999999999999,
+          "text": "Thanks for clarifying the problem. A sideways page is different from an absent page."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1408-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "If I arrive early, may I leave the documents and come back for the appointment?"
+        },
+        {
+          "segment_id": "j1408-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 14.0,
+          "text": "You can ask reception to record a drop-off; that does not change the appointment time."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-09",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j1409-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Soy Tomás Vega. ¿Se puede confirmar una cita con solo mi apellido?"
+        },
+        {
+          "segment_id": "j1409-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 11.4,
+          "text": "No puedo identificar una cita de forma segura solo con ese dato."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1410-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "I am Ada Birch. You were going to confirm which envelope is mine."
+        },
+        {
+          "segment_id": "j1410-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 13.7,
+          "text": "I will compare the labels with the collection record; I have not completed that check yet."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-11",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1411-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "My notes refer to next Tuesday, but I wrote them last month."
+        },
+        {
+          "segment_id": "j1411-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 13.600000000000001,
+          "text": "That relative date cannot be resolved from today's date alone. Keep the original note date with it."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260714-12",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1412-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Can reception explain the difference between a copy and a certified copy?"
+        },
+        {
+          "segment_id": "j1412-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 14.0,
+          "text": "I can tell you they are not interchangeable terms, but the lawyer needs to say which is needed."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260716-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1601-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Is a consultation request the same as opening a file?"
+        },
+        {
+          "segment_id": "j1601-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 11.399999999999999,
+          "text": "We have not confirmed a file opening merely because you asked for a consultation."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260716-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1602-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "I found the appointment card under my papers. I don't need another reminder."
+        },
+        {
+          "segment_id": "j1602-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 13.2,
+          "text": "Understood; you have the card now. We have not changed reminder settings in this call."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260716-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1603-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.4,
+          "text": "I am Hugo Field. Please call me when someone can explain the reference on this cover sheet."
+        },
+        {
+          "segment_id": "j1603-s2",
+          "speaker": "staff",
+          "start_seconds": 8.4,
+          "end_seconds": 11.4,
+          "text": "What reference?"
+        },
+        {
+          "segment_id": "j1603-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 12.4,
+          "end_seconds": 17.6,
+          "text": "It ends in a letter, but I cannot read the number clearly."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260716-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1604-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "Does the office keep spare blank envelopes?"
+        },
+        {
+          "segment_id": "j1604-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 7.0,
+          "text": "Reception has plain envelopes for document drop-off."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260716-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1605-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I wrote on the back of the page. Should I tell reception?"
+        },
+        {
+          "segment_id": "j1605-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 12.3,
+          "text": "Yes, mention that there is writing on both sides when you hand it over."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260716-06",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j1606-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.5,
+          "text": "¿Necesito traducir mi pregunta para llamar a recepción?"
+        },
+        {
+          "segment_id": "j1606-s2",
+          "speaker": "staff",
+          "start_seconds": 4.5,
+          "end_seconds": 11.5,
+          "text": "Puede hacer su pregunta en español; si no la entendemos, lo diremos en vez de adivinar."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260716-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1607-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.4,
+          "text": "I am Cora Hill. I want to check the spelling on my envelope before it is logged."
+        },
+        {
+          "segment_id": "j1607-s2",
+          "speaker": "staff",
+          "start_seconds": 8.4,
+          "end_seconds": 15.4,
+          "text": "Please read it at reception during handover. We have not corrected a label over this call."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260716-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1608-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Could I have a duplicate receipt stamped as an original?"
+        },
+        {
+          "segment_id": "j1608-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 8.8,
+          "text": "Reception cannot describe a duplicate as an original."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260716-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1609-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "Is the lawyer in court today?"
+        },
+        {
+          "segment_id": "j1609-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 9.2,
+          "text": "Reception cannot confirm the lawyer's whereabouts from the information on this screen."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1701-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I am Noel West. The cover email and attachment have different names."
+        },
+        {
+          "segment_id": "j1701-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 13.2,
+          "text": "I will ask reception to check what was sent before saying which document it should contain."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1702-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "The page numbers skip from two to four. Does that mean page three is missing?"
+        },
+        {
+          "segment_id": "j1702-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 14.9,
+          "text": "It may be a numbering issue or a missing page; I cannot resolve it without the set."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1703-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.5,
+          "text": "Can I leave my only copy at reception?"
+        },
+        {
+          "segment_id": "j1703-s2",
+          "speaker": "staff",
+          "start_seconds": 4.5,
+          "end_seconds": 11.9,
+          "text": "Keep a copy for yourself if possible; reception cannot decide whether your only copy should be surrendered."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1704-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I am Lila Moss. Please ask the lawyer whether the new address changes the letter."
+        },
+        {
+          "segment_id": "j1704-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 14.5,
+          "text": "I cannot answer the effect of an address change. Your question is about the letter, correct?"
+        },
+        {
+          "segment_id": "j1704-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 15.5,
+          "end_seconds": 18.5,
+          "text": "Yes."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-05",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j1705-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.5,
+          "text": "¿Una llamada perdida significa que debo ir hoy?"
+        },
+        {
+          "segment_id": "j1705-s2",
+          "speaker": "staff",
+          "start_seconds": 4.5,
+          "end_seconds": 11.0,
+          "text": "No podemos inferir una cita o una instrucción de acudir solo por una llamada perdida."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1706-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "The appointment line says room pending. Where should I wait?"
+        },
+        {
+          "segment_id": "j1706-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 10.5,
+          "text": "Start at reception; the room has not been specified in that message."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1707-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "I asked for directions, but I meant the mailing address, not driving directions."
+        },
+        {
+          "segment_id": "j1707-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 13.2,
+          "text": "The mailing address appears on the office letterhead. Use that rather than interpreting driving directions."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1708-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "I am Ellis Snow. The courier says delivered but I have no office receipt."
+        },
+        {
+          "segment_id": "j1708-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 15.4,
+          "text": "A courier status and our reception receipt are separate records. I cannot confirm our receipt from that status alone."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1709-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "Can reception answer whether a document is legally binding?"
+        },
+        {
+          "segment_id": "j1709-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 9.7,
+          "text": "No, that requires the lawyer's assessment of the document and context."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1710-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "The form has a space for an organization, but I am calling for myself."
+        },
+        {
+          "segment_id": "j1710-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 12.3,
+          "text": "Leave out an organization name if you are not calling for one."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-11",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1711-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.4,
+          "text": "I am Vera Lake. Please have the lawyer call about the sentence marked with a question mark."
+        },
+        {
+          "segment_id": "j1711-s2",
+          "speaker": "staff",
+          "start_seconds": 8.4,
+          "end_seconds": 11.4,
+          "text": "Can you read it?"
+        },
+        {
+          "segment_id": "j1711-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 12.4,
+          "end_seconds": 18.5,
+          "text": "I do not have it here. I only wanted to ask for a call."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-12",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j1712-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "Do I need to sign the blank intake form before asking how to complete it?"
+        },
+        {
+          "segment_id": "j1712-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 13.2,
+          "text": "You can ask reception about the form without signing it during this call."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260717-13",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j1713-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Soy Inés Ríos. ¿Puedo entregar las páginas en una carpeta?"
+        },
+        {
+          "segment_id": "j1713-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 9.6,
+          "text": "Sí, recepción puede recibir una carpeta y registrar la entrega."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260720-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2001-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "The office voicemail sounds different. Have I called another business?"
+        },
+        {
+          "segment_id": "j2001-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 8.8,
+          "text": "You have reached this law office's reception desk."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260720-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2002-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I am Mark Heath. One of the printed instructions is faint."
+        },
+        {
+          "segment_id": "j2002-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 12.8,
+          "text": "I will check whether reception has a clearer printed copy; I have not located one yet."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260720-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2003-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "My appointment is written in pencil. Does that make it tentative?"
+        },
+        {
+          "segment_id": "j2003-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 13.2,
+          "text": "The writing tool alone does not establish booking status. I cannot verify a booking from that detail."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260720-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2004-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I have several documents in one envelope. Should I list them outside?"
+        },
+        {
+          "segment_id": "j2004-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 14.5,
+          "text": "You can attach a contents list for reception, but receipt of the envelope is not verification of that list."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260720-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2005-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "Could I request a consultation about a shop lease for a friend without sharing their documents?"
+        },
+        {
+          "segment_id": "j2005-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 15.4,
+          "text": "You can ask about the appointment process; reception cannot establish representation of your friend through this inquiry."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260720-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2006-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I am Lucy Ford. I have already collected the folder. Please don't look for it."
+        },
+        {
+          "segment_id": "j2006-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 11.8,
+          "text": "Understood, you are reporting collection and withdrawing the search request."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-01",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2101-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "¿El mensaje confirma una hora exacta o solo la mañana?"
+        },
+        {
+          "segment_id": "j2101-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 10.1,
+          "text": "Si solo dice por la mañana, no establece una hora exacta."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2102-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "The attachment has a password box. Should I send you my password?"
+        },
+        {
+          "segment_id": "j2102-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 12.7,
+          "text": "Do not give reception a password on this call. We have not accessed the attachment."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2103-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.4,
+          "text": "I am Peter Cove. Please ask the lawyer about the note on the reverse of the letter."
+        },
+        {
+          "segment_id": "j2103-s2",
+          "speaker": "staff",
+          "start_seconds": 8.4,
+          "end_seconds": 14.9,
+          "text": "I can record that it is on the reverse, but I cannot interpret it here."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2104-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Does the reception receipt prove how many attachments were in an email?"
+        },
+        {
+          "segment_id": "j2104-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 11.4,
+          "text": "A paper drop-off receipt does not establish the attachments in an email."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2105-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "The form asks for previous names. I have never used another name."
+        },
+        {
+          "segment_id": "j2105-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 11.0,
+          "text": "You can indicate that there are no previous names to report."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2106-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I am Olive Stone. I want to confirm whether the envelope is ready for collection."
+        },
+        {
+          "segment_id": "j2106-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 13.2,
+          "text": "I will check the collection shelf; I cannot confirm readiness before that check."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2107-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "Can I arrive with a suitcase because I am coming from the station?"
+        },
+        {
+          "segment_id": "j2107-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 11.5,
+          "text": "Reception cannot promise storage for luggage. Please arrange your belongings accordingly."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2108-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "My copy is in black and white. Do you need color?"
+        },
+        {
+          "segment_id": "j2108-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 10.6,
+          "text": "I cannot determine whether color matters without the lawyer's document request."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-09",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2109-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "Soy Pablo Sol. ¿Puedo dejar una pregunta por escrito en recepción?"
+        },
+        {
+          "segment_id": "j2109-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 11.0,
+          "text": "Sí, puede dejar una nota; eso no confirma cuándo recibirá una respuesta."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2110-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I called about a receipt number, but found it while waiting."
+        },
+        {
+          "segment_id": "j2110-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 8.8,
+          "text": "Then you have the number you needed."
+        },
+        {
+          "segment_id": "j2110-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 9.8,
+          "end_seconds": 12.8,
+          "text": "Yes, no further question."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-11",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2111-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I am Tess Harbor. Please have the lawyer explain whether the draft is the latest version."
+        },
+        {
+          "segment_id": "j2111-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 15.0,
+          "text": "I do not have a version decision at reception. That remains a question for the lawyer."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-12",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2112-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Can an email auto-reply be treated as the lawyer's answer?"
+        },
+        {
+          "segment_id": "j2112-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 10.5,
+          "text": "An automatic receipt does not provide a substantive answer from the lawyer."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-13",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2113-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "I have a torn envelope but the pages look intact."
+        },
+        {
+          "segment_id": "j2113-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 11.399999999999999,
+          "text": "Keep the envelope with the pages so the lawyer can see what you received."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260721-14",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2114-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "The reminder has my initial only. Is that enough to know it is mine?"
+        },
+        {
+          "segment_id": "j2114-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 14.1,
+          "text": "An initial alone may not identify the intended recipient; I cannot confirm that from the initial."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260722-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2201-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I am Miles Ash. I need someone to check whether the copied last page is readable."
+        },
+        {
+          "segment_id": "j2201-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 15.0,
+          "text": "I will ask reception to inspect the copy quality; that is separate from reviewing its meaning."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260722-02",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2202-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "¿Puedo usar una copia del formulario que ya tengo?"
+        },
+        {
+          "segment_id": "j2202-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 13.200000000000001,
+          "text": "Si es el formulario en blanco actual, recepción puede ayudarle a comprobar el título; no lo hemos comparado todavía."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260722-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2203-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "Is the office directory downstairs enough to find you?"
+        },
+        {
+          "segment_id": "j2203-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 10.600000000000001,
+          "text": "Look for the law office name on the directory, then come to reception."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260722-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2204-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I am Ruby Lane. Please ask about a second consultation after I find the missing papers."
+        },
+        {
+          "segment_id": "j2204-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 13.2,
+          "text": "You are asking about a possible later appointment, not booking one now?"
+        },
+        {
+          "segment_id": "j2204-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 14.2,
+          "end_seconds": 17.2,
+          "text": "Yes."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260722-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2205-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "Can I bring the envelope unopened?"
+        },
+        {
+          "segment_id": "j2205-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 11.0,
+          "text": "Reception can accept a sealed envelope. That does not mean staff have checked what is inside."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260722-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2206-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.8,
+          "text": "I was told to keep the original. Does that mean I cannot bring it to show the lawyer?"
+        },
+        {
+          "segment_id": "j2206-s2",
+          "speaker": "staff",
+          "start_seconds": 8.8,
+          "end_seconds": 16.200000000000003,
+          "text": "I cannot interpret that earlier instruction without its context; keeping and showing are not the same action."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260722-07",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2207-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Soy Rosa Mar. ¿Una cita solicitada ya aparece como confirmada?"
+        },
+        {
+          "segment_id": "j2207-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 11.0,
+          "text": "Solicitarla no equivale a confirmarla. No hemos confirmado una cita en esta llamada."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260722-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2208-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "I am Jay Linden. The attachment title says draft, but the email does not."
+        },
+        {
+          "segment_id": "j2208-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 10.6,
+          "text": "Please ask the lawyer which version is intended."
+        },
+        {
+          "segment_id": "j2208-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 11.6,
+          "end_seconds": 14.6,
+          "text": "Please have him call me about that."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260722-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2209-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "The questionnaire has a second contact field. Is another contact compulsory?"
+        },
+        {
+          "segment_id": "j2209-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 8.8,
+          "text": "The form marks that field optional."
+        },
+        {
+          "segment_id": "j2209-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 9.8,
+          "end_seconds": 12.8,
+          "text": "I see the optional label now."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260722-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2210-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Can I ask for an appointment without describing private details to reception?"
+        },
+        {
+          "segment_id": "j2210-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 12.3,
+          "text": "You can ask about the process without giving a full account on this call."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260723-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2301-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "My name is Mina Grove. The receipt has yesterday's date even though I came today."
+        },
+        {
+          "segment_id": "j2301-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 14.9,
+          "text": "I will ask reception to check the entry; I cannot say the receipt has been corrected yet."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260723-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2302-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "Is there a water fountain near reception?"
+        },
+        {
+          "segment_id": "j2302-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 7.5,
+          "text": "There is drinking water in the waiting area."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260723-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2303-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "I have a page with no heading. Should I write a title on it?"
+        },
+        {
+          "segment_id": "j2303-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 14.5,
+          "text": "Keep it as received and explain the missing heading to the lawyer rather than guessing a title."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260723-05",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2305-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "¿Recepción puede confirmar que mi correo no se fue a spam?"
+        },
+        {
+          "segment_id": "j2305-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 11.0,
+          "text": "No tenemos una comprobación del buzón aquí, así que no puedo confirmarlo."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260723-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2306-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "I am Ben Elm. Please ask the lawyer what the handwritten arrow means."
+        },
+        {
+          "segment_id": "j2306-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 9.7,
+          "text": "I cannot see the annotation."
+        },
+        {
+          "segment_id": "j2306-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 10.7,
+          "end_seconds": 15.5,
+          "text": "I will have it in front of me when he calls."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260723-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2307-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "The address on my old form differs from the new letterhead."
+        },
+        {
+          "segment_id": "j2307-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 14.5,
+          "text": "Use the current letterhead for the office mailing address; this does not change the address written in your older document."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260723-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2308-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I want an appointment for information only, not to sign anything today."
+        },
+        {
+          "segment_id": "j2308-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 12.7,
+          "text": "You can state that when requesting the consultation. No signing has happened in this call."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260723-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2309-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I am Faye Holt. I no longer need a paper copy; the electronic one is readable."
+        },
+        {
+          "segment_id": "j2309-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 11.0,
+          "text": "Understood. You are withdrawing the paper-copy request."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260723-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2310-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Does the reception log include when the lawyer takes an envelope upstairs?"
+        },
+        {
+          "segment_id": "j2310-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 11.9,
+          "text": "This log records incoming handovers only. It does not establish later internal movement."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260723-11",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2311-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Soy Luis Prado. ¿Puedo traer una lista de preguntas para no olvidarlas?"
+        },
+        {
+          "segment_id": "j2311-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 9.7,
+          "text": "Sí, puede llevar su lista a la consulta."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260724-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2401-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I am Gail Pine. The envelope collection note lists the wrong color."
+        },
+        {
+          "segment_id": "j2401-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 12.7,
+          "text": "I will compare the note with the stored envelope before giving you a collection confirmation."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260724-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2402-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "If the lawyer is unavailable, should I leave the same question again?"
+        },
+        {
+          "segment_id": "j2402-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 12.7,
+          "text": "You can clarify an earlier message; repetition alone does not show it has been read."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260724-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2403-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I have a consultation question about a neighbor's shared driveway, but only know a nickname."
+        },
+        {
+          "segment_id": "j2403-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 14.0,
+          "text": "Do not guess a full name in the inquiry. Mark the identifying information as incomplete."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260724-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2404-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "Can reception stamp the date on my own copy at drop-off?"
+        },
+        {
+          "segment_id": "j2404-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 12.3,
+          "text": "You can request a receipt at handover; reception must see what is being received first."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260724-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2405-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I am Rowan Vale. Please have the lawyer explain whether the first draft should be kept."
+        },
+        {
+          "segment_id": "j2405-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 11.0,
+          "text": "I cannot decide document retention from reception."
+        },
+        {
+          "segment_id": "j2405-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 12.0,
+          "end_seconds": 15.5,
+          "text": "That is why I would like a call."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260724-06",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2406-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "¿Si falta una página, debo inventar lo que decía?"
+        },
+        {
+          "segment_id": "j2406-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 9.2,
+          "text": "No. Indique que falta y conserve las páginas que tiene."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260724-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2407-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I took a photo of the appointment card. The bottom is blurred."
+        },
+        {
+          "segment_id": "j2407-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 13.600000000000001,
+          "text": "A blurred photo cannot establish the missing wording. Keep the physical card if you still have it."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260724-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2408-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "My name is Kit Reed. I am checking whether reception has a large-print blank form."
+        },
+        {
+          "segment_id": "j2408-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 13.6,
+          "text": "I will check our printed stock; I cannot promise that format until I look."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2701-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Is there a separate line to ask general opening-hour questions?"
+        },
+        {
+          "segment_id": "j2701-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 9.2,
+          "text": "You can ask reception those questions on this line."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2702-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "The file name ends in final-final. Does that prove it is approved?"
+        },
+        {
+          "segment_id": "j2702-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 11.0,
+          "text": "A file name alone does not establish approval by the lawyer."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2703-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 9.1,
+          "text": "I am Asha Green. Please ask the lawyer to call about a paragraph that refers to an attachment I never received."
+        },
+        {
+          "segment_id": "j2703-s2",
+          "speaker": "staff",
+          "start_seconds": 10.1,
+          "end_seconds": 13.1,
+          "text": "Which attachment?"
+        },
+        {
+          "segment_id": "j2703-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 14.1,
+          "end_seconds": 17.1,
+          "text": "The paragraph does not name it clearly."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-04",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2704-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "Soy Eva Sierra. ¿Puedo traer las hojas ordenadas como las recibí?"
+        },
+        {
+          "segment_id": "j2704-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 10.6,
+          "text": "Sí, mantenga ese orden y explique si cree que falta algo."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2705-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "The form asks for the best time to call. Can I write a range?"
+        },
+        {
+          "segment_id": "j2705-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 13.6,
+          "text": "Yes, you can state a range; that is a preference, not a guaranteed callback time."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2706-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "I am Theo Marsh. I asked about parking, but I have decided to walk."
+        },
+        {
+          "segment_id": "j2706-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 10.6,
+          "text": "Then you no longer need the parking information."
+        },
+        {
+          "segment_id": "j2706-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 11.6,
+          "end_seconds": 14.6,
+          "text": "Correct."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2707-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "Can I show the lawyer a message on my phone instead of printing it?"
+        },
+        {
+          "segment_id": "j2707-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 13.6,
+          "text": "You can ask at the consultation. Reception cannot decide whether that format will be sufficient."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2708-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "The note says bring identification. Does a photocopy satisfy that?"
+        },
+        {
+          "segment_id": "j2708-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 10.5,
+          "text": "I cannot determine what the lawyer intended from that short instruction alone."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2709-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I am Orla Bay. One corner of my receipt is missing."
+        },
+        {
+          "segment_id": "j2709-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 12.3,
+          "text": "I will ask reception whether the logged receipt can be matched before offering another copy."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-10",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2710-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "¿Puedo preguntar el proceso de consulta aunque aún no tenga documentos?"
+        },
+        {
+          "segment_id": "j2710-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 11.5,
+          "text": "Sí, puede preguntar el proceso; no hemos evaluado su asunto en esta llamada."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-11",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2711-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "The appointment card says bring notes if available. I have none."
+        },
+        {
+          "segment_id": "j2711-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 12.3,
+          "text": "The phrase if available does not say you must create notes you do not have."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260727-12",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2712-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 8.7,
+          "text": "I am Finn Dale. Please have the lawyer explain why the date on the cover differs from the signature page."
+        },
+        {
+          "segment_id": "j2712-s2",
+          "speaker": "staff",
+          "start_seconds": 9.7,
+          "end_seconds": 12.7,
+          "text": "I cannot resolve that discrepancy from reception."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260728-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2801-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I found a second envelope addressed to me. Should I assume it replaces the first?"
+        },
+        {
+          "segment_id": "j2801-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 13.6,
+          "text": "Do not assume replacement just because another envelope arrived. Keep both available for clarification."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260728-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2802-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "Can I borrow a pen when completing the form at reception?"
+        },
+        {
+          "segment_id": "j2802-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 8.8,
+          "text": "There are pens at the reception desk."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260728-03",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2803-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "Soy Alma Nieve. La dirección ya se ve bien en la copia nueva."
+        },
+        {
+          "segment_id": "j2803-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 10.6,
+          "text": "Entonces la copia nueva resolvió el problema de lectura."
+        },
+        {
+          "segment_id": "j2803-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 11.6,
+          "end_seconds": 14.6,
+          "text": "Sí, gracias."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260728-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2804-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I am Drew Clay. Please ask whether my written question was included with the folder."
+        },
+        {
+          "segment_id": "j2804-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 11.4,
+          "text": "I cannot confirm folder contents from the receipt alone."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260728-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2805-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.7,
+          "text": "The instructions say bring any relevant correspondence. Can reception decide what is relevant?"
+        },
+        {
+          "segment_id": "j2805-s2",
+          "speaker": "staff",
+          "start_seconds": 6.7,
+          "end_seconds": 13.7,
+          "text": "Reception cannot make that judgment about your matter. Keep the instructions for discussion with the lawyer."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260728-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2806-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "I printed the blank form at half size. The text is readable to me."
+        },
+        {
+          "segment_id": "j2806-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 12.8,
+          "text": "Reception cannot confirm that the reduced form is suitable for the lawyer's use."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260728-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2807-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I am Esme Flint. The courier left a delivery photo but the label is hidden."
+        },
+        {
+          "segment_id": "j2807-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 14.0,
+          "text": "I will compare the available reception record; the photo alone does not identify your envelope."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260728-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2808-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Does the office website contact form guarantee a same-day reply?"
+        },
+        {
+          "segment_id": "j2808-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 10.1,
+          "text": "I have no same-day response guarantee to give you from reception."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260728-09",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2809-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.0,
+          "text": "¿Una copia borrosa cuenta como información confirmada?"
+        },
+        {
+          "segment_id": "j2809-s2",
+          "speaker": "staff",
+          "start_seconds": 4.0,
+          "end_seconds": 8.3,
+          "text": "No podemos confirmar palabras que no se leen con claridad."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260728-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2810-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.8,
+          "text": "My name is Cam North. I need the lawyer to call about the blank space before my name."
+        },
+        {
+          "segment_id": "j2810-s2",
+          "speaker": "staff",
+          "start_seconds": 8.8,
+          "end_seconds": 14.5,
+          "text": "I cannot tell whether that space should be completed without the document context."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260729-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2901-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "The reminder says reply only if you cannot attend. I can attend."
+        },
+        {
+          "segment_id": "j2901-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 11.9,
+          "text": "That instruction does not ask for a reply from someone who can attend."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260729-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2902-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Can I bring a typed list instead of handwritten questions?"
+        },
+        {
+          "segment_id": "j2902-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 9.2,
+          "text": "Yes, you may bring typed questions to the appointment."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260729-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2903-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 8.7,
+          "text": "I am Sylvie Reed. I have the receipt in my hand now; please disregard my earlier question about losing it."
+        },
+        {
+          "segment_id": "j2903-s2",
+          "speaker": "staff",
+          "start_seconds": 9.7,
+          "end_seconds": 13.6,
+          "text": "Understood, you are reporting that it has been found."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260729-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2904-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "Does an envelope marked personal skip the reception log?"
+        },
+        {
+          "segment_id": "j2904-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 10.600000000000001,
+          "text": "Reception cannot promise to bypass the delivery record based on an envelope marking."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260729-05",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j2905-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "Soy Nico Alba. ¿Puedo escribir desconocido si no sé una fecha?"
+        },
+        {
+          "segment_id": "j2905-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 9.3,
+          "text": "Sí, no adivine una fecha que no conoce."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260729-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2906-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I am Eden Birch. Please ask the lawyer whether the unsigned version is still useful."
+        },
+        {
+          "segment_id": "j2906-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 13.2,
+          "text": "That is a document question for the lawyer, not something reception can decide."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260729-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2907-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I have a consultation request but may be away next week."
+        },
+        {
+          "segment_id": "j2907-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 12.3,
+          "text": "Give reception your availability when you request a slot; this call has not reserved one."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260729-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2908-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "The reception receipt uses an abbreviation I cannot read."
+        },
+        {
+          "segment_id": "j2908-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 9.2,
+          "text": "I cannot expand an unclear abbreviation without seeing the receipt."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260729-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j2909-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I am Jules Moss. Please check whether the smaller envelope is still with the folder."
+        },
+        {
+          "segment_id": "j2909-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 13.2,
+          "text": "I will compare the folder handover record; I have not inspected the contents."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-01",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3001-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Could you clarify whether reception handles appointment questions or the lawyer does?"
+        },
+        {
+          "segment_id": "j3001-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 12.3,
+          "text": "Reception can discuss the schedule; legal questions about your matter remain for the lawyer."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-02",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j3002-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.5,
+          "text": "¿Puedo traer el sobre con el sello postal?"
+        },
+        {
+          "segment_id": "j3002-s2",
+          "speaker": "staff",
+          "start_seconds": 4.5,
+          "end_seconds": 10.2,
+          "text": "Sí, consérvelo junto con la carta para que el abogado vea lo recibido."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3003-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "I found two reminders for the same date but different rooms."
+        },
+        {
+          "segment_id": "j3003-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 13.2,
+          "text": "That conflict needs a calendar check. The reminders alone do not tell us which room is correct."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3004-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I am Rae Wood. Please have the lawyer explain the word enclosure on the last line."
+        },
+        {
+          "segment_id": "j3004-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 13.7,
+          "text": "I can note that word, but cannot identify the intended enclosure from reception."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3005-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 3.9,
+          "text": "Can reception confirm whether a scanned signature is acceptable?"
+        },
+        {
+          "segment_id": "j3005-s2",
+          "speaker": "staff",
+          "start_seconds": 4.9,
+          "end_seconds": 11.4,
+          "text": "That depends on the document and purpose; reception cannot approve it from this question alone."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3006-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "My appointment instructions were folded and the middle line is unreadable."
+        },
+        {
+          "segment_id": "j3006-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 11.899999999999999,
+          "text": "Do not infer the missing words. Bring the damaged instructions when asking for clarification."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-07",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3007-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I am Zoe Vale. The replacement printout has all the margins now."
+        },
+        {
+          "segment_id": "j3007-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 10.1,
+          "text": "Then the printing problem you described has been resolved."
+        },
+        {
+          "segment_id": "j3007-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 11.1,
+          "end_seconds": 14.1,
+          "text": "Yes, nothing else is needed."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-08",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j3008-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Soy Sara Olmo. ¿Recepción puede decir si debo firmar hoy?"
+        },
+        {
+          "segment_id": "j3008-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 11.8,
+          "text": "No puedo indicarle que firme ni inventar un plazo; esa pregunta es para el abogado."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3009-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.8,
+          "text": "I am Max Fen. Please ask about the difference between the attachment I received Monday and today's one."
+        },
+        {
+          "segment_id": "j3009-s2",
+          "speaker": "staff",
+          "start_seconds": 8.8,
+          "end_seconds": 12.700000000000001,
+          "text": "I cannot compare versions from reception without the documents."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3010-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "Does a request for a receipt imply that the lawyer agrees with the document?"
+        },
+        {
+          "segment_id": "j3010-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 11.399999999999999,
+          "text": "No. A receipt records delivery, not agreement with the contents."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-11",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3011-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.3,
+          "text": "Can I leave a short note with my preferred pronunciation?"
+        },
+        {
+          "segment_id": "j3011-s2",
+          "speaker": "staff",
+          "start_seconds": 5.3,
+          "end_seconds": 9.2,
+          "text": "Yes, you can include that with the intake form."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260730-12",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3012-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I am Lena Ridge. The receipt copy has a blank where the count should be."
+        },
+        {
+          "segment_id": "j3012-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 14.5,
+          "text": "I will ask reception to check the logged count before answering how many items were recorded."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260731-01",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j3101-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "¿Si no conozco el número de página, puedo describir el párrafo?"
+        },
+        {
+          "segment_id": "j3101-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 10.1,
+          "text": "Sí, describa lo que puede leer sin inventar un número."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260731-02",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3102-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.4,
+          "text": "I want to know whether I can ask about a consultation on a freelance contract next month."
+        },
+        {
+          "segment_id": "j3102-s2",
+          "speaker": "staff",
+          "start_seconds": 8.4,
+          "end_seconds": 14.5,
+          "text": "Reception can explain the request process; we have not booked a next-month appointment here."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260731-03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3103-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I am Neil Cove. I no longer need directions; a friend showed me the office."
+        },
+        {
+          "segment_id": "j3103-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 10.5,
+          "text": "Understood, the directions question is answered."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260731-04",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3104-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 4.8,
+          "text": "The letter says see attached, but there is no attachment listed."
+        },
+        {
+          "segment_id": "j3104-s2",
+          "speaker": "staff",
+          "start_seconds": 5.8,
+          "end_seconds": 10.6,
+          "text": "That is an unresolved reference; reception cannot invent the missing attachment."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260731-05",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3105-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 7.0,
+          "text": "I am Mara Field. Please ask the lawyer whether the two dates refer to different events."
+        },
+        {
+          "segment_id": "j3105-s2",
+          "speaker": "staff",
+          "start_seconds": 8.0,
+          "end_seconds": 12.3,
+          "text": "I cannot assign meanings to those dates without the letter."
+        },
+        {
+          "segment_id": "j3105-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 13.3,
+          "end_seconds": 16.3,
+          "text": "I will keep it for the callback."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260731-06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3106-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.1,
+          "text": "Can reception confirm how long a consultation will last from a starting time alone?"
+        },
+        {
+          "segment_id": "j3106-s2",
+          "speaker": "staff",
+          "start_seconds": 7.1,
+          "end_seconds": 10.6,
+          "text": "A starting time alone does not establish duration."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260731-07",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "j3107-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Soy Dani Valle. ¿Puedo pedir que repitan una instrucción que no entendí?"
+        },
+        {
+          "segment_id": "j3107-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 11.9,
+          "text": "Sí, diga qué parte no entendió; no es necesario fingir que quedó clara."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260731-08",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3108-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 6.5,
+          "text": "I am Arlo Lake. Could someone verify that my loose receipt stayed with the envelope?"
+        },
+        {
+          "segment_id": "j3108-s2",
+          "speaker": "staff",
+          "start_seconds": 7.5,
+          "end_seconds": 14.9,
+          "text": "I will check the handover note; I cannot say the receipt is inside until that is checked."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260731-09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3109-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "I have a blank form labeled optional supplement. Must everyone complete it?"
+        },
+        {
+          "segment_id": "j3109-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 14.0,
+          "text": "The optional label does not say everyone must complete it. Ask about your specific use at the consultation."
+        }
+      ]
+    },
+    {
+      "fixture_id": "CL-M2-20260731-10",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "j3110-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 5.2,
+          "text": "Can I bring a magnifier to read my papers during the appointment?"
+        },
+        {
+          "segment_id": "j3110-s2",
+          "speaker": "staff",
+          "start_seconds": 6.2,
+          "end_seconds": 9.2,
+          "text": "Yes, you may bring your reading aid."
+        }
+      ]
+    }
+  ]
+}

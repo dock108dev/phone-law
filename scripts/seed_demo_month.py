@@ -46,6 +46,20 @@ def main() -> None:
     manifest = DemoMonthManifest(args.manifest)
     source = DemoMonthCallSource(manifest)
     try:
+        allowed = {item["fixture_id"] for item in manifest.received_entries()}
+        with engine.connect() as connection:
+            present = set(connection.execute(sa.select(calls.c.fixture_id)).scalars())
+            versions = {
+                payload.get("metadata", {}).get("manifest_version")
+                for payload in connection.execute(sa.select(calls.c.normalized_payload)).scalars()
+            }
+        if versions - {manifest.version}:
+            raise SystemExit("seed refused: existing records belong to a different manifest")
+        if present - allowed:
+            raise SystemExit(
+                "seed refused: database contains a different dataset; "
+                "use a separate disposable stack"
+            )
         repository = ReviewRepository(engine)
         playbook = PlaybookVersion.model_validate_json(
             Path("fixtures/playbooks/synthetic-draft-v1.json").read_text(encoding="utf-8")

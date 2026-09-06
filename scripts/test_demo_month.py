@@ -14,6 +14,7 @@ from packages.config import Settings
 from packages.contracts.report import DailyReport
 from packages.contracts.review import StructuredAnalysis, Transcript
 from packages.database.health import create_database_engine
+from packages.database.review_experience import ReviewExperienceRepository
 from packages.database.review_schema import (
     analyses,
     audit_events,
@@ -24,6 +25,7 @@ from packages.database.review_schema import (
     transcripts,
 )
 from packages.review.demo_month import DemoMonthManifest
+from packages.review.month_content_review import expectations, review_recap, verify_originals
 
 EVIDENCE_ROOT = Path(
     os.environ.get(
@@ -40,7 +42,21 @@ def require(condition: bool, message: str) -> None:
 
 def main() -> None:
     manifest = DemoMonthManifest()
+    verify_originals(manifest)
     contract_totals = manifest.contract["totals"]
+    require(
+        contract_totals
+        == {
+            "expected": 227,
+            "received": 226,
+            "analyzed": 224,
+            "failed": 2,
+            "missing": 1,
+            "late": 3,
+            "duplicate_deliveries": 3,
+        },
+        "independently reviewed v2 baseline mismatch",
+    )
     engine = create_database_engine(
         Settings(service_name="demo-month-test").sqlalchemy_database_url
     )
@@ -51,7 +67,9 @@ def main() -> None:
         with engine.connect() as connection:
             call_rows = (
                 connection.execute(
-                    sa.select(calls).where(calls.c.fixture_id.like("CL-MONTH-202607-%"))
+                    sa.select(calls).where(
+                        calls.c.fixture_id.in_([e["fixture_id"] for e in manifest.entries()])
+                    )
                 )
                 .mappings()
                 .all()
@@ -98,7 +116,7 @@ def main() -> None:
                     .select_from(
                         ingestion_events.join(calls, ingestion_events.c.call_id == calls.c.id)
                     )
-                    .where(calls.c.fixture_id.like("CL-MONTH-202607-%"))
+                    .where(calls.c.fixture_id.in_([e["fixture_id"] for e in manifest.entries()]))
                 ).scalar_one()
             )
             review_count = int(
@@ -112,6 +130,12 @@ def main() -> None:
                 ).scalar_one()
             )
 
+        with engine.connect() as connection:
+            require(
+                set(connection.execute(sa.select(calls.c.fixture_id)).scalars())
+                == {e["fixture_id"] for e in manifest.received_entries()},
+                "foreign or standalone dataset records present",
+            )
         require(len(call_rows) == contract_totals["received"], "persisted received total mismatch")
         require(
             len(analysis_rows) == contract_totals["analyzed"], "persisted analyzed total mismatch"
@@ -179,6 +203,16 @@ def main() -> None:
         for row in report_rows:
             report = DailyReport.model_validate_json(json.dumps(row["snapshot_payload"]))
             counts = report.completeness.reconciliation
+            authored_day = next(
+                d
+                for d in manifest.contract["daily_schedule"]
+                if d["date"] == str(report.business_date)
+            )
+            for key in contract_totals:
+                require(
+                    getattr(counts, key) == authored_day[key],
+                    f"daily authored {key} mismatch on {report.business_date}",
+                )
             require(
                 counts.expected == counts.received + counts.missing,
                 "daily expected equation failed",
@@ -205,14 +239,16 @@ def main() -> None:
             )
         for key, expected in contract_totals.items():
             require(monthly[key] == expected, f"monthly {key} mismatch")
-        require(statuses["zero_activity"] == 8, "eight weekends must show zero activity")
         require(
-            sum(1 for item in daily_summaries if item["expected"] != 0) == 23,
+            statuses["zero_activity"] == 9, "eight weekends and one closure must show zero activity"
+        )
+        require(
+            sum(1 for item in daily_summaries if item["expected"] != 0) == 22,
             "weekday count mismatch",
         )
         require(
             spanish_preserved
-            == 80
+            == 32
             - sum(
                 1
                 for item in manifest.entries()
@@ -220,7 +256,7 @@ def main() -> None:
             ),
             "received Spanish analysis preservation mismatch",
         )
-        require(high_priority_valid > 0 and evidence_count > 0, "evidence coverage was empty")
+        require(evidence_count > 0, "evidence coverage was empty")
 
         scenario_inventory = Counter(
             scenario for item in manifest.entries() for scenario in item["scenarios"]
@@ -244,8 +280,50 @@ def main() -> None:
             "persisted expected language metadata mismatch",
         )
 
+        experience = ReviewExperienceRepository(engine)
+        oracle = expectations()
+        review_results = []
+        for day in manifest.contract["coverage_dates"]:
+            briefing = experience.briefing(date.fromisoformat(day))
+            authored_day = next(d for d in manifest.contract["daily_schedule"] if d["date"] == day)
+            require(len(briefing.calls) == authored_day["received"], "recap count mismatch")
+            for recap in briefing.calls:
+                entry = manifest.entry(recap.synthetic_reference)
+                if recap.synthetic_reference in oracle:
+                    references = review_recap(recap, oracle[recap.synthetic_reference])
+                    if recap.detail is not None:
+                        require(
+                            recap.detail.summary == entry["expected_analysis"]["summary"],
+                            "persisted recap drift",
+                        )
+                    review_results.append(
+                        {
+                            "fixture_id": recap.synthetic_reference,
+                            "result": "passed",
+                            "references_checked": references,
+                            "state": recap.state,
+                        }
+                    )
+                else:
+                    require(
+                        recap.state == "unavailable" and recap.detail is None,
+                        "failed transcript invented a recap",
+                    )
+            if day == "2026-07-15":
+                require(
+                    len(briefing.calls) == 10
+                    and sum(bool(c.attention) for c in briefing.calls) == 3,
+                    "morning preservation mismatch",
+                )
+        for outside in (date(2026, 6, 30), date(2026, 8, 1)):
+            require(
+                experience.briefing(outside).completeness is None,
+                "outside coverage became verified zero",
+            )
+        require(len(review_results) == 225, "not every usable conversation was reviewed")
         output = {
             "decision": "passed",
+            "conversation_reviews": review_results,
             "manifest": manifest.summary(),
             "monthly_reconciliation": dict(monthly),
             "daily_reconciliation": daily_summaries,

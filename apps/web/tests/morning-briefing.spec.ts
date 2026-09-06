@@ -46,9 +46,17 @@ test("ten-call morning, dates, original evidence and keyboard return", async ({ 
   await page.getByRole('button', { name: 'Open day' }).focus();
   await page.keyboard.press('Enter');
   await expect(page.getByRole('heading', { name: 'Calls from July 19, 2026' })).toBeVisible();
-  await expect(page.getByText(/Coverage is unavailable for this date/)).toBeVisible();
-  await page.getByRole('link', { name: 'Latest earlier day with activity: July 15, 2026' }).click();
-  await expect(page.locator('.briefing-recap')).toHaveCount(10);
+  if (process.env.MONTH_V2 === '1') {
+    await expect(page.getByText(/No eligible synthetic calls were expected or received on this date/)).toBeVisible();
+    await page.getByRole('link', { name: 'Latest earlier day with activity: July 17, 2026' }).click();
+    await expect(page.locator('.briefing-recap')).toHaveCount(13);
+    await page.goto('/briefing/2026-08-01');
+    await expect(page.getByText(/Coverage is unavailable for this date/)).toBeVisible();
+  } else {
+    await expect(page.getByText(/Coverage is unavailable for this date/)).toBeVisible();
+    await page.getByRole('link', { name: 'Latest earlier day with activity: July 15, 2026' }).click();
+    await expect(page.locator('.briefing-recap')).toHaveCount(10);
+  }
   expect(external).toEqual([]);
   expect(errors).toEqual([]);
   await writeFile(`${evidenceDirectory}/morning-browser.json`, JSON.stringify({ received: 10, attention_calls: 3, passage_links_checked: recaps.reduce((sum, recap) => sum + recap.links.length, 0), widths: [1440,390], external_requests: external.length, page_errors: errors, owner_acceptance: false }, null, 2));

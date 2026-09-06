@@ -197,7 +197,10 @@ class FixtureAnalyzer:
         )
 
     def extract_facts(self, fixture_id: str, transcript: Transcript) -> ExtractedFacts:
-        raw = cast(dict[str, Any], self.manifest.entry(fixture_id)["expected_facts"])
+        entry = self.manifest.entry(fixture_id)
+        if entry.get("analysis_failure"):
+            raise ValueError("deterministic fixture analysis unavailable")
+        raw = cast(dict[str, Any], entry["expected_facts"])
         commitments: list[StaffCommitment] = []
         for item in cast(list[dict[str, Any]], raw["staff_commitments"]):
             timing_raw = cast(dict[str, Any] | None, item.get("timing"))

@@ -596,7 +596,7 @@ function CallPage({ callId, principal }: { callId: string; principal: DemoPrinci
 
       <section className="metadata-grid" aria-label="Synthetic call metadata">
         <div className="metadata"><span>Direction</span><strong>{humanize(detail.direction)}</strong></div>
-        <div className="metadata"><span>Time</span><strong>{new Date(detail.occurred_at).toLocaleString()}</strong></div>
+        <div className="metadata"><span>Time</span><strong>{new Date(detail.occurred_at).toLocaleString("en-US", { timeZone: "America/New_York", timeZoneName: "short" })}</strong></div>
         <div className="metadata"><span>Duration</span><strong>{clock(detail.duration_seconds)}</strong></div>
         <div className="metadata"><span>Language</span><strong>{detail.language === "es" ? "Spanish" : "English"}</strong></div>
         <div className="metadata"><span>Staff extension</span><strong>{detail.staff_extension ?? "Unknown"}</strong></div>
