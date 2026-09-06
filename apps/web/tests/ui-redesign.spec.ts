@@ -3,6 +3,8 @@ import { chmod, writeFile } from "node:fs/promises";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
 
+import { expectMonthCountsFit } from "./month-layout";
+
 const evidenceDirectory = process.env.EVIDENCE_DIR ?? "/evidence";
 
 async function accessible(page: Page, label: string): Promise<void> {
@@ -141,11 +143,13 @@ test("professional internal-firm workspace routes, states, recovery, and evidenc
     await page.goto("/months/2026-07");
     await expect(page.getByRole("heading", { name: "July 2026" })).toBeVisible();
     await noOverflow(page);
+    await expectMonthCountsFit(page);
     if ([1280, 1024, 768, 390].includes(viewport.width)) await shot(page, `month-${viewport.width.toString()}px`);
   }
   await page.setViewportSize({ width: 780, height: 900 });
   await page.evaluate(() => { document.documentElement.style.zoom = "2"; });
   await noOverflow(page);
+  await expectMonthCountsFit(page);
   await shot(page, "month-200-percent-zoom");
   await page.evaluate(() => { document.documentElement.style.zoom = "1"; });
 

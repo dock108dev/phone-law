@@ -4,6 +4,8 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import type { DailyBriefing } from "../src/types";
 
+import { expectMonthCountsFit } from "./month-layout";
+
 const evidenceDirectory = process.env.EVIDENCE_DIR ?? "/evidence";
 
 test("July month history and representative daily reports remain usable", async ({ page }) => {
@@ -29,6 +31,17 @@ test("July month history and representative daily reports remain usable", async 
   expect(accessibility.violations, JSON.stringify(accessibility.violations, null, 2)).toEqual([]);
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.screenshot({ path: `${evidenceDirectory}/month-history.png`, fullPage: true });
+
+  for (const width of [1440, 1280, 1024, 768, 390]) {
+    await page.setViewportSize({ width, height: 950 });
+    await expectMonthCountsFit(page);
+    await page.screenshot({ path: `${evidenceDirectory}/month-counts-${width.toString()}.png`, fullPage: true });
+  }
+  await page.setViewportSize({ width: 780, height: 950 });
+  await page.evaluate(() => { document.documentElement.style.zoom = "2"; });
+  await expectMonthCountsFit(page);
+  await page.screenshot({ path: `${evidenceDirectory}/month-counts-css-zoom-200.png`, fullPage: true });
+  await page.evaluate(() => { document.documentElement.style.zoom = "1"; });
 
   const journeys = [
     ["normal_complete", "/reports/2026-07-08", "Coverage is complete."],
