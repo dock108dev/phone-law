@@ -36,7 +36,7 @@ docker compose -p colacci-law-e2e run --rm api alembic upgrade head
 docker compose -p colacci-law-e2e up -d --wait api worker web
 docker compose -p colacci-law-e2e run --rm api python scripts/seed_demo.py
 e2e_status=0
-docker compose -p colacci-law-e2e --profile e2e run --rm e2e || e2e_status=$?
+docker compose -p colacci-law-e2e --profile e2e run --rm e2e npm run test:e2e -- --project=review-flow --project=manual-upload --project=local-operations || e2e_status=$?
 docker compose -p colacci-law-e2e logs --no-color api worker > "$evidence_directory/e2e-application.log"
 docker compose -p colacci-law-e2e run --rm --no-deps \
   -v "$evidence_directory:/evidence:ro" api \
@@ -49,4 +49,8 @@ else
   docker compose -p colacci-law-e2e run --rm --no-deps api \
     python scripts/collect_slice2_evidence.py > "$evidence_directory/database-evidence.json"
 fi
-exit "$e2e_status"
+if [[ "$e2e_status" != "0" ]]; then exit "$e2e_status"; fi
+docker compose -p colacci-law-e2e run --rm api alembic downgrade base
+docker compose -p colacci-law-e2e run --rm api alembic upgrade head
+docker compose -p colacci-law-e2e run --rm api python scripts/seed_demo_month.py --manifest fixtures/demo-month/morning-v1.json
+docker compose -p colacci-law-e2e --profile e2e run --rm e2e npm run test:e2e -- --project=morning-briefing

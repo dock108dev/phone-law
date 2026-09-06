@@ -22,7 +22,7 @@ from packages.contracts.media import (
     TranscriptionResponseMetadata,
     TranscriptionUsageMetadata,
 )
-from packages.contracts.report import AuditEvent, DailyReport, ReviewEvent
+from packages.contracts.report import AuditEvent, DailyBriefing, DailyReport, ReviewEvent
 from packages.contracts.review import (
     ExtractedFacts,
     IngestionEvent,
@@ -45,6 +45,7 @@ MODELS: dict[str, type[BaseModel]] = {
     "structured-analysis.schema.json": StructuredAnalysis,
     "transcript.schema.json": Transcript,
     "daily-report.schema.json": DailyReport,
+    "daily-briefing.schema.json": DailyBriefing,
     "review-event.schema.json": ReviewEvent,
     "audit-event.schema.json": AuditEvent,
     "media-input.schema.json": MediaInput,

@@ -1,0 +1,13 @@
+services:
+  db:
+    ports: !reset []
+  api:
+    ports: !reset []
+  worker:
+    ports: !reset []
+  web:
+    ports: !override
+      - "127.0.0.1:15174:5173"
+networks:
+  app:
+    internal: true

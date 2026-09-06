@@ -13,6 +13,7 @@ from packages.authorization import DemoPermission, has_permission
 from packages.contracts.report import (
     AuditEvent,
     CallDetail,
+    DailyBriefing,
     DailyReport,
     DemoPrincipal,
     FailureQueue,
@@ -38,6 +39,13 @@ Principal = Annotated[DemoPrincipal, Depends(demo_principal)]
 
 def _repository(request: Request) -> ReviewExperienceRepository:
     return ReviewExperienceRepository(request.app.state.engine)
+
+
+@router.get("/briefing", response_model=DailyBriefing)
+def morning_briefing(
+    request: Request, _: Principal, business_date: date | None = None
+) -> DailyBriefing:
+    return _repository(request).briefing(business_date)
 
 
 @router.get("/reports/dates", response_model=ReportDateList)

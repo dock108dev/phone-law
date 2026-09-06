@@ -372,3 +372,30 @@ class ReportDateList(StrictModel):
 class ApiError(StrictModel):
     error: NonEmptyText
     correlation_id: OpaqueId
+
+
+class BriefingAttention(StrictModel):
+    kind: Literal["caller_request", "staff_promise", "analysis_suggestion"]
+    reason: NonEmptyText
+    evidence: tuple[EvidenceReference, ...]
+
+
+class BriefingCall(StrictModel):
+    call_id: OpaqueId
+    synthetic_reference: OpaqueId
+    occurred_at: AwareDatetime
+    state: Literal["available", "unavailable"]
+    detail: CallDetail | None = None
+    attention: tuple[BriefingAttention, ...] = ()
+
+
+class DailyBriefing(StrictModel):
+    schema_version: Literal["daily-briefing-v1"] = "daily-briefing-v1"
+    business_date: date
+    timezone: Literal["America/New_York"] = "America/New_York"
+    simulated_morning: date | None = None
+    scenario_version: str | None = None
+    completeness: ReportCompleteness | None = None
+    coverage_explanation: NonEmptyText
+    latest_activity_date: date | None = None
+    calls: tuple[BriefingCall, ...]

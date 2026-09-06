@@ -6,6 +6,7 @@ import hashlib
 import json
 from calendar import month_name, monthrange
 from datetime import UTC, date, datetime
+from pathlib import Path
 from typing import cast
 from uuid import uuid4
 from zoneinfo import ZoneInfo
@@ -16,6 +17,7 @@ from sqlalchemy import Engine
 from packages.contracts.report import (
     AuditEvent,
     CallDetail,
+    DailyBriefing,
     DailyReport,
     DemoPrincipal,
     DemoPrincipalId,
@@ -61,7 +63,12 @@ from packages.database.review_schema import (
     transcripts,
 )
 from packages.review.demo_month import DemoMonthManifest
-from packages.review.reporting import ReportCallInput, aggregate_daily_report
+from packages.review.reporting import (
+    ReportCallInput,
+    aggregate_daily_report,
+    briefing_call,
+    prior_calendar_day,
+)
 
 
 def _id() -> str:
@@ -274,6 +281,69 @@ class ReviewExperienceRepository:
                         )
                     )
         return report
+
+    def briefing(self, business_date: date | None = None) -> DailyBriefing:
+        timezone = ZoneInfo("America/New_York")
+        with self.engine.connect() as connection:
+            rows = connection.execute(
+                sa.select(calls.c.id, calls.c.fixture_id, calls.c.occurred_at)
+                .where(calls.c.is_synthetic.is_(True))
+                .order_by(calls.c.occurred_at, calls.c.id)
+            ).all()
+        scenario = DemoMonthManifest(
+            Path(__file__).parents[2] / "fixtures/demo-month/morning-v1.json"
+        )
+        scenario_ids = {item["fixture_id"] for item in scenario.entries()}
+        scenario_present = scenario_ids.issubset({str(row.fixture_id) for row in rows})
+        selected = business_date or (
+            date.fromisoformat(scenario.contract["scenario"]["review_date"])
+            if scenario_present
+            else prior_calendar_day(datetime.now(UTC))
+        )
+        day_rows = [row for row in rows if row.occurred_at.astimezone(timezone).date() == selected]
+        report = self.report(selected)
+        projected = tuple(
+            briefing_call(
+                call_id=str(row.id),
+                synthetic_reference=str(row.fixture_id),
+                occurred_at=row.occurred_at,
+                detail=self.call_detail(str(row.id)),
+            )
+            for row in day_rows
+        )
+        completeness = report.completeness if report else None
+        explanation = (
+            report.completeness.explanation
+            if report
+            else "Coverage is unavailable for this date; this is not a verified zero-call day."
+        )
+        if report and (
+            report.completeness.reconciliation.received != len(projected)
+            or report.completeness.reconciliation.analyzed
+            != sum(call.state == "available" for call in projected)
+        ):
+            completeness = None
+            explanation = (
+                "Received records or available results have changed since the coverage snapshot. "
+                "Coverage needs reconciliation; this is not an all-clear day."
+            )
+        activity_dates = {row.occurred_at.astimezone(timezone).date() for row in rows}
+        earlier = [value for value in activity_dates if value < selected]
+        simulated = (
+            date.fromisoformat(scenario.contract["scenario"]["simulated_morning"])
+            if scenario_present
+            and selected == date.fromisoformat(scenario.contract["scenario"]["review_date"])
+            else None
+        )
+        return DailyBriefing(
+            business_date=selected,
+            simulated_morning=simulated,
+            scenario_version=scenario.version if simulated else None,
+            completeness=completeness,
+            coverage_explanation=explanation,
+            latest_activity_date=max(earlier) if earlier else None,
+            calls=projected,
+        )
 
     def report_dates(self) -> tuple[date, ...]:
         with self.engine.connect() as connection:

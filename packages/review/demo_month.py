@@ -22,7 +22,11 @@ class DemoMonthManifest:
         self.contract = cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
         self.version = cast(str, self.contract["manifest_version"])
         self.seed = int(self.contract["seed"])
-        self._entries = self._build_entries()
+        self._entries = (
+            cast(list[dict[str, Any]], self.contract["entries"])
+            if "entries" in self.contract
+            else self._build_entries()
+        )
         self._validate_contract()
 
     def entries(self) -> tuple[dict[str, Any], ...]:

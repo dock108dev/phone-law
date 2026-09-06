@@ -291,3 +291,38 @@ def test_demo_api_role_matrix_and_safe_errors(
         assert "correlation_id" in denied_publish.json()["detail"]
         unknown = client.get("/api/reports/dates", headers={"X-Demo-Principal": "arbitrary"})
         assert unknown.status_code == 401
+
+
+def test_briefing_unique_received_failure_missing_and_date_coverage(
+    seeded_experience: tuple[sa.Engine, ReviewExperienceRepository, dict[str, str]],
+) -> None:
+    _, experience, _ = seeded_experience
+    day = experience.briefing(date(2026, 8, 17))
+    assert len(day.calls) == len({call.call_id for call in day.calls}) == 11
+    assert [call.occurred_at for call in day.calls] == sorted(
+        call.occurred_at for call in day.calls
+    )
+    assert sum(call.state == "unavailable" for call in day.calls) == 1
+    assert day.completeness is not None
+    assert day.completeness.reconciliation.missing == 0
+    expected = (*experience.expected_source_call_ids(date(2026, 8, 17)), "never-received")
+    experience.generate_report(
+        business_date=date(2026, 8, 17),
+        cutoff_at=datetime(2026, 8, 17, 18, tzinfo=ZoneInfo("America/New_York")),
+        expected_source_call_ids=expected,
+    )
+    missing = experience.briefing(date(2026, 8, 17))
+    assert len(missing.calls) == 11
+    assert missing.completeness is not None and missing.completeness.reconciliation.missing == 1
+    unknown = experience.briefing(date(2026, 7, 19))
+    assert unknown.completeness is None and not unknown.calls
+    assert "not a verified zero" in unknown.coverage_explanation
+    experience.generate_report(
+        business_date=date(2026, 8, 23),
+        cutoff_at=datetime(2026, 8, 23, 18, tzinfo=ZoneInfo("America/New_York")),
+        expected_source_call_ids=(),
+    )
+    sunday = experience.briefing(date(2026, 8, 23))
+    assert sunday.completeness is not None and sunday.completeness.status.value == "zero_activity"
+    assert sunday.latest_activity_date == date(2026, 8, 17)
+    assert sunday.simulated_morning is None

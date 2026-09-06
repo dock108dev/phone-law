@@ -240,7 +240,7 @@ class FixtureAnalyzer:
             missing_context=tuple(cast(list[str], raw["missing_context"])),
             caller_identity=IdentityClaim(
                 state=cast(Any, ValueState(cast(str, raw["caller_identity_state"]))),
-                label=None,
+                label=cast(str | None, raw.get("caller_identity_label")),
                 metadata_verified=False,
             ),
             confidence=Confidence(cast(str, raw["confidence"])),

@@ -1,0 +1,1262 @@
+{
+  "manifest_version": "demo-morning-2026-07-v1",
+  "generator_version": "authored-conversations-v1",
+  "seed": 20260715,
+  "business_month": "2026-07",
+  "scenario": {
+    "simulated_morning": "2026-07-16",
+    "review_date": "2026-07-15",
+    "timezone": "America/New_York"
+  },
+  "coverage_dates": [
+    "2026-07-15"
+  ],
+  "totals": {
+    "expected": 10,
+    "received": 10,
+    "analyzed": 10,
+    "failed": 0,
+    "missing": 0
+  },
+  "categories": {
+    "routine_no_action": 4,
+    "new_intake": 2,
+    "existing_client_follow_up": 1,
+    "administrative": 2,
+    "unknown": 1
+  },
+  "languages": {
+    "en": 8,
+    "es": 2
+  },
+  "scenario_contract": {
+    "representative_morning": 10
+  },
+  "entries": [
+    {
+      "fixture_id": "CL-AM-20260715-01",
+      "business_date": "2026-07-15",
+      "category": "routine_no_action",
+      "language": "en",
+      "outcome": "analyzed",
+      "scenarios": [
+        "representative_morning"
+      ],
+      "event": {
+        "received_at": "2026-07-15T08:12:07-04:00",
+        "call": {
+          "source": "transcript_only",
+          "source_event_id": "evt-cl-am-20260715-01",
+          "source_call_id": "call-cl-am-20260715-01",
+          "recording_id": null,
+          "occurred_at": "2026-07-15T08:12:00-04:00",
+          "direction": "inbound",
+          "duration_seconds": 60.0,
+          "staff_extension": null,
+          "language_hint": "en",
+          "media_reference": null,
+          "transcript_fixture_reference": "transcript-cl-am-20260715-01",
+          "metadata": {
+            "source_mode": "transcript_only",
+            "manifest_version": "demo-morning-2026-07-v1"
+          },
+          "synthetic": true
+        }
+      },
+      "transcript": {
+        "language": "en",
+        "diarization_status": "available",
+        "segments": [
+          {
+            "segment_id": "am01-s1",
+            "speaker": "outside_caller",
+            "start_seconds": 0.0,
+            "end_seconds": 14.0,
+            "text": "Hi, Nora Bell here. Is the office still on the second floor? I am outside for my appointment."
+          },
+          {
+            "segment_id": "am01-s2",
+            "speaker": "staff",
+            "start_seconds": 15.0,
+            "end_seconds": 29.0,
+            "text": "Yes, second floor, suite 204. The elevator is just past the lobby desk."
+          },
+          {
+            "segment_id": "am01-s3",
+            "speaker": "outside_caller",
+            "start_seconds": 30.0,
+            "end_seconds": 44.0,
+            "text": "I see it now. That is all I needed, thanks."
+          },
+          {
+            "segment_id": "am01-s4",
+            "speaker": "staff",
+            "start_seconds": 45.0,
+            "end_seconds": 59.0,
+            "text": "You are welcome. Come up when you are ready."
+          }
+        ]
+      },
+      "expected_facts": {
+        "caller_request": {
+          "state": "present",
+          "value": "Office location for an appointment.",
+          "evidence": [
+            "am01-s1"
+          ]
+        },
+        "reported_facts": [],
+        "people_or_organizations": [
+          {
+            "state": "present",
+            "value": "Nora Bell",
+            "evidence": [
+              "am01-s1"
+            ]
+          }
+        ],
+        "dates": [],
+        "staff_commitments": [],
+        "requested_follow_up": {
+          "state": "not_mentioned",
+          "value": null,
+          "evidence": []
+        },
+        "unresolved_questions": [],
+        "missing_context": [],
+        "caller_identity_state": "unverified",
+        "caller_identity_label": "Nora Bell",
+        "confidence": "high"
+      },
+      "expected_analysis": {
+        "category": "routine_no_action",
+        "priority": "low",
+        "summary": "Nora Bell called from outside to find the office. Staff gave the floor, suite and elevator directions; she said that was all she needed.",
+        "proposed_next_steps": [],
+        "responsible_role": "unassigned",
+        "suggested_response_timing": null,
+        "attorney_attention_issues": [],
+        "dissatisfaction_indicators": [],
+        "omitted_information_findings": [],
+        "findings": [],
+        "internal_file_note_draft": "Nora Bell called from outside to find the office. Staff gave the floor, suite and elevator directions; she said that was all she needed.",
+        "confidence": "high"
+      },
+      "transcriber_failures": []
+    },
+    {
+      "fixture_id": "CL-AM-20260715-02",
+      "business_date": "2026-07-15",
+      "category": "new_intake",
+      "language": "en",
+      "outcome": "analyzed",
+      "scenarios": [
+        "representative_morning"
+      ],
+      "event": {
+        "received_at": "2026-07-15T09:03:07-04:00",
+        "call": {
+          "source": "transcript_only",
+          "source_event_id": "evt-cl-am-20260715-02",
+          "source_call_id": "call-cl-am-20260715-02",
+          "recording_id": null,
+          "occurred_at": "2026-07-15T09:03:00-04:00",
+          "direction": "inbound",
+          "duration_seconds": 90.0,
+          "staff_extension": null,
+          "language_hint": "en",
+          "media_reference": null,
+          "transcript_fixture_reference": "transcript-cl-am-20260715-02",
+          "metadata": {
+            "source_mode": "transcript_only",
+            "manifest_version": "demo-morning-2026-07-v1"
+          },
+          "synthetic": true
+        }
+      },
+      "transcript": {
+        "language": "en",
+        "diarization_status": "available",
+        "segments": [
+          {
+            "segment_id": "am02-s1",
+            "speaker": "staff",
+            "start_seconds": 0.0,
+            "end_seconds": 14.0,
+            "text": "Good morning, Colacci Law."
+          },
+          {
+            "segment_id": "am02-s2",
+            "speaker": "outside_caller",
+            "start_seconds": 15.0,
+            "end_seconds": 29.0,
+            "text": "My name is Evan Reed. I have never used your office. Do you take questions about a lease deposit?"
+          },
+          {
+            "segment_id": "am02-s3",
+            "speaker": "staff",
+            "start_seconds": 30.0,
+            "end_seconds": 44.0,
+            "text": "The lawyer would need to decide whether that is something he can help with. We can offer an initial conversation."
+          },
+          {
+            "segment_id": "am02-s4",
+            "speaker": "outside_caller",
+            "start_seconds": 45.0,
+            "end_seconds": 59.0,
+            "text": "I am only checking today. I want to gather my paperwork before asking for an appointment."
+          },
+          {
+            "segment_id": "am02-s5",
+            "speaker": "staff",
+            "start_seconds": 60.0,
+            "end_seconds": 74.0,
+            "text": "All right. You can call back when you are ready."
+          },
+          {
+            "segment_id": "am02-s6",
+            "speaker": "outside_caller",
+            "start_seconds": 75.0,
+            "end_seconds": 89.0,
+            "text": "Okay, I will leave it there for now."
+          }
+        ]
+      },
+      "expected_facts": {
+        "caller_request": {
+          "state": "present",
+          "value": "Whether the office handles lease-deposit questions.",
+          "evidence": [
+            "am02-s2"
+          ]
+        },
+        "reported_facts": [],
+        "people_or_organizations": [
+          {
+            "state": "present",
+            "value": "Evan Reed",
+            "evidence": [
+              "am02-s2"
+            ]
+          }
+        ],
+        "dates": [],
+        "staff_commitments": [],
+        "requested_follow_up": {
+          "state": "not_mentioned",
+          "value": null,
+          "evidence": []
+        },
+        "unresolved_questions": [],
+        "missing_context": [
+          "Whether the lawyer can help is not established."
+        ],
+        "caller_identity_state": "unverified",
+        "caller_identity_label": "Evan Reed",
+        "confidence": "high"
+      },
+      "expected_analysis": {
+        "category": "new_intake",
+        "priority": "low",
+        "summary": "Evan Reed asked whether the office handles lease-deposit questions. Staff said the lawyer would need to decide. Evan chose to gather paperwork before requesting an appointment; none was booked.",
+        "proposed_next_steps": [],
+        "responsible_role": "unassigned",
+        "suggested_response_timing": null,
+        "attorney_attention_issues": [],
+        "dissatisfaction_indicators": [],
+        "omitted_information_findings": [],
+        "findings": [],
+        "internal_file_note_draft": "Evan Reed asked whether the office handles lease-deposit questions. Staff said the lawyer would need to decide. Evan chose to gather paperwork before requesting an appointment; none was booked.",
+        "confidence": "high"
+      },
+      "transcriber_failures": []
+    },
+    {
+      "fixture_id": "CL-AM-20260715-03",
+      "business_date": "2026-07-15",
+      "category": "routine_no_action",
+      "language": "es",
+      "outcome": "analyzed",
+      "scenarios": [
+        "representative_morning"
+      ],
+      "event": {
+        "received_at": "2026-07-15T09:48:07-04:00",
+        "call": {
+          "source": "transcript_only",
+          "source_event_id": "evt-cl-am-20260715-03",
+          "source_call_id": "call-cl-am-20260715-03",
+          "recording_id": null,
+          "occurred_at": "2026-07-15T09:48:00-04:00",
+          "direction": "inbound",
+          "duration_seconds": 60.0,
+          "staff_extension": null,
+          "language_hint": "es",
+          "media_reference": null,
+          "transcript_fixture_reference": "transcript-cl-am-20260715-03",
+          "metadata": {
+            "source_mode": "transcript_only",
+            "manifest_version": "demo-morning-2026-07-v1"
+          },
+          "synthetic": true
+        }
+      },
+      "transcript": {
+        "language": "es",
+        "diarization_status": "available",
+        "segments": [
+          {
+            "segment_id": "am03-s1",
+            "speaker": "outside_caller",
+            "start_seconds": 0.0,
+            "end_seconds": 14.0,
+            "text": "Buenos días, soy Lucía Soto. ¿Puedo entregar una copia en vez del documento original?"
+          },
+          {
+            "segment_id": "am03-s2",
+            "speaker": "staff",
+            "start_seconds": 15.0,
+            "end_seconds": 29.0,
+            "text": "Para dejarlo en recepción, sí, una copia está bien. Si el abogado necesita el original, se lo dirá."
+          },
+          {
+            "segment_id": "am03-s3",
+            "speaker": "outside_caller",
+            "start_seconds": 30.0,
+            "end_seconds": 44.0,
+            "text": "Perfecto, entonces guardaré el original en casa. Solo quería confirmar eso."
+          },
+          {
+            "segment_id": "am03-s4",
+            "speaker": "staff",
+            "start_seconds": 45.0,
+            "end_seconds": 59.0,
+            "text": "De acuerdo, que tenga buen día."
+          }
+        ]
+      },
+      "expected_facts": {
+        "caller_request": {
+          "state": "present",
+          "value": "Whether reception accepts a copy instead of an original.",
+          "evidence": [
+            "am03-s1"
+          ]
+        },
+        "reported_facts": [],
+        "people_or_organizations": [
+          {
+            "state": "present",
+            "value": "Lucía Soto",
+            "evidence": [
+              "am03-s1"
+            ]
+          }
+        ],
+        "dates": [],
+        "staff_commitments": [],
+        "requested_follow_up": {
+          "state": "not_mentioned",
+          "value": null,
+          "evidence": []
+        },
+        "unresolved_questions": [],
+        "missing_context": [
+          "The conversation does not establish whether an original will later be needed."
+        ],
+        "caller_identity_state": "unverified",
+        "caller_identity_label": "Lucía Soto",
+        "confidence": "high"
+      },
+      "expected_analysis": {
+        "category": "routine_no_action",
+        "priority": "low",
+        "summary": "Lucía Soto asked whether she could leave a copy at reception. Staff said a copy was fine for that purpose and the lawyer would say if an original was needed. Her document-drop-off question was answered.",
+        "proposed_next_steps": [],
+        "responsible_role": "unassigned",
+        "suggested_response_timing": null,
+        "attorney_attention_issues": [],
+        "dissatisfaction_indicators": [],
+        "omitted_information_findings": [],
+        "findings": [],
+        "internal_file_note_draft": "Lucía Soto asked whether she could leave a copy at reception. Staff said a copy was fine for that purpose and the lawyer would say if an original was needed. Her document-drop-off question was answered.",
+        "confidence": "high"
+      },
+      "transcriber_failures": []
+    },
+    {
+      "fixture_id": "CL-AM-20260715-04",
+      "business_date": "2026-07-15",
+      "category": "existing_client_follow_up",
+      "language": "en",
+      "outcome": "analyzed",
+      "scenarios": [
+        "representative_morning"
+      ],
+      "event": {
+        "received_at": "2026-07-15T10:26:07-04:00",
+        "call": {
+          "source": "transcript_only",
+          "source_event_id": "evt-cl-am-20260715-04",
+          "source_call_id": "call-cl-am-20260715-04",
+          "recording_id": null,
+          "occurred_at": "2026-07-15T10:26:00-04:00",
+          "direction": "inbound",
+          "duration_seconds": 75.0,
+          "staff_extension": null,
+          "language_hint": "en",
+          "media_reference": null,
+          "transcript_fixture_reference": "transcript-cl-am-20260715-04",
+          "metadata": {
+            "source_mode": "transcript_only",
+            "manifest_version": "demo-morning-2026-07-v1"
+          },
+          "synthetic": true
+        }
+      },
+      "transcript": {
+        "language": "en",
+        "diarization_status": "available",
+        "segments": [
+          {
+            "segment_id": "am04-s1",
+            "speaker": "outside_caller",
+            "start_seconds": 0.0,
+            "end_seconds": 14.0,
+            "text": "This is Daniel Moss. I left a question about the letter I received, and I would like the lawyer to call me back."
+          },
+          {
+            "segment_id": "am04-s2",
+            "speaker": "staff",
+            "start_seconds": 15.0,
+            "end_seconds": 29.0,
+            "text": "What would you like me to put in the message?"
+          },
+          {
+            "segment_id": "am04-s3",
+            "speaker": "outside_caller",
+            "start_seconds": 30.0,
+            "end_seconds": 44.0,
+            "text": "Whether he has had a chance to read it. There is no new date on it that I can see."
+          },
+          {
+            "segment_id": "am04-s4",
+            "speaker": "staff",
+            "start_seconds": 45.0,
+            "end_seconds": 59.0,
+            "text": "I have written that in the message. I cannot give you a callback time."
+          },
+          {
+            "segment_id": "am04-s5",
+            "speaker": "outside_caller",
+            "start_seconds": 60.0,
+            "end_seconds": 74.0,
+            "text": "That is fine. The number already on my file is the one to use."
+          }
+        ]
+      },
+      "expected_facts": {
+        "caller_request": {
+          "state": "present",
+          "value": "Whether the lawyer has read a letter.",
+          "evidence": [
+            "am04-s1"
+          ]
+        },
+        "reported_facts": [],
+        "people_or_organizations": [
+          {
+            "state": "present",
+            "value": "Daniel Moss",
+            "evidence": [
+              "am04-s1"
+            ]
+          }
+        ],
+        "dates": [],
+        "staff_commitments": [],
+        "requested_follow_up": {
+          "state": "present",
+          "value": "A lawyer callback about the letter.",
+          "evidence": [
+            "am04-s1"
+          ]
+        },
+        "unresolved_questions": [],
+        "missing_context": [
+          "The letter review and callback remain unconfirmed; the phone number is not spoken."
+        ],
+        "caller_identity_state": "unverified",
+        "caller_identity_label": "Daniel Moss",
+        "confidence": "high"
+      },
+      "expected_analysis": {
+        "category": "existing_client_follow_up",
+        "priority": "normal",
+        "summary": "Daniel Moss requested a lawyer callback about whether his letter had been read. Staff recorded the message but gave no callback time. The conversation does not establish that the letter was read or that a callback happened.",
+        "proposed_next_steps": [],
+        "responsible_role": "unassigned",
+        "suggested_response_timing": null,
+        "attorney_attention_issues": [
+          {
+            "finding_id": "am04-attention",
+            "kind": "supported_follow_up",
+            "statement": "Caller requested a lawyer callback; no callback time or completion is established.",
+            "material": true,
+            "evidence": [
+              "am04-s1",
+              "am04-s4"
+            ]
+          }
+        ],
+        "dissatisfaction_indicators": [],
+        "omitted_information_findings": [],
+        "findings": [],
+        "internal_file_note_draft": "Daniel Moss requested a lawyer callback about whether his letter had been read. Staff recorded the message but gave no callback time. The conversation does not establish that the letter was read or that a callback happened.",
+        "confidence": "high"
+      },
+      "transcriber_failures": []
+    },
+    {
+      "fixture_id": "CL-AM-20260715-05",
+      "business_date": "2026-07-15",
+      "category": "administrative",
+      "language": "en",
+      "outcome": "analyzed",
+      "scenarios": [
+        "representative_morning"
+      ],
+      "event": {
+        "received_at": "2026-07-15T11:17:07-04:00",
+        "call": {
+          "source": "transcript_only",
+          "source_event_id": "evt-cl-am-20260715-05",
+          "source_call_id": "call-cl-am-20260715-05",
+          "recording_id": null,
+          "occurred_at": "2026-07-15T11:17:00-04:00",
+          "direction": "inbound",
+          "duration_seconds": 75.0,
+          "staff_extension": null,
+          "language_hint": "en",
+          "media_reference": null,
+          "transcript_fixture_reference": "transcript-cl-am-20260715-05",
+          "metadata": {
+            "source_mode": "transcript_only",
+            "manifest_version": "demo-morning-2026-07-v1"
+          },
+          "synthetic": true
+        }
+      },
+      "transcript": {
+        "language": "en",
+        "diarization_status": "available",
+        "segments": [
+          {
+            "segment_id": "am05-s1",
+            "speaker": "outside_caller",
+            "start_seconds": 0.0,
+            "end_seconds": 14.0,
+            "text": "Hello, Priya Lane calling. I received the appointment directions, but the attachment opens as a blank page."
+          },
+          {
+            "segment_id": "am05-s2",
+            "speaker": "staff",
+            "start_seconds": 15.0,
+            "end_seconds": 29.0,
+            "text": "Let me check. I can read the parking directions over the phone now: use the visitor spaces behind the building."
+          },
+          {
+            "segment_id": "am05-s3",
+            "speaker": "outside_caller",
+            "start_seconds": 30.0,
+            "end_seconds": 44.0,
+            "text": "That helps. Could you also send me a readable copy?"
+          },
+          {
+            "segment_id": "am05-s4",
+            "speaker": "staff",
+            "start_seconds": 45.0,
+            "end_seconds": 59.0,
+            "text": "Yes, I will resend the directions this afternoon."
+          },
+          {
+            "segment_id": "am05-s5",
+            "speaker": "outside_caller",
+            "start_seconds": 60.0,
+            "end_seconds": 74.0,
+            "text": "Thank you. I will look for them later."
+          }
+        ]
+      },
+      "expected_facts": {
+        "caller_request": {
+          "state": "present",
+          "value": "A blank directions attachment.",
+          "evidence": [
+            "am05-s1"
+          ]
+        },
+        "reported_facts": [],
+        "people_or_organizations": [
+          {
+            "state": "present",
+            "value": "Priya Lane",
+            "evidence": [
+              "am05-s1"
+            ]
+          }
+        ],
+        "dates": [],
+        "staff_commitments": [
+          {
+            "state": "present",
+            "commitment": "Resend the directions this afternoon.",
+            "responsible_role": "unassigned",
+            "timing": null,
+            "evidence": [
+              "am05-s4"
+            ]
+          }
+        ],
+        "requested_follow_up": {
+          "state": "present",
+          "value": "A readable copy of the directions.",
+          "evidence": [
+            "am05-s3"
+          ]
+        },
+        "unresolved_questions": [],
+        "missing_context": [
+          "Delivery of the replacement directions is not confirmed."
+        ],
+        "caller_identity_state": "unverified",
+        "caller_identity_label": "Priya Lane",
+        "confidence": "high"
+      },
+      "expected_analysis": {
+        "category": "administrative",
+        "priority": "normal",
+        "summary": "Priya Lane could not open the directions attachment. Staff explained visitor parking and promised to resend the directions that afternoon. The call does not confirm that the replacement was sent.",
+        "proposed_next_steps": [],
+        "responsible_role": "unassigned",
+        "suggested_response_timing": null,
+        "attorney_attention_issues": [
+          {
+            "finding_id": "am05-attention",
+            "kind": "supported_follow_up",
+            "statement": "Staff promised to resend directions this afternoon; sending is not confirmed.",
+            "material": true,
+            "evidence": [
+              "am05-s3",
+              "am05-s4"
+            ]
+          }
+        ],
+        "dissatisfaction_indicators": [],
+        "omitted_information_findings": [],
+        "findings": [],
+        "internal_file_note_draft": "Priya Lane could not open the directions attachment. Staff explained visitor parking and promised to resend the directions that afternoon. The call does not confirm that the replacement was sent.",
+        "confidence": "high"
+      },
+      "transcriber_failures": []
+    },
+    {
+      "fixture_id": "CL-AM-20260715-06",
+      "business_date": "2026-07-15",
+      "category": "routine_no_action",
+      "language": "en",
+      "outcome": "analyzed",
+      "scenarios": [
+        "representative_morning"
+      ],
+      "event": {
+        "received_at": "2026-07-15T12:06:07-04:00",
+        "call": {
+          "source": "transcript_only",
+          "source_event_id": "evt-cl-am-20260715-06",
+          "source_call_id": "call-cl-am-20260715-06",
+          "recording_id": null,
+          "occurred_at": "2026-07-15T12:06:00-04:00",
+          "direction": "inbound",
+          "duration_seconds": 75.0,
+          "staff_extension": null,
+          "language_hint": "en",
+          "media_reference": null,
+          "transcript_fixture_reference": "transcript-cl-am-20260715-06",
+          "metadata": {
+            "source_mode": "transcript_only",
+            "manifest_version": "demo-morning-2026-07-v1"
+          },
+          "synthetic": true
+        }
+      },
+      "transcript": {
+        "language": "en",
+        "diarization_status": "available",
+        "segments": [
+          {
+            "segment_id": "am06-s1",
+            "speaker": "staff",
+            "start_seconds": 0.0,
+            "end_seconds": 14.0,
+            "text": "Colacci Law, good afternoon."
+          },
+          {
+            "segment_id": "am06-s2",
+            "speaker": "outside_caller",
+            "start_seconds": 15.0,
+            "end_seconds": 29.0,
+            "text": "Is this the pharmacy on Main Street?"
+          },
+          {
+            "segment_id": "am06-s3",
+            "speaker": "staff",
+            "start_seconds": 30.0,
+            "end_seconds": 44.0,
+            "text": "No, this is a law office."
+          },
+          {
+            "segment_id": "am06-s4",
+            "speaker": "outside_caller",
+            "start_seconds": 45.0,
+            "end_seconds": 59.0,
+            "text": "Sorry, wrong number."
+          },
+          {
+            "segment_id": "am06-s5",
+            "speaker": "staff",
+            "start_seconds": 60.0,
+            "end_seconds": 74.0,
+            "text": "No problem."
+          }
+        ]
+      },
+      "expected_facts": {
+        "caller_request": {
+          "state": "present",
+          "value": "Trying to reach a pharmacy.",
+          "evidence": [
+            "am06-s2"
+          ]
+        },
+        "reported_facts": [],
+        "people_or_organizations": [],
+        "dates": [],
+        "staff_commitments": [],
+        "requested_follow_up": {
+          "state": "not_mentioned",
+          "value": null,
+          "evidence": []
+        },
+        "unresolved_questions": [],
+        "missing_context": [
+          "Caller name was not provided."
+        ],
+        "caller_identity_state": "unknown",
+        "caller_identity_label": null,
+        "confidence": "high"
+      },
+      "expected_analysis": {
+        "category": "routine_no_action",
+        "priority": "low",
+        "summary": "An unnamed caller reached the law office while trying to call a pharmacy. Staff explained the wrong number and the call ended.",
+        "proposed_next_steps": [],
+        "responsible_role": "unassigned",
+        "suggested_response_timing": null,
+        "attorney_attention_issues": [],
+        "dissatisfaction_indicators": [],
+        "omitted_information_findings": [],
+        "findings": [],
+        "internal_file_note_draft": "An unnamed caller reached the law office while trying to call a pharmacy. Staff explained the wrong number and the call ended.",
+        "confidence": "high"
+      },
+      "transcriber_failures": []
+    },
+    {
+      "fixture_id": "CL-AM-20260715-07",
+      "business_date": "2026-07-15",
+      "category": "new_intake",
+      "language": "es",
+      "outcome": "analyzed",
+      "scenarios": [
+        "representative_morning"
+      ],
+      "event": {
+        "received_at": "2026-07-15T13:21:07-04:00",
+        "call": {
+          "source": "transcript_only",
+          "source_event_id": "evt-cl-am-20260715-07",
+          "source_call_id": "call-cl-am-20260715-07",
+          "recording_id": null,
+          "occurred_at": "2026-07-15T13:21:00-04:00",
+          "direction": "inbound",
+          "duration_seconds": 75.0,
+          "staff_extension": null,
+          "language_hint": "es",
+          "media_reference": null,
+          "transcript_fixture_reference": "transcript-cl-am-20260715-07",
+          "metadata": {
+            "source_mode": "transcript_only",
+            "manifest_version": "demo-morning-2026-07-v1"
+          },
+          "synthetic": true
+        }
+      },
+      "transcript": {
+        "language": "es",
+        "diarization_status": "available",
+        "segments": [
+          {
+            "segment_id": "am07-s1",
+            "speaker": "outside_caller",
+            "start_seconds": 0.0,
+            "end_seconds": 14.0,
+            "text": "Me llamo Mateo Cruz. ¿La primera conversación puede ser en español? Todavía no quiero reservar."
+          },
+          {
+            "segment_id": "am07-s2",
+            "speaker": "staff",
+            "start_seconds": 15.0,
+            "end_seconds": 29.0,
+            "text": "Podemos recibir su consulta en español. Antes de fijar una cita, necesitamos saber de qué se trata."
+          },
+          {
+            "segment_id": "am07-s3",
+            "speaker": "outside_caller",
+            "start_seconds": 30.0,
+            "end_seconds": 44.0,
+            "text": "Entiendo. Voy a hablar con mi hermana primero; ella tiene los papeles. Hoy solo quería preguntar por el idioma."
+          },
+          {
+            "segment_id": "am07-s4",
+            "speaker": "staff",
+            "start_seconds": 45.0,
+            "end_seconds": 59.0,
+            "text": "Está bien. Cuando llame otra vez, explique brevemente el asunto."
+          },
+          {
+            "segment_id": "am07-s5",
+            "speaker": "outside_caller",
+            "start_seconds": 60.0,
+            "end_seconds": 74.0,
+            "text": "Gracias, eso era todo."
+          }
+        ]
+      },
+      "expected_facts": {
+        "caller_request": {
+          "state": "present",
+          "value": "Availability of an initial conversation in Spanish.",
+          "evidence": [
+            "am07-s1"
+          ]
+        },
+        "reported_facts": [],
+        "people_or_organizations": [
+          {
+            "state": "present",
+            "value": "Mateo Cruz",
+            "evidence": [
+              "am07-s1"
+            ]
+          }
+        ],
+        "dates": [],
+        "staff_commitments": [],
+        "requested_follow_up": {
+          "state": "not_mentioned",
+          "value": null,
+          "evidence": []
+        },
+        "unresolved_questions": [],
+        "missing_context": [
+          "The underlying matter is not described."
+        ],
+        "caller_identity_state": "unverified",
+        "caller_identity_label": "Mateo Cruz",
+        "confidence": "high"
+      },
+      "expected_analysis": {
+        "category": "new_intake",
+        "priority": "low",
+        "summary": "Mateo Cruz asked if an initial conversation could be in Spanish. Staff said the office could receive his inquiry in Spanish. He wanted to speak with his sister before booking; no appointment or matter details were provided.",
+        "proposed_next_steps": [],
+        "responsible_role": "unassigned",
+        "suggested_response_timing": null,
+        "attorney_attention_issues": [],
+        "dissatisfaction_indicators": [],
+        "omitted_information_findings": [],
+        "findings": [],
+        "internal_file_note_draft": "Mateo Cruz asked if an initial conversation could be in Spanish. Staff said the office could receive his inquiry in Spanish. He wanted to speak with his sister before booking; no appointment or matter details were provided.",
+        "confidence": "high"
+      },
+      "transcriber_failures": []
+    },
+    {
+      "fixture_id": "CL-AM-20260715-08",
+      "business_date": "2026-07-15",
+      "category": "administrative",
+      "language": "en",
+      "outcome": "analyzed",
+      "scenarios": [
+        "representative_morning"
+      ],
+      "event": {
+        "received_at": "2026-07-15T14:09:07-04:00",
+        "call": {
+          "source": "transcript_only",
+          "source_event_id": "evt-cl-am-20260715-08",
+          "source_call_id": "call-cl-am-20260715-08",
+          "recording_id": null,
+          "occurred_at": "2026-07-15T14:09:00-04:00",
+          "direction": "inbound",
+          "duration_seconds": 75.0,
+          "staff_extension": null,
+          "language_hint": "en",
+          "media_reference": null,
+          "transcript_fixture_reference": "transcript-cl-am-20260715-08",
+          "metadata": {
+            "source_mode": "transcript_only",
+            "manifest_version": "demo-morning-2026-07-v1"
+          },
+          "synthetic": true
+        }
+      },
+      "transcript": {
+        "language": "en",
+        "diarization_status": "available",
+        "segments": [
+          {
+            "segment_id": "am08-s1",
+            "speaker": "outside_caller",
+            "start_seconds": 0.0,
+            "end_seconds": 14.0,
+            "text": "Ruth Ellis here. I am checking that you received the envelope I dropped off this morning."
+          },
+          {
+            "segment_id": "am08-s2",
+            "speaker": "staff",
+            "start_seconds": 15.0,
+            "end_seconds": 29.0,
+            "text": "I have the reception log in front of me. It shows an envelope from Ruth Ellis received at ten fifteen."
+          },
+          {
+            "segment_id": "am08-s3",
+            "speaker": "outside_caller",
+            "start_seconds": 30.0,
+            "end_seconds": 44.0,
+            "text": "Great. I was not asking whether anyone had reviewed it, just whether it arrived."
+          },
+          {
+            "segment_id": "am08-s4",
+            "speaker": "staff",
+            "start_seconds": 45.0,
+            "end_seconds": 59.0,
+            "text": "Yes, receipt is logged. I cannot tell you whether it has been reviewed."
+          },
+          {
+            "segment_id": "am08-s5",
+            "speaker": "outside_caller",
+            "start_seconds": 60.0,
+            "end_seconds": 74.0,
+            "text": "That answers my question."
+          }
+        ]
+      },
+      "expected_facts": {
+        "caller_request": {
+          "state": "present",
+          "value": "Confirmation of envelope receipt.",
+          "evidence": [
+            "am08-s1"
+          ]
+        },
+        "reported_facts": [],
+        "people_or_organizations": [
+          {
+            "state": "present",
+            "value": "Ruth Ellis",
+            "evidence": [
+              "am08-s1"
+            ]
+          }
+        ],
+        "dates": [],
+        "staff_commitments": [],
+        "requested_follow_up": {
+          "state": "not_mentioned",
+          "value": null,
+          "evidence": []
+        },
+        "unresolved_questions": [],
+        "missing_context": [
+          "Receipt does not establish review of the envelope contents."
+        ],
+        "caller_identity_state": "unverified",
+        "caller_identity_label": "Ruth Ellis",
+        "confidence": "high"
+      },
+      "expected_analysis": {
+        "category": "administrative",
+        "priority": "low",
+        "summary": "Ruth Ellis asked whether her envelope arrived. Staff confirmed its receipt in the reception log at 10:15. Ruth said that answered her question; review of the contents was not confirmed.",
+        "proposed_next_steps": [],
+        "responsible_role": "unassigned",
+        "suggested_response_timing": null,
+        "attorney_attention_issues": [],
+        "dissatisfaction_indicators": [],
+        "omitted_information_findings": [],
+        "findings": [],
+        "internal_file_note_draft": "Ruth Ellis asked whether her envelope arrived. Staff confirmed its receipt in the reception log at 10:15. Ruth said that answered her question; review of the contents was not confirmed.",
+        "confidence": "high"
+      },
+      "transcriber_failures": []
+    },
+    {
+      "fixture_id": "CL-AM-20260715-09",
+      "business_date": "2026-07-15",
+      "category": "unknown",
+      "language": "en",
+      "outcome": "analyzed",
+      "scenarios": [
+        "representative_morning"
+      ],
+      "event": {
+        "received_at": "2026-07-15T15:34:07-04:00",
+        "call": {
+          "source": "transcript_only",
+          "source_event_id": "evt-cl-am-20260715-09",
+          "source_call_id": "call-cl-am-20260715-09",
+          "recording_id": null,
+          "occurred_at": "2026-07-15T15:34:00-04:00",
+          "direction": "inbound",
+          "duration_seconds": 75.0,
+          "staff_extension": null,
+          "language_hint": "en",
+          "media_reference": null,
+          "transcript_fixture_reference": "transcript-cl-am-20260715-09",
+          "metadata": {
+            "source_mode": "transcript_only",
+            "manifest_version": "demo-morning-2026-07-v1"
+          },
+          "synthetic": true
+        }
+      },
+      "transcript": {
+        "language": "en",
+        "diarization_status": "partial",
+        "segments": [
+          {
+            "segment_id": "am09-s1",
+            "speaker": "outside_caller",
+            "start_seconds": 0.0,
+            "end_seconds": 14.0,
+            "text": "I am calling about the meeting. I thought it was—"
+          },
+          {
+            "segment_id": "am09-s2",
+            "speaker": "staff",
+            "start_seconds": 15.0,
+            "end_seconds": 29.0,
+            "text": "Could you give me your name and which meeting you mean?"
+          },
+          {
+            "segment_id": "am09-s3",
+            "speaker": "outside_caller",
+            "start_seconds": 30.0,
+            "end_seconds": 44.0,
+            "text": "The one with… [line breaks up]"
+          },
+          {
+            "segment_id": "am09-s4",
+            "speaker": "staff",
+            "start_seconds": 45.0,
+            "end_seconds": 59.0,
+            "text": "I cannot hear you. Are you still there?"
+          },
+          {
+            "segment_id": "am09-s5",
+            "speaker": "unknown_participant",
+            "start_seconds": 60.0,
+            "end_seconds": 74.0,
+            "text": "[connection ends; no further words captured]"
+          }
+        ]
+      },
+      "expected_facts": {
+        "caller_request": {
+          "state": "present",
+          "value": "An unspecified meeting.",
+          "evidence": [
+            "am09-s1"
+          ]
+        },
+        "reported_facts": [],
+        "people_or_organizations": [],
+        "dates": [],
+        "staff_commitments": [],
+        "requested_follow_up": {
+          "state": "not_mentioned",
+          "value": null,
+          "evidence": []
+        },
+        "unresolved_questions": [],
+        "missing_context": [
+          "Caller identity, meeting and intended question are unknown."
+        ],
+        "caller_identity_state": "unknown",
+        "caller_identity_label": null,
+        "confidence": "low"
+      },
+      "expected_analysis": {
+        "category": "unknown",
+        "priority": "normal",
+        "summary": "An unidentified caller began asking about a meeting, but the connection broke before they supplied a name or meeting details. Staff asked for clarification; the recording ends without an answer.",
+        "proposed_next_steps": [
+          "Consider whether the interrupted inquiry can be identified before deciding any follow-up."
+        ],
+        "responsible_role": "unassigned",
+        "suggested_response_timing": null,
+        "attorney_attention_issues": [
+          {
+            "finding_id": "am09-attention",
+            "kind": "incomplete_conversation",
+            "statement": "Consider checking whether the interrupted meeting inquiry can be identified; no caller or meeting is known.",
+            "material": true,
+            "evidence": [
+              "am09-s1",
+              "am09-s2",
+              "am09-s3",
+              "am09-s4",
+              "am09-s5"
+            ]
+          }
+        ],
+        "dissatisfaction_indicators": [],
+        "omitted_information_findings": [],
+        "findings": [],
+        "internal_file_note_draft": "An unidentified caller began asking about a meeting, but the connection broke before they supplied a name or meeting details. Staff asked for clarification; the recording ends without an answer.",
+        "confidence": "low"
+      },
+      "transcriber_failures": []
+    },
+    {
+      "fixture_id": "CL-AM-20260715-10",
+      "business_date": "2026-07-15",
+      "category": "routine_no_action",
+      "language": "en",
+      "outcome": "analyzed",
+      "scenarios": [
+        "representative_morning"
+      ],
+      "event": {
+        "received_at": "2026-07-15T16:42:07-04:00",
+        "call": {
+          "source": "transcript_only",
+          "source_event_id": "evt-cl-am-20260715-10",
+          "source_call_id": "call-cl-am-20260715-10",
+          "recording_id": null,
+          "occurred_at": "2026-07-15T16:42:00-04:00",
+          "direction": "inbound",
+          "duration_seconds": 75.0,
+          "staff_extension": null,
+          "language_hint": "en",
+          "media_reference": null,
+          "transcript_fixture_reference": "transcript-cl-am-20260715-10",
+          "metadata": {
+            "source_mode": "transcript_only",
+            "manifest_version": "demo-morning-2026-07-v1"
+          },
+          "synthetic": true
+        }
+      },
+      "transcript": {
+        "language": "en",
+        "diarization_status": "available",
+        "segments": [
+          {
+            "segment_id": "am10-s1",
+            "speaker": "outside_caller",
+            "start_seconds": 0.0,
+            "end_seconds": 14.0,
+            "text": "Hi, it is Owen Park. The reminder says four, but my calendar says three. What time is my appointment?"
+          },
+          {
+            "segment_id": "am10-s2",
+            "speaker": "staff",
+            "start_seconds": 15.0,
+            "end_seconds": 29.0,
+            "text": "I am looking at the appointment list. Your appointment is at four on July twenty-second."
+          },
+          {
+            "segment_id": "am10-s3",
+            "speaker": "outside_caller",
+            "start_seconds": 30.0,
+            "end_seconds": 44.0,
+            "text": "July twenty-second at four. I have corrected my calendar now."
+          },
+          {
+            "segment_id": "am10-s4",
+            "speaker": "staff",
+            "start_seconds": 45.0,
+            "end_seconds": 59.0,
+            "text": "Good. Is there anything else?"
+          },
+          {
+            "segment_id": "am10-s5",
+            "speaker": "outside_caller",
+            "start_seconds": 60.0,
+            "end_seconds": 74.0,
+            "text": "No, that is everything."
+          }
+        ]
+      },
+      "expected_facts": {
+        "caller_request": {
+          "state": "present",
+          "value": "Conflicting appointment times.",
+          "evidence": [
+            "am10-s1"
+          ]
+        },
+        "reported_facts": [],
+        "people_or_organizations": [
+          {
+            "state": "present",
+            "value": "Owen Park",
+            "evidence": [
+              "am10-s1"
+            ]
+          }
+        ],
+        "dates": [],
+        "staff_commitments": [],
+        "requested_follow_up": {
+          "state": "not_mentioned",
+          "value": null,
+          "evidence": []
+        },
+        "unresolved_questions": [],
+        "missing_context": [],
+        "caller_identity_state": "unverified",
+        "caller_identity_label": "Owen Park",
+        "confidence": "high"
+      },
+      "expected_analysis": {
+        "category": "routine_no_action",
+        "priority": "low",
+        "summary": "Owen Park checked a conflicting appointment time. Staff stated July 22 at four, and Owen said he corrected his calendar. The call resolved his time question.",
+        "proposed_next_steps": [],
+        "responsible_role": "unassigned",
+        "suggested_response_timing": null,
+        "attorney_attention_issues": [],
+        "dissatisfaction_indicators": [],
+        "omitted_information_findings": [],
+        "findings": [],
+        "internal_file_note_draft": "Owen Park checked a conflicting appointment time. Staff stated July 22 at four, and Owen said he corrected his calendar. The call resolved his time question.",
+        "confidence": "high"
+      },
+      "transcriber_failures": []
+    }
+  ]
+}

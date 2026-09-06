@@ -310,3 +310,19 @@ h2, h3 { color: var(--firm-ink); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+
+/* One lawyer's complete chronological morning read. */
+.morning-briefing { max-width: 960px; margin: 0 auto; }
+.briefing-heading h1 { font-size: clamp(1.8rem, 4vw, 2.5rem); }
+.briefing-heading form { margin: 1.25rem 0; display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; }
+.briefing-coverage { border-left: 3px solid #526c7e; padding: .5rem 1rem; margin: 1.5rem 0; background: #edf2f5; }
+.briefing-attention { padding: 1.25rem; background: #fffaf0; border: 1px solid #e2d6bb; border-radius: 8px; margin: 1.5rem 0 2rem; }
+.briefing-attention-item + .briefing-attention-item { border-top: 1px solid #e2d6bb; padding-top: 1rem; }
+.briefing-recap { background: white; border: 1px solid #d8e0e6; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; scroll-margin-top: 1rem; overflow-wrap: anywhere; }
+.briefing-recap h3 { font-size: 1.25rem; margin: .5rem 0; }
+.briefing-recap p { line-height: 1.65; }
+.briefing-evidence { display: flex; flex-wrap: wrap; gap: .6rem 1rem; font-size: .875rem; }
+.briefing-evidence a { padding: .4rem 0; }
+.language-note { color: #435466; font-style: italic; }
+.briefing-recap:focus { outline: 3px solid #296d9b; outline-offset: 3px; }
+@media (max-width: 480px) { .briefing-recap, .briefing-attention { padding: 1rem; } }

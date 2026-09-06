@@ -14,6 +14,7 @@ import type {
   AuditEvent,
   ConfigurationHistory,
   DailyReport,
+  DailyBriefing,
   MonthHistory,
   DeletionJob,
   DemoPrincipal,
@@ -93,7 +94,7 @@ function Header({
   path: string;
 }): ReactNode {
   const selectedRole = principals.find((item) => item.id === principal)?.role ?? "Reviewer";
-  const workArea = path === "/uploads" ? "Manual upload" : path === "/failures" ? "Failure queue" : path === "/playbooks" ? "Playbook" : path === "/operations" ? "Operations" : path.startsWith("/calls/") ? "Call review" : path.startsWith("/reports/") ? "Daily report" : "Month history";
+  const workArea = path === "/uploads" ? "Manual upload" : path === "/failures" ? "Failure queue" : path === "/playbooks" ? "Playbook" : path === "/operations" ? "Operations" : path.startsWith("/calls/") ? "Call review" : path.startsWith("/reports/") ? "Daily report" : path === "/" || path.startsWith("/briefing/") ? "Morning briefing" : "Month history";
   const reportDate = path.match(/^\/reports\/(\d{4}-\d{2}-\d{2})$/)?.[1];
   return (
     <header className="site-header">
@@ -102,7 +103,8 @@ function Header({
         <span><b>Colacci Law</b><small>{workArea}{reportDate ? ` · ${reportDate}` : ""}</small></span>
       </a>
       <nav aria-label="Primary navigation">
-        <a className={`nav-link ${path === "/" || path.startsWith("/months/") || path.startsWith("/reports/") ? "active" : ""}`} href="/">Month history</a>
+        <a className={`nav-link ${path === "/" || path.startsWith("/briefing/") ? "active" : ""}`} href="/">Morning briefing</a>
+        <a className="nav-link" href="/months/2026-07">Month history</a>
         <a className={`nav-link ${path === "/uploads" ? "active" : ""}`} href="/uploads">Manual upload</a>
         <a className={`nav-link ${path === "/failures" ? "active" : ""}`} href="/failures">Failures</a>
         <a className={`nav-link ${path === "/playbooks" ? "active" : ""}`} href="/playbooks">Playbook</a>
@@ -175,6 +177,70 @@ function EvidenceLink({ callId, evidence }: { callId: string; evidence: Evidence
       Evidence · {clock(evidence.start_seconds)} · {humanize(evidence.speaker)}
     </a>
   );
+}
+
+function longDate(value: string): string {
+  return new Date(`${value}T12:00:00Z`).toLocaleDateString("en-US", { timeZone: "America/New_York", month: "long", day: "numeric", year: "numeric" });
+}
+
+function BriefingPage({ principal, selectedDate }: { principal: DemoPrincipal; selectedDate?: string }): ReactNode {
+  const [briefing, setBriefing] = useState<DailyBriefing | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    let active = true;
+    apiRequest<DailyBriefing>(`/api/briefing${selectedDate ? `?business_date=${selectedDate}` : ""}`, principal)
+      .then((result) => { if (active) setBriefing(result); })
+      .catch((reason: unknown) => { if (active) setError(reason instanceof Error ? reason.message : "Request failed"); });
+    return () => { active = false; };
+  }, [principal, selectedDate]);
+  useEffect(() => {
+    if (briefing && window.location.hash) document.getElementById(window.location.hash.slice(1))?.focus();
+  }, [briefing]);
+  if (!briefing || error) return <RequestState loading={!error} error={error} area="morning briefing" />;
+  const counts = briefing.completeness?.reconciliation;
+  const attention = briefing.calls.filter((call) => call.attention.length > 0);
+  const evidencePath = (callId: string, segmentId: string): string => `/calls/${callId}?briefing=${briefing.business_date}#${segmentId}`;
+  const labels = { caller_request: "Caller requested", staff_promise: "Staff promised", analysis_suggestion: "Consider reviewing" };
+  return <div className="morning-briefing">
+    <section className="briefing-heading">
+      <div className="eyebrow">Your morning call briefing</div>
+      <h1>Calls from {longDate(briefing.business_date)}</h1>
+      {briefing.simulated_morning && <p>Simulated morning: {longDate(briefing.simulated_morning)} — reviewing {longDate(briefing.business_date)}.</p>}
+      <p>America/New_York · Invented conversations for engineering review.</p>
+      <form onSubmit={(event) => { event.preventDefault(); const value = new FormData(event.currentTarget).get("date"); if (typeof value === "string" && value) window.location.assign(`/briefing/${value}`); }}>
+        <label htmlFor="briefing-date">Review another date</label>{" "}
+        <input id="briefing-date" name="date" type="date" defaultValue={briefing.business_date} required />{" "}<button type="submit">Open day</button>
+      </form>
+    </section>
+    <section className="briefing-coverage" aria-label="Call coverage">
+      <p><strong>{briefing.calls.length} received {briefing.calls.length === 1 ? "call" : "calls"}.</strong> {briefing.coverage_explanation}</p>
+      {counts && <p>{counts.analyzed} analyzed · {counts.failed} received with failed analysis · {counts.missing} expected but missing · {counts.late} late · {counts.duplicate_deliveries} duplicate deliveries counted once.</p>}
+      {briefing.calls.length === 0 && briefing.latest_activity_date && <a href={`/briefing/${briefing.latest_activity_date}`}>Latest earlier day with activity: {longDate(briefing.latest_activity_date)}</a>}
+    </section>
+    <section className="briefing-attention" aria-labelledby="briefing-attention-title">
+      <h2 id="briefing-attention-title">May need attention</h2>
+      <p>These are statements and suggestions to review. Reviewing an analysis does not complete a callback or other action.</p>
+      {attention.length === 0 && <p>No supported attention items are available{briefing.completeness?.status === "complete" || briefing.completeness?.status === "zero_activity" ? "." : "; incomplete coverage is not an all-clear."}</p>}
+      {attention.map((call) => <div className="briefing-attention-item" key={call.call_id}>
+        <a href={`#call-${call.call_id}`}>{call.detail?.identity_label ?? "Caller not identified"} · Go to recap</a>
+        {call.attention.map((item, index) => <p key={index}><strong>{labels[item.kind]}:</strong> {item.reason}{" "}{item.evidence[0] && <a href={evidencePath(call.call_id, item.evidence[0].segment_id)}>Supporting passage</a>}</p>)}
+      </div>)}
+    </section>
+    <section aria-labelledby="all-calls-title"><h2 id="all-calls-title">All calls, in time order</h2>
+      {briefing.calls.map((call, index) => <article className="briefing-recap" id={`call-${call.call_id}`} tabIndex={-1} key={call.call_id}>
+        <div className="eyebrow">Call {index + 1} · {new Date(call.occurred_at).toLocaleTimeString("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" })}</div>
+        <h3>{call.detail?.identity_label ?? "Caller not identified"}</h3>
+        {call.detail ? <>
+          {call.detail.identity_label && <small>Name stated in conversation; identity not independently verified.</small>}
+          {call.detail.language === "es" && <p className="language-note">English paraphrase of a Spanish conversation. Original Spanish evidence is preserved.</p>}
+          <p className="recap-summary">{call.detail.summary}</p>
+          {call.attention.map((item, number) => <p key={number}><strong>{labels[item.kind]}:</strong> {item.reason}</p>)}
+          {call.detail.uncertainty.length > 0 && <p><strong>Unclear:</strong> {call.detail.uncertainty.join(" ")}</p>}
+          <div className="briefing-evidence">{call.detail.transcript_segments.map((segment, number) => <a key={segment.segment_id} href={evidencePath(call.call_id, segment.segment_id)}>Passage {number + 1} · {humanize(segment.speaker)}</a>)}</div>
+        </> : <p>Result unavailable for this received call. No conversation recap can be provided.</p>}
+      </article>)}
+    </section>
+  </div>;
 }
 
 function MonthPage({ principal, monthKey = "2026-07" }: { principal: DemoPrincipal; monthKey?: string }): ReactNode {
@@ -508,10 +574,16 @@ function CallPage({ callId, principal }: { callId: string; principal: DemoPrinci
     }
   }, [detail]);
 
+  useEffect(() => {
+    const onHashChange = (): void => { if (window.location.hash) jump(window.location.hash.slice(1)); };
+    window.addEventListener("hashchange", onHashChange);
+    return () => { window.removeEventListener("hashchange", onHashChange); };
+  }, []);
+
   if (loading || error || !detail) return <RequestState loading={loading} error={error} area="call review" />;
   return (
     <>
-      <a className="back-link" href={`/reports/${detail.occurred_at.slice(0, 10)}?month=${detail.occurred_at.slice(0, 7)}`}>← Back to daily report</a>
+      {new URLSearchParams(window.location.search).get("briefing")?.match(/^\d{4}-\d{2}-\d{2}$/) ? <a className="back-link" href={`/briefing/${new URLSearchParams(window.location.search).get("briefing") ?? ""}#call-${detail.call_id}`}>← Back to morning briefing</a> : <a className="back-link" href={`/reports/${detail.occurred_at.slice(0, 10)}?month=${detail.occurred_at.slice(0, 7)}`}>← Back to daily report</a>}
       <section className="call-heading">
         <div>
           <div className="eyebrow">Call review</div>
@@ -1111,6 +1183,6 @@ export function App({ path = window.location.pathname }: { path?: string }): Rea
   else if (path === "/playbooks") page = <PlaybookPage principal={principal} />;
   else if (path === "/operations") page = <OperationsPage principal={principal} />;
   else if (path === "/health") page = <HealthPage />;
-  else page = <MonthPage principal={principal} />;
+  else page = <BriefingPage principal={principal} selectedDate={path.match(/^\/briefing\/(\d{4}-\d{2}-\d{2})$/)?.[1]} />;
   return <Shell principal={principal} setPrincipal={setPrincipal} path={path}>{page}</Shell>;
 }

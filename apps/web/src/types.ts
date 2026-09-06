@@ -373,3 +373,20 @@ export type AuditEvent = {
   result: string;
   created_at: string;
 };
+
+export type DailyBriefing = {
+  business_date: string;
+  simulated_morning: string | null;
+  timezone: string;
+  completeness: DailyReport["completeness"] | null;
+  coverage_explanation: string;
+  latest_activity_date: string | null;
+  calls: {
+    call_id: string;
+    synthetic_reference: string;
+    occurred_at: string;
+    state: "available" | "unavailable";
+    detail: CallDetail | null;
+    attention: { kind: "caller_request" | "staff_promise" | "analysis_suggestion"; reason: string; evidence: Evidence[] }[];
+  }[];
+};

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 from collections import Counter
 from datetime import date, datetime, time
@@ -26,11 +27,14 @@ from packages.database.review_schema import (
     ingestion_events,
     review_events,
 )
-from packages.review.demo_month import DemoMonthCallSource, DemoMonthManifest
+from packages.review.demo_month import MANIFEST_PATH, DemoMonthCallSource, DemoMonthManifest
 from packages.review.pipeline import FixturePipeline
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--manifest", type=Path, default=MANIFEST_PATH)
+    args = parser.parse_args()
     settings = Settings(service_name="demo-month-seed")
     parsed = urlsplit(settings.sqlalchemy_database_url.replace("postgresql+psycopg", "postgresql"))
     if not settings.synthetic_mode or parsed.path.endswith("_test"):
@@ -39,7 +43,7 @@ def main() -> None:
     alembic.set_main_option("sqlalchemy.url", settings.sqlalchemy_database_url)
     command.upgrade(alembic, "head")
     engine = create_database_engine(settings.sqlalchemy_database_url)
-    manifest = DemoMonthManifest()
+    manifest = DemoMonthManifest(args.manifest)
     source = DemoMonthCallSource(manifest)
     try:
         repository = ReviewRepository(engine)
@@ -78,8 +82,11 @@ def main() -> None:
         timezone = ZoneInfo("America/New_York")
         experience = ReviewExperienceRepository(engine)
         daily: list[dict[str, object]] = []
-        for day_number in range(1, 32):
-            business_date = date(2026, 7, day_number)
+        coverage_dates = manifest.contract.get(
+            "coverage_dates", [f"2026-07-{day:02}" for day in range(1, 32)]
+        )
+        for date_text in coverage_dates:
+            business_date = date.fromisoformat(date_text)
             expected = tuple(
                 str(item["event"]["call"]["source_call_id"])
                 for item in manifest.expected_entries(business_date)
@@ -101,20 +108,26 @@ def main() -> None:
                 connection.execute(
                     sa.select(sa.func.count())
                     .select_from(calls)
-                    .where(calls.c.fixture_id.like("CL-MONTH-202607-%"))
+                    .where(
+                        calls.c.fixture_id.in_([item["fixture_id"] for item in manifest.entries()])
+                    )
                 ).scalar_one()
             )
             month_analyses = int(
                 connection.execute(
                     sa.select(sa.func.count())
                     .select_from(analyses.join(calls, analyses.c.call_id == calls.c.id))
-                    .where(calls.c.fixture_id.like("CL-MONTH-202607-%"))
+                    .where(
+                        calls.c.fixture_id.in_([item["fixture_id"] for item in manifest.entries()])
+                    )
                 ).scalar_one()
             )
             report_versions = Counter(
                 connection.execute(
                     sa.select(daily_reports.c.business_date).where(
-                        daily_reports.c.business_date.between(date(2026, 7, 1), date(2026, 7, 31))
+                        daily_reports.c.business_date.in_(
+                            [date.fromisoformat(value) for value in coverage_dates]
+                        )
                     )
                 ).scalars()
             )

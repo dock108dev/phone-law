@@ -13,7 +13,7 @@ const uiRedesignProjects: Project[] = process.env.INCLUDE_UI_REDESIGN === "1" ? 
 
 export default defineConfig({
   testDir: "./tests",
-  outputDir: "/tmp/colacci-law-playwright-results",
+  outputDir: `${process.env.EVIDENCE_DIR ?? "/tmp/colacci-law-playwright-results"}/browser-results`,
   fullyParallel: false,
   forbidOnly: true,
   retries: 0,
@@ -21,6 +21,7 @@ export default defineConfig({
   reporter: "line",
   grep: process.env.PLAYWRIGHT_GREP ? new RegExp(process.env.PLAYWRIGHT_GREP) : undefined,
   projects: [
+    { name: "morning-briefing", testMatch: "morning-briefing.spec.ts" },
     { name: "review-flow", testMatch: "review-flow.spec.ts" },
     {
       name: "manual-upload",

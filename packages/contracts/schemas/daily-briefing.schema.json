@@ -1,0 +1,1529 @@
+{
+  "$defs": {
+    "AnalysisCategory": {
+      "enum": [
+        "new_intake",
+        "existing_client_follow_up",
+        "administrative",
+        "dissatisfaction_escalation",
+        "routine_no_action",
+        "unknown"
+      ],
+      "title": "AnalysisCategory",
+      "type": "string"
+    },
+    "AppointmentFact": {
+      "additionalProperties": false,
+      "properties": {
+        "date": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DateFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "purpose": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Purpose"
+        },
+        "state": {
+          "$ref": "#/$defs/ValueState"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "AppointmentFact",
+      "type": "object"
+    },
+    "BriefingAttention": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "kind": {
+          "enum": [
+            "caller_request",
+            "staff_promise",
+            "analysis_suggestion"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reason": {
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "reason",
+        "evidence"
+      ],
+      "title": "BriefingAttention",
+      "type": "object"
+    },
+    "BriefingCall": {
+      "additionalProperties": false,
+      "properties": {
+        "attention": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/BriefingAttention"
+          },
+          "title": "Attention",
+          "type": "array"
+        },
+        "call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Call Id",
+          "type": "string"
+        },
+        "detail": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CallDetail"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "available",
+            "unavailable"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "synthetic_reference": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Synthetic Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "call_id",
+        "synthetic_reference",
+        "occurred_at",
+        "state"
+      ],
+      "title": "BriefingCall",
+      "type": "object"
+    },
+    "CallDetail": {
+      "additionalProperties": false,
+      "properties": {
+        "analysis_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Id",
+          "type": "string"
+        },
+        "attempts": {
+          "items": {
+            "$ref": "#/$defs/ProcessingAttemptSummary"
+          },
+          "title": "Attempts",
+          "type": "array"
+        },
+        "call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Call Id",
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/$defs/AnalysisCategory"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "direction": {
+          "$ref": "#/$defs/Direction"
+        },
+        "duration_seconds": {
+          "minimum": 0,
+          "title": "Duration Seconds",
+          "type": "number"
+        },
+        "facts": {
+          "$ref": "#/$defs/ExtractedFacts"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "identity_label": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Identity Label"
+        },
+        "identity_state": {
+          "title": "Identity State",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "es"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "occurred_at": {
+          "format": "date-time",
+          "title": "Occurred At",
+          "type": "string"
+        },
+        "priority": {
+          "title": "Priority",
+          "type": "string"
+        },
+        "proposed_next_steps": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Proposed Next Steps",
+          "type": "array"
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "responsible_role": {
+          "$ref": "#/$defs/ResponsibleRole"
+        },
+        "review_history": {
+          "items": {
+            "$ref": "#/$defs/ReviewEvent"
+          },
+          "title": "Review History",
+          "type": "array"
+        },
+        "staff_extension": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Staff Extension"
+        },
+        "suggested_response_timing": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Suggested Response Timing"
+        },
+        "summary": {
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "synthetic": {
+          "const": true,
+          "title": "Synthetic",
+          "type": "boolean"
+        },
+        "synthetic_reference": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Synthetic Reference",
+          "type": "string"
+        },
+        "transcript_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Id",
+          "type": "string"
+        },
+        "transcript_segments": {
+          "items": {
+            "$ref": "#/$defs/TranscriptSegment"
+          },
+          "title": "Transcript Segments",
+          "type": "array"
+        },
+        "uncertainty": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Uncertainty",
+          "type": "array"
+        }
+      },
+      "required": [
+        "call_id",
+        "synthetic_reference",
+        "synthetic",
+        "occurred_at",
+        "direction",
+        "duration_seconds",
+        "language",
+        "identity_state",
+        "transcript_id",
+        "transcript_segments",
+        "analysis_id",
+        "summary",
+        "category",
+        "priority",
+        "confidence",
+        "uncertainty",
+        "facts",
+        "findings",
+        "proposed_next_steps",
+        "responsible_role",
+        "provenance",
+        "attempts",
+        "review_history"
+      ],
+      "title": "CallDetail",
+      "type": "object"
+    },
+    "CallSource": {
+      "enum": [
+        "fixture",
+        "transcript_only",
+        "manual_upload",
+        "broadvoice"
+      ],
+      "title": "CallSource",
+      "type": "string"
+    },
+    "Confidence": {
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "title": "Confidence",
+      "type": "string"
+    },
+    "DateFact": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "expression": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expression"
+        },
+        "is_deadline": {
+          "default": false,
+          "title": "Is Deadline",
+          "type": "boolean"
+        },
+        "iso_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Iso Date"
+        },
+        "state": {
+          "$ref": "#/$defs/ValueState"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "DateFact",
+      "type": "object"
+    },
+    "DemoPrincipal": {
+      "additionalProperties": false,
+      "properties": {
+        "principal_id": {
+          "$ref": "#/$defs/DemoPrincipalId"
+        },
+        "role": {
+          "$ref": "#/$defs/DemoRole"
+        },
+        "synthetic": {
+          "const": true,
+          "default": true,
+          "title": "Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "principal_id",
+        "role"
+      ],
+      "title": "DemoPrincipal",
+      "type": "object"
+    },
+    "DemoPrincipalId": {
+      "enum": [
+        "demo-reviewer",
+        "demo-admin",
+        "demo-operations"
+      ],
+      "title": "DemoPrincipalId",
+      "type": "string"
+    },
+    "DemoRole": {
+      "enum": [
+        "reviewer",
+        "administrator",
+        "operations"
+      ],
+      "title": "DemoRole",
+      "type": "string"
+    },
+    "Direction": {
+      "enum": [
+        "inbound",
+        "outbound",
+        "unknown"
+      ],
+      "title": "Direction",
+      "type": "string"
+    },
+    "EvidenceReference": {
+      "additionalProperties": false,
+      "properties": {
+        "end_seconds": {
+          "exclusiveMinimum": 0,
+          "title": "End Seconds",
+          "type": "number"
+        },
+        "excerpt": {
+          "minLength": 1,
+          "title": "Excerpt",
+          "type": "string"
+        },
+        "segment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "speaker": {
+          "$ref": "#/$defs/Speaker"
+        },
+        "start_seconds": {
+          "minimum": 0,
+          "title": "Start Seconds",
+          "type": "number"
+        }
+      },
+      "required": [
+        "segment_id",
+        "start_seconds",
+        "end_seconds",
+        "speaker",
+        "excerpt"
+      ],
+      "title": "EvidenceReference",
+      "type": "object"
+    },
+    "ExtractedFacts": {
+      "additionalProperties": false,
+      "properties": {
+        "appointments": {
+          "items": {
+            "$ref": "#/$defs/AppointmentFact"
+          },
+          "title": "Appointments",
+          "type": "array"
+        },
+        "caller_identity": {
+          "$ref": "#/$defs/IdentityClaim"
+        },
+        "caller_request": {
+          "$ref": "#/$defs/TextFact"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "dates": {
+          "items": {
+            "$ref": "#/$defs/DateFact"
+          },
+          "title": "Dates",
+          "type": "array"
+        },
+        "missing_context": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": "Missing Context",
+          "type": "array"
+        },
+        "monetary_figures": {
+          "items": {
+            "$ref": "#/$defs/MonetaryFigure"
+          },
+          "title": "Monetary Figures",
+          "type": "array"
+        },
+        "people_or_organizations": {
+          "items": {
+            "$ref": "#/$defs/TextFact"
+          },
+          "title": "People Or Organizations",
+          "type": "array"
+        },
+        "reported_facts": {
+          "items": {
+            "$ref": "#/$defs/TextFact"
+          },
+          "title": "Reported Facts",
+          "type": "array"
+        },
+        "requested_follow_up": {
+          "$ref": "#/$defs/TextFact"
+        },
+        "staff_commitments": {
+          "items": {
+            "$ref": "#/$defs/StaffCommitment"
+          },
+          "title": "Staff Commitments",
+          "type": "array"
+        },
+        "unresolved_questions": {
+          "items": {
+            "$ref": "#/$defs/UnresolvedQuestion"
+          },
+          "title": "Unresolved Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "caller_request",
+        "reported_facts",
+        "people_or_organizations",
+        "dates",
+        "appointments",
+        "monetary_figures",
+        "staff_commitments",
+        "requested_follow_up",
+        "unresolved_questions",
+        "missing_context",
+        "caller_identity",
+        "confidence"
+      ],
+      "title": "ExtractedFacts",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "finding_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "kind": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Kind",
+          "type": "string"
+        },
+        "material": {
+          "title": "Material",
+          "type": "boolean"
+        },
+        "statement": {
+          "minLength": 1,
+          "title": "Statement",
+          "type": "string"
+        }
+      },
+      "required": [
+        "finding_id",
+        "kind",
+        "statement",
+        "material"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "IdentityClaim": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "metadata_verified": {
+          "default": false,
+          "title": "Metadata Verified",
+          "type": "boolean"
+        },
+        "state": {
+          "enum": [
+            "unknown",
+            "unverified",
+            "present"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "IdentityClaim",
+      "type": "object"
+    },
+    "MonetaryFigure": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "anyOf": [
+            {
+              "pattern": "^(0|[1-9][0-9]*)(\\.[0-9]{1,2})?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount"
+        },
+        "currency": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Z]{3}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "state": {
+          "$ref": "#/$defs/ValueState"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "MonetaryFigure",
+      "type": "object"
+    },
+    "ProcessingAttemptSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Attempt Id",
+          "type": "string"
+        },
+        "attempt_number": {
+          "minimum": 1,
+          "title": "Attempt Number",
+          "type": "integer"
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Completed At"
+        },
+        "diagnostic_code": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Diagnostic Code"
+        },
+        "retryable": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retryable"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/ProcessingState"
+        }
+      },
+      "required": [
+        "attempt_id",
+        "attempt_number",
+        "state",
+        "started_at"
+      ],
+      "title": "ProcessingAttemptSummary",
+      "type": "object"
+    },
+    "ProcessingState": {
+      "enum": [
+        "RECEIVED",
+        "VALIDATED",
+        "QUEUED",
+        "MEDIA_READY",
+        "TRANSCRIBING",
+        "TRANSCRIBED",
+        "EXTRACTING_FACTS",
+        "APPLYING_PLAYBOOK",
+        "ANALYZED",
+        "AUDIO_INVALID",
+        "TRANSCRIPTION_FAILED",
+        "OUTPUT_VALIDATION_FAILED",
+        "ANALYSIS_FAILED"
+      ],
+      "title": "ProcessingState",
+      "type": "string"
+    },
+    "Provenance": {
+      "additionalProperties": false,
+      "properties": {
+        "adapter_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Adapter Version",
+          "type": "string"
+        },
+        "analysis_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Adapter",
+          "type": "string"
+        },
+        "analysis_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Model Version",
+          "type": "string"
+        },
+        "authorization_reference": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Authorization Reference"
+        },
+        "call_source": {
+          "$ref": "#/$defs/CallSource"
+        },
+        "endpoint_class": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Endpoint Class"
+        },
+        "environment": {
+          "enum": [
+            "fixture",
+            "demonstration",
+            "local_dev",
+            "live_test",
+            "staging",
+            "real_client"
+          ],
+          "title": "Environment",
+          "type": "string"
+        },
+        "generated_at": {
+          "format": "date-time",
+          "title": "Generated At",
+          "type": "string"
+        },
+        "playbook_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Playbook Version",
+          "type": "string"
+        },
+        "processing_attempt_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Processing Attempt Id",
+          "type": "string"
+        },
+        "project_configuration": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Configuration"
+        },
+        "prompt_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Prompt Version",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "review-contracts-v1",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "source_call_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Call Id",
+          "type": "string"
+        },
+        "source_event_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Source Event Id",
+          "type": "string"
+        },
+        "transcript_adapter": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Adapter",
+          "type": "string"
+        },
+        "transcript_model_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Transcript Model Version",
+          "type": "string"
+        },
+        "transcription_transport": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TranscriptionTransportProvenance"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "schema_version",
+        "call_source",
+        "source_event_id",
+        "source_call_id",
+        "transcript_adapter",
+        "transcript_model_version",
+        "analysis_adapter",
+        "analysis_model_version",
+        "prompt_version",
+        "playbook_version",
+        "adapter_version",
+        "generated_at",
+        "processing_attempt_id",
+        "environment"
+      ],
+      "title": "Provenance",
+      "type": "object"
+    },
+    "ReportCompleteness": {
+      "additionalProperties": false,
+      "properties": {
+        "explanation": {
+          "minLength": 1,
+          "title": "Explanation",
+          "type": "string"
+        },
+        "reconciliation": {
+          "$ref": "#/$defs/ReportReconciliation"
+        },
+        "status": {
+          "$ref": "#/$defs/ReportStatus"
+        }
+      },
+      "required": [
+        "status",
+        "explanation",
+        "reconciliation"
+      ],
+      "title": "ReportCompleteness",
+      "type": "object"
+    },
+    "ReportReconciliation": {
+      "additionalProperties": false,
+      "properties": {
+        "analyzed": {
+          "minimum": 0,
+          "title": "Analyzed",
+          "type": "integer"
+        },
+        "duplicate_deliveries": {
+          "minimum": 0,
+          "title": "Duplicate Deliveries",
+          "type": "integer"
+        },
+        "expected": {
+          "minimum": 0,
+          "title": "Expected",
+          "type": "integer"
+        },
+        "failed": {
+          "minimum": 0,
+          "title": "Failed",
+          "type": "integer"
+        },
+        "late": {
+          "minimum": 0,
+          "title": "Late",
+          "type": "integer"
+        },
+        "missing": {
+          "minimum": 0,
+          "title": "Missing",
+          "type": "integer"
+        },
+        "received": {
+          "minimum": 0,
+          "title": "Received",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "expected",
+        "received",
+        "duplicate_deliveries",
+        "analyzed",
+        "failed",
+        "missing",
+        "late"
+      ],
+      "title": "ReportReconciliation",
+      "type": "object"
+    },
+    "ReportStatus": {
+      "enum": [
+        "complete",
+        "partial",
+        "failed",
+        "zero_activity"
+      ],
+      "title": "ReportStatus",
+      "type": "string"
+    },
+    "ResponsibleRole": {
+      "enum": [
+        "intake_team",
+        "case_team",
+        "records_coordinator",
+        "supervising_attorney",
+        "spanish_speaking_intake",
+        "unassigned"
+      ],
+      "title": "ResponsibleRole",
+      "type": "string"
+    },
+    "ReviewEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "analysis_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Analysis Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "event_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Event Id",
+          "type": "string"
+        },
+        "finding_id": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Finding Id"
+        },
+        "label": {
+          "$ref": "#/$defs/ReviewLabel"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Note"
+        },
+        "principal": {
+          "$ref": "#/$defs/DemoPrincipal"
+        },
+        "schema_version": {
+          "const": "review-event-v1",
+          "title": "Schema Version",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema_version",
+        "event_id",
+        "analysis_id",
+        "label",
+        "principal",
+        "created_at"
+      ],
+      "title": "ReviewEvent",
+      "type": "object"
+    },
+    "ReviewLabel": {
+      "enum": [
+        "correct",
+        "partially_correct",
+        "incorrect",
+        "unsupported",
+        "missing",
+        "not_applicable"
+      ],
+      "title": "ReviewLabel",
+      "type": "string"
+    },
+    "Speaker": {
+      "enum": [
+        "staff",
+        "outside_caller",
+        "unknown_participant"
+      ],
+      "title": "Speaker",
+      "type": "string"
+    },
+    "SpeakerIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "asserted_label": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Asserted Label"
+        },
+        "raw_provider_speaker_label": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Raw Provider Speaker Label"
+        },
+        "speaker": {
+          "$ref": "#/$defs/Speaker"
+        },
+        "verification_state": {
+          "enum": [
+            "unknown",
+            "unverified"
+          ],
+          "title": "Verification State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "speaker",
+        "verification_state"
+      ],
+      "title": "SpeakerIdentity",
+      "type": "object"
+    },
+    "StaffCommitment": {
+      "additionalProperties": false,
+      "properties": {
+        "commitment": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Commitment"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "responsible_role": {
+          "$ref": "#/$defs/ResponsibleRole"
+        },
+        "state": {
+          "$ref": "#/$defs/ValueState"
+        },
+        "timing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DateFact"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "state",
+        "responsible_role"
+      ],
+      "title": "StaffCommitment",
+      "type": "object"
+    },
+    "TextFact": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "state": {
+          "$ref": "#/$defs/ValueState"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "state"
+      ],
+      "title": "TextFact",
+      "type": "object"
+    },
+    "TranscriptSegment": {
+      "additionalProperties": false,
+      "properties": {
+        "end_seconds": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "End Seconds"
+        },
+        "identity": {
+          "$ref": "#/$defs/SpeakerIdentity"
+        },
+        "segment_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Segment Id",
+          "type": "string"
+        },
+        "speaker": {
+          "$ref": "#/$defs/Speaker"
+        },
+        "start_seconds": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Start Seconds"
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id",
+        "speaker",
+        "identity",
+        "start_seconds",
+        "end_seconds",
+        "text"
+      ],
+      "title": "TranscriptSegment",
+      "type": "object"
+    },
+    "TranscriptionTransportProvenance": {
+      "additionalProperties": false,
+      "properties": {
+        "attempt_number": {
+          "maximum": 3,
+          "minimum": 1,
+          "title": "Attempt Number",
+          "type": "integer"
+        },
+        "declared_contract_version": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Declared Contract Version",
+          "type": "string"
+        },
+        "generated_asset_fingerprint": {
+          "anyOf": [
+            {
+              "pattern": "^sha256:[a-f0-9]{12}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Generated Asset Fingerprint"
+        },
+        "model_id": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Model Id",
+          "type": "string"
+        },
+        "observed_cli_version": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+              "type": "string"
+            },
+            {
+              "const": "unavailable",
+              "type": "string"
+            }
+          ],
+          "title": "Observed Cli Version"
+        },
+        "requested_response_format": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,127}$",
+          "title": "Requested Response Format",
+          "type": "string"
+        },
+        "result_kind": {
+          "enum": [
+            "deterministic_fixture",
+            "separately_authorized_live",
+            "transcript_only"
+          ],
+          "title": "Result Kind",
+          "type": "string"
+        },
+        "transport": {
+          "enum": [
+            "fixture",
+            "openai_cli_local",
+            "sdk",
+            "transcript_only"
+          ],
+          "title": "Transport",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transport",
+        "declared_contract_version",
+        "observed_cli_version",
+        "model_id",
+        "requested_response_format",
+        "attempt_number",
+        "result_kind"
+      ],
+      "title": "TranscriptionTransportProvenance",
+      "type": "object"
+    },
+    "UnresolvedQuestion": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/EvidenceReference"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "question": {
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "unknown",
+            "missing",
+            "unverified"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question",
+        "state"
+      ],
+      "title": "UnresolvedQuestion",
+      "type": "object"
+    },
+    "ValueState": {
+      "enum": [
+        "present",
+        "missing",
+        "unknown",
+        "unverified",
+        "not_mentioned"
+      ],
+      "title": "ValueState",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "business_date": {
+      "format": "date",
+      "title": "Business Date",
+      "type": "string"
+    },
+    "calls": {
+      "items": {
+        "$ref": "#/$defs/BriefingCall"
+      },
+      "title": "Calls",
+      "type": "array"
+    },
+    "completeness": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReportCompleteness"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "coverage_explanation": {
+      "minLength": 1,
+      "title": "Coverage Explanation",
+      "type": "string"
+    },
+    "latest_activity_date": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Latest Activity Date"
+    },
+    "scenario_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Scenario Version"
+    },
+    "schema_version": {
+      "const": "daily-briefing-v1",
+      "default": "daily-briefing-v1",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "simulated_morning": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Simulated Morning"
+    },
+    "timezone": {
+      "const": "America/New_York",
+      "default": "America/New_York",
+      "title": "Timezone",
+      "type": "string"
+    }
+  },
+  "required": [
+    "business_date",
+    "coverage_explanation",
+    "calls"
+  ],
+  "title": "DailyBriefing",
+  "type": "object"
+}

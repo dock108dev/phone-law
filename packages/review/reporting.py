@@ -7,6 +7,9 @@ from dataclasses import dataclass
 from datetime import date, datetime
 
 from packages.contracts.report import (
+    BriefingAttention,
+    BriefingCall,
+    CallDetail,
     DailyReport,
     FailedCallSummary,
     LateCallMarker,
@@ -286,4 +289,54 @@ def aggregate_daily_report(
         ),
         sections=tuple(sections),
         late_calls=late_markers,
+    )
+
+
+def prior_calendar_day(now: datetime) -> date:
+    """The previous New York calendar date, including weekends and empty days."""
+    from datetime import timedelta
+    from zoneinfo import ZoneInfo
+
+    if now.tzinfo is None:
+        raise ValueError("morning selection requires an aware clock")
+    return now.astimezone(ZoneInfo("America/New_York")).date() - timedelta(days=1)
+
+
+def briefing_call(
+    *, call_id: str, synthetic_reference: str, occurred_at: datetime, detail: CallDetail | None
+) -> BriefingCall:
+    attention: list[BriefingAttention] = []
+    if detail is not None:
+        request = detail.facts.requested_follow_up
+        if request.state.value == "present" and request.value and request.evidence:
+            attention.append(
+                BriefingAttention(
+                    kind="caller_request", reason=request.value, evidence=request.evidence
+                )
+            )
+        for promise in detail.facts.staff_commitments:
+            if promise.state.value == "present" and promise.commitment and promise.evidence:
+                attention.append(
+                    BriefingAttention(
+                        kind="staff_promise", reason=promise.commitment, evidence=promise.evidence
+                    )
+                )
+        # Suggestions are advisory findings, never tasks or completion records.
+        if not attention:
+            for finding in detail.findings:
+                if finding.material and finding.evidence and detail.proposed_next_steps:
+                    attention.append(
+                        BriefingAttention(
+                            kind="analysis_suggestion",
+                            reason=finding.statement,
+                            evidence=finding.evidence,
+                        )
+                    )
+    return BriefingCall(
+        call_id=call_id,
+        synthetic_reference=synthetic_reference,
+        occurred_at=occurred_at,
+        state="available" if detail else "unavailable",
+        detail=detail,
+        attention=tuple(attention),
     )

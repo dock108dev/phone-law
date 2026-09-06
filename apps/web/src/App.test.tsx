@@ -5,11 +5,11 @@ import { App } from "./App";
 import { loadWebConfiguration } from "./config";
 
 describe("Colacci Law workspace shell", () => {
-  it("renders the persistent synthetic boundary and month-history loading state", () => {
+  it("renders the persistent synthetic boundary and morning-briefing loading state", () => {
     const html = renderToStaticMarkup(<App path="/" />);
     expect(html).toContain("Local / synthetic");
     expect(html).toContain("No client data or live services");
-    expect(html).toContain("Loading month history");
+    expect(html).toContain("Loading morning briefing");
     expect(html).toContain("Month history");
   });
 

@@ -1,0 +1,418 @@
+{
+  "synthetic": true,
+  "calls": [
+    {
+      "number": 1,
+      "time": "08:12",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "am01-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 14.0,
+          "text": "Hi, Nora Bell here. Is the office still on the second floor? I am outside for my appointment."
+        },
+        {
+          "segment_id": "am01-s2",
+          "speaker": "staff",
+          "start_seconds": 15.0,
+          "end_seconds": 29.0,
+          "text": "Yes, second floor, suite 204. The elevator is just past the lobby desk."
+        },
+        {
+          "segment_id": "am01-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 30.0,
+          "end_seconds": 44.0,
+          "text": "I see it now. That is all I needed, thanks."
+        },
+        {
+          "segment_id": "am01-s4",
+          "speaker": "staff",
+          "start_seconds": 45.0,
+          "end_seconds": 59.0,
+          "text": "You are welcome. Come up when you are ready."
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "time": "09:03",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "am02-s1",
+          "speaker": "staff",
+          "start_seconds": 0.0,
+          "end_seconds": 14.0,
+          "text": "Good morning, Colacci Law."
+        },
+        {
+          "segment_id": "am02-s2",
+          "speaker": "outside_caller",
+          "start_seconds": 15.0,
+          "end_seconds": 29.0,
+          "text": "My name is Evan Reed. I have never used your office. Do you take questions about a lease deposit?"
+        },
+        {
+          "segment_id": "am02-s3",
+          "speaker": "staff",
+          "start_seconds": 30.0,
+          "end_seconds": 44.0,
+          "text": "The lawyer would need to decide whether that is something he can help with. We can offer an initial conversation."
+        },
+        {
+          "segment_id": "am02-s4",
+          "speaker": "outside_caller",
+          "start_seconds": 45.0,
+          "end_seconds": 59.0,
+          "text": "I am only checking today. I want to gather my paperwork before asking for an appointment."
+        },
+        {
+          "segment_id": "am02-s5",
+          "speaker": "staff",
+          "start_seconds": 60.0,
+          "end_seconds": 74.0,
+          "text": "All right. You can call back when you are ready."
+        },
+        {
+          "segment_id": "am02-s6",
+          "speaker": "outside_caller",
+          "start_seconds": 75.0,
+          "end_seconds": 89.0,
+          "text": "Okay, I will leave it there for now."
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "time": "09:48",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "am03-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 14.0,
+          "text": "Buenos días, soy Lucía Soto. ¿Puedo entregar una copia en vez del documento original?"
+        },
+        {
+          "segment_id": "am03-s2",
+          "speaker": "staff",
+          "start_seconds": 15.0,
+          "end_seconds": 29.0,
+          "text": "Para dejarlo en recepción, sí, una copia está bien. Si el abogado necesita el original, se lo dirá."
+        },
+        {
+          "segment_id": "am03-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 30.0,
+          "end_seconds": 44.0,
+          "text": "Perfecto, entonces guardaré el original en casa. Solo quería confirmar eso."
+        },
+        {
+          "segment_id": "am03-s4",
+          "speaker": "staff",
+          "start_seconds": 45.0,
+          "end_seconds": 59.0,
+          "text": "De acuerdo, que tenga buen día."
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "time": "10:26",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "am04-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 14.0,
+          "text": "This is Daniel Moss. I left a question about the letter I received, and I would like the lawyer to call me back."
+        },
+        {
+          "segment_id": "am04-s2",
+          "speaker": "staff",
+          "start_seconds": 15.0,
+          "end_seconds": 29.0,
+          "text": "What would you like me to put in the message?"
+        },
+        {
+          "segment_id": "am04-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 30.0,
+          "end_seconds": 44.0,
+          "text": "Whether he has had a chance to read it. There is no new date on it that I can see."
+        },
+        {
+          "segment_id": "am04-s4",
+          "speaker": "staff",
+          "start_seconds": 45.0,
+          "end_seconds": 59.0,
+          "text": "I have written that in the message. I cannot give you a callback time."
+        },
+        {
+          "segment_id": "am04-s5",
+          "speaker": "outside_caller",
+          "start_seconds": 60.0,
+          "end_seconds": 74.0,
+          "text": "That is fine. The number already on my file is the one to use."
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "time": "11:17",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "am05-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 14.0,
+          "text": "Hello, Priya Lane calling. I received the appointment directions, but the attachment opens as a blank page."
+        },
+        {
+          "segment_id": "am05-s2",
+          "speaker": "staff",
+          "start_seconds": 15.0,
+          "end_seconds": 29.0,
+          "text": "Let me check. I can read the parking directions over the phone now: use the visitor spaces behind the building."
+        },
+        {
+          "segment_id": "am05-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 30.0,
+          "end_seconds": 44.0,
+          "text": "That helps. Could you also send me a readable copy?"
+        },
+        {
+          "segment_id": "am05-s4",
+          "speaker": "staff",
+          "start_seconds": 45.0,
+          "end_seconds": 59.0,
+          "text": "Yes, I will resend the directions this afternoon."
+        },
+        {
+          "segment_id": "am05-s5",
+          "speaker": "outside_caller",
+          "start_seconds": 60.0,
+          "end_seconds": 74.0,
+          "text": "Thank you. I will look for them later."
+        }
+      ]
+    },
+    {
+      "number": 6,
+      "time": "12:06",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "am06-s1",
+          "speaker": "staff",
+          "start_seconds": 0.0,
+          "end_seconds": 14.0,
+          "text": "Colacci Law, good afternoon."
+        },
+        {
+          "segment_id": "am06-s2",
+          "speaker": "outside_caller",
+          "start_seconds": 15.0,
+          "end_seconds": 29.0,
+          "text": "Is this the pharmacy on Main Street?"
+        },
+        {
+          "segment_id": "am06-s3",
+          "speaker": "staff",
+          "start_seconds": 30.0,
+          "end_seconds": 44.0,
+          "text": "No, this is a law office."
+        },
+        {
+          "segment_id": "am06-s4",
+          "speaker": "outside_caller",
+          "start_seconds": 45.0,
+          "end_seconds": 59.0,
+          "text": "Sorry, wrong number."
+        },
+        {
+          "segment_id": "am06-s5",
+          "speaker": "staff",
+          "start_seconds": 60.0,
+          "end_seconds": 74.0,
+          "text": "No problem."
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "time": "13:21",
+      "language": "es",
+      "segments": [
+        {
+          "segment_id": "am07-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 14.0,
+          "text": "Me llamo Mateo Cruz. ¿La primera conversación puede ser en español? Todavía no quiero reservar."
+        },
+        {
+          "segment_id": "am07-s2",
+          "speaker": "staff",
+          "start_seconds": 15.0,
+          "end_seconds": 29.0,
+          "text": "Podemos recibir su consulta en español. Antes de fijar una cita, necesitamos saber de qué se trata."
+        },
+        {
+          "segment_id": "am07-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 30.0,
+          "end_seconds": 44.0,
+          "text": "Entiendo. Voy a hablar con mi hermana primero; ella tiene los papeles. Hoy solo quería preguntar por el idioma."
+        },
+        {
+          "segment_id": "am07-s4",
+          "speaker": "staff",
+          "start_seconds": 45.0,
+          "end_seconds": 59.0,
+          "text": "Está bien. Cuando llame otra vez, explique brevemente el asunto."
+        },
+        {
+          "segment_id": "am07-s5",
+          "speaker": "outside_caller",
+          "start_seconds": 60.0,
+          "end_seconds": 74.0,
+          "text": "Gracias, eso era todo."
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "time": "14:09",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "am08-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 14.0,
+          "text": "Ruth Ellis here. I am checking that you received the envelope I dropped off this morning."
+        },
+        {
+          "segment_id": "am08-s2",
+          "speaker": "staff",
+          "start_seconds": 15.0,
+          "end_seconds": 29.0,
+          "text": "I have the reception log in front of me. It shows an envelope from Ruth Ellis received at ten fifteen."
+        },
+        {
+          "segment_id": "am08-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 30.0,
+          "end_seconds": 44.0,
+          "text": "Great. I was not asking whether anyone had reviewed it, just whether it arrived."
+        },
+        {
+          "segment_id": "am08-s4",
+          "speaker": "staff",
+          "start_seconds": 45.0,
+          "end_seconds": 59.0,
+          "text": "Yes, receipt is logged. I cannot tell you whether it has been reviewed."
+        },
+        {
+          "segment_id": "am08-s5",
+          "speaker": "outside_caller",
+          "start_seconds": 60.0,
+          "end_seconds": 74.0,
+          "text": "That answers my question."
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "time": "15:34",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "am09-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 14.0,
+          "text": "I am calling about the meeting. I thought it was—"
+        },
+        {
+          "segment_id": "am09-s2",
+          "speaker": "staff",
+          "start_seconds": 15.0,
+          "end_seconds": 29.0,
+          "text": "Could you give me your name and which meeting you mean?"
+        },
+        {
+          "segment_id": "am09-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 30.0,
+          "end_seconds": 44.0,
+          "text": "The one with… [line breaks up]"
+        },
+        {
+          "segment_id": "am09-s4",
+          "speaker": "staff",
+          "start_seconds": 45.0,
+          "end_seconds": 59.0,
+          "text": "I cannot hear you. Are you still there?"
+        },
+        {
+          "segment_id": "am09-s5",
+          "speaker": "unknown_participant",
+          "start_seconds": 60.0,
+          "end_seconds": 74.0,
+          "text": "[connection ends; no further words captured]"
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "time": "16:42",
+      "language": "en",
+      "segments": [
+        {
+          "segment_id": "am10-s1",
+          "speaker": "outside_caller",
+          "start_seconds": 0.0,
+          "end_seconds": 14.0,
+          "text": "Hi, it is Owen Park. The reminder says four, but my calendar says three. What time is my appointment?"
+        },
+        {
+          "segment_id": "am10-s2",
+          "speaker": "staff",
+          "start_seconds": 15.0,
+          "end_seconds": 29.0,
+          "text": "I am looking at the appointment list. Your appointment is at four on July twenty-second."
+        },
+        {
+          "segment_id": "am10-s3",
+          "speaker": "outside_caller",
+          "start_seconds": 30.0,
+          "end_seconds": 44.0,
+          "text": "July twenty-second at four. I have corrected my calendar now."
+        },
+        {
+          "segment_id": "am10-s4",
+          "speaker": "staff",
+          "start_seconds": 45.0,
+          "end_seconds": 59.0,
+          "text": "Good. Is there anything else?"
+        },
+        {
+          "segment_id": "am10-s5",
+          "speaker": "outside_caller",
+          "start_seconds": 60.0,
+          "end_seconds": 74.0,
+          "text": "No, that is everything."
+        }
+      ]
+    }
+  ]
+}
