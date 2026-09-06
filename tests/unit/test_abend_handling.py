@@ -17,8 +17,13 @@ from packages.observability.logging import OperationalLogger
 from scripts import cleanup_manual_upload_assets, secret_scan
 
 
-def test_unexpected_api_failure_has_safe_diagnostics_and_headers(caplog):
-    app = create_app(Settings(_env_file=None))
+@pytest.mark.parametrize("allowed_origin", ["http://localhost:15173", "http://web:5173"])
+@pytest.mark.parametrize("origin_allowed", [True, False])
+def test_unexpected_api_failure_has_safe_diagnostics_and_headers(
+    caplog, allowed_origin, origin_allowed
+):
+    app = create_app(Settings(_env_file=None, cors_origins=[allowed_origin]))
+    request_origin = allowed_origin if origin_allowed else "http://unapproved.invalid"
 
     @app.get("/fault")
     def fault():
@@ -30,10 +35,13 @@ def test_unexpected_api_failure_has_safe_diagnostics_and_headers(caplog):
                 "/fault",
                 headers={
                     "X-Correlation-ID": "abend-request-001",
-                    "Origin": "http://localhost:15173",
+                    "Origin": request_origin,
                 },
             )
-            assert response.headers["Access-Control-Allow-Origin"] == "http://localhost:15173"
+            if origin_allowed:
+                assert response.headers["Access-Control-Allow-Origin"] == allowed_origin
+            else:
+                assert "Access-Control-Allow-Origin" not in response.headers
             assert response.headers["Access-Control-Expose-Headers"] == "X-Correlation-ID"
             assert response.status_code == 500
             assert response.json()["detail"] == {
