@@ -464,3 +464,15 @@ def test_local_cli_factory_rejects_every_missing_process_authority(tmp_path: Pat
     )
     assert adapter.adapter_name == "openai_cli_local"
     assert runner.requests == []
+
+
+def test_cli_cleanup_failure_is_terminal_even_after_provider_success(tmp_path, monkeypatch):
+    runner = FakeRunner([_response("english-diarized")])
+    adapter, _ = _adapter(tmp_path, runner)
+    monkeypatch.setattr("packages.transcription.cli_local.shutil.rmtree", lambda *a, **kw: None)
+    with pytest.raises(TranscriptionAdapterError) as caught:
+        _transcribe(adapter)
+    assert caught.value.classification.error_class is MediaErrorClass.MEDIA_DELETION_FAILED
+    assert not caught.value.classification.retryable
+    assert len(runner.requests) == 1
+    assert adapter.client.cleanup_confirmations == [False]

@@ -159,7 +159,7 @@ def test_live_factory_revalidates_every_gate_before_client_construction(
     assert constructions == 0
 
 
-def test_live_factory_requires_final_confirmation_then_constructs_once() -> None:
+def test_retired_live_factory_never_constructs_even_when_confirmed() -> None:
     unconfirmed = Settings(**live_values(transcription_live_execution_confirmed=False))
     constructions = 0
 
@@ -168,7 +168,7 @@ def test_live_factory_requires_final_confirmation_then_constructs_once() -> None
         constructions += 1
         return object()
 
-    with pytest.raises(LiveTranscriptionBlockedError, match="confirmation"):
+    with pytest.raises(LiveTranscriptionBlockedError, match="unsupported_live_transcription"):
         create_live_openai_transcriber(
             unconfirmed,
             media_resolver=object(),  # type: ignore[arg-type]
@@ -178,13 +178,14 @@ def test_live_factory_requires_final_confirmation_then_constructs_once() -> None
     assert constructions == 0
 
     confirmed = Settings(**live_values())
-    create_live_openai_transcriber(
-        confirmed,
-        media_resolver=object(),  # type: ignore[arg-type]
-        request_guard=lambda _: None,
-        client_builder=builder,
-    )
-    assert constructions == 1
+    with pytest.raises(LiveTranscriptionBlockedError, match="unsupported_live_transcription"):
+        create_live_openai_transcriber(
+            confirmed,
+            media_resolver=object(),  # type: ignore[arg-type]
+            request_guard=lambda _: None,
+            client_builder=builder,
+        )
+    assert constructions == 0
 
 
 def inspection(

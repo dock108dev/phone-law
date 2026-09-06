@@ -132,8 +132,7 @@ idempotency, content-free evidence, and cleanup. Evidence is generated only unde
 `/tmp/colacci-law-slice3c/evidence/` and is not committed.
 
 Do not place human or realistic audio, a credential, a project identifier, transcript text, raw
-CLI output, or a command string in evidence. The `make test-transcription-live` command remains
-separately owner-gated and is not a fallback or routine completion requirement.
+CLI output, or a command string in evidence. Provider execution is unsupported; the retired factory always rejects construction.
 
 ## Local synthetic manual upload
 

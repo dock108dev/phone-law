@@ -16,6 +16,7 @@ from packages.contracts.media import (
     MediaLifecycleState,
     TemporaryObjectReference,
 )
+from packages.observability.logging import OperationalLogger
 
 OBJECT_ID_PATTERN = re.compile(r"^[a-f0-9]{32}$")
 
@@ -88,8 +89,13 @@ class LocalSyntheticObjectStore:
     def import_file(self, source: Path, *, artifact_id: str) -> TemporaryObjectReference:
         approved = self._assert_approved_source(source)
         reference, destination = self.allocate(artifact_id=artifact_id)
-        shutil.copyfile(approved, destination)
-        os.chmod(destination, 0o600)
+        try:
+            shutil.copyfile(approved, destination)
+            os.chmod(destination, 0o600)
+        except OSError:
+            # Allocation may already contain partial media; deletion emits a safe failure event.
+            self.delete(reference)
+            raise
         return reference
 
     def allocate(self, *, artifact_id: str) -> tuple[TemporaryObjectReference, Path]:
@@ -132,6 +138,14 @@ class LocalSyntheticObjectStore:
             confirmed = not path.exists()
         except OSError:
             confirmed = False
+        if not confirmed:
+            OperationalLogger("media_store").event(
+                "media_deletion_failed",
+                level="error",
+                component="temporary_store",
+                error_code="media_deletion_failed",
+                status="failed",
+            )
         return MediaDeletionEvent(
             event_id=uuid4().hex,
             artifact_id=reference.artifact_id,

@@ -1,4 +1,4 @@
-"""OpenAI file-transcription adapter with a fail-closed Slice 3B live factory."""
+"""Injected file-transcription contract adapter; live construction is unsupported."""
 
 from __future__ import annotations
 
@@ -9,14 +9,12 @@ from dataclasses import dataclass
 from time import monotonic, sleep
 from typing import Any, Protocol, cast
 
-import httpx2
 from openai import (
     APIConnectionError,
     APIStatusError,
     APITimeoutError,
     AuthenticationError,
     BadRequestError,
-    OpenAI,
     PermissionDeniedError,
     RateLimitError,
 )
@@ -474,44 +472,8 @@ def create_live_openai_transcriber(
     request_guard: RequestGuard | None = None,
     client_builder: Callable[[Settings], InjectedOpenAIClient] | None = None,
 ) -> OpenAITranscriber:
-    """Construct the live client only after validated settings and final confirmation."""
+    """Reject the retired provider entry point before inspecting credentials or clients."""
 
-    try:
-        validated = Settings(  # type: ignore[call-arg]
-            _env_file=None,
-            **settings.model_dump(),
-        )
-    except ValidationError as exc:
-        raise LiveTranscriptionBlockedError("live_settings_validation_failed") from exc
-    if validated.app_profile is not AppProfile.LIVE_TEST:
-        raise LiveTranscriptionBlockedError("slice3b_live_test_profile_required")
-    if not validated.transcription_live_execution_confirmed:
-        raise LiveTranscriptionBlockedError("live_execution_confirmation_required")
-    if media_resolver is None or request_guard is None:
-        raise LiveTranscriptionBlockedError("live_media_boundary_required")
-    builder = client_builder or _build_live_client
-    client = builder(validated)
-    return OpenAITranscriber(
-        client=client,
-        media_resolver=media_resolver,
-        settings=validated,
-        request_guard=request_guard,
-        adapter_name="openai-transcriber-live",
-        adapter_version="openai-transcriber-live-v1",
-    )
-
-
-def _build_live_client(settings: Settings) -> InjectedOpenAIClient:
-    if settings.openai_api_key is None or settings.openai_project_id is None:
-        raise LiveTranscriptionBlockedError("live_project_credentials_required")
-    http_client = httpx2.Client(follow_redirects=False)
-    return cast(
-        InjectedOpenAIClient,
-        OpenAI(
-            api_key=settings.openai_api_key.get_secret_value(),
-            project=settings.openai_project_id.get_secret_value(),
-            base_url=settings.openai_base_url,
-            http_client=http_client,
-            max_retries=0,
-        ),
+    raise LiveTranscriptionBlockedError(
+        "unsupported_live_transcription; use the synthetic application or offline contract tests"
     )

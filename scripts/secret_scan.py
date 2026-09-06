@@ -31,6 +31,7 @@ TEXT_SUFFIXES = {
     ".yml",
 }
 IGNORED_PARTS = {
+    ".DS_Store",  # macOS binary folder metadata, not a source file
     ".git",
     ".mypy_cache",
     ".pytest_cache",
@@ -70,6 +71,7 @@ def scan_paths(paths: list[Path]) -> list[Finding]:
             content = path.read_text(encoding="utf-8")
         # Preserve Python 3.13 parse compatibility for stale-image rejection diagnostics.
         except (OSError, UnicodeDecodeError):  # fmt: skip
+            findings.append(Finding(path, 0, "source_unreadable"))
             continue
         for line_number, line in enumerate(content.splitlines(), start=1):
             for kind, pattern in PATTERNS.items():

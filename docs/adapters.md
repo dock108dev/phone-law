@@ -40,26 +40,20 @@ The JSON mode passes the complete bounded body to the existing transcript-only p
 it creates no object and never invokes a transcriber. Neither mode constructs an OpenAI client or
 CLI process.
 
-## Bounded OpenAI live verification
+## Offline provider contracts
 
-The candidate OpenAI file-transcription adapter has a gated `live_test` factory. The
-factory revalidates every owner gate before client construction, sets SDK retries to
-zero, refuses redirects and arbitrary endpoints, and uses an injected shared request
-guard. Live requests use only `/v1/audio/transcriptions`,
-`gpt-4o-transcribe-diarize`, and `diarized_json`; longer media uses automatic chunking.
-Provider speaker labels remain opaque and map only to `unknown_participant`.
-
-These are architecture seams. Slices 1 and 2 implement local deterministic fixture adapters.
-The disabled candidate file-transcription adapter is exercised only through an injected
-mock transport. No vendor credential, live provider URL, or external request is implemented.
+The injected transcription converter is retained for offline response-contract and CLI harness
+tests. The former live factory always rejects construction; its SDK builder and execution
+command have been deleted. Historical gate/budget metadata remains only for offline evidence
+validation pending the retirement follow-up in [SSOT ownership](ssot.md).
 
 | Boundary | Synthetic/test option | Future option | Current state |
 |---|---|---|---|
 | `CallSource` | `FixtureCallSource`; local synthetic manual upload | Broadvoice only after approval | Deterministic generic ingestion events plus a narrow local route |
 | `Transcriber` | `FixtureTranscriber`; offline `OpenAITranscriber`; local `openai_cli_local` shim | Separately authorized approved provider adapter | Exact fixtures, network-blocked response contracts, and bounded local CLI process harness |
 | `Analyzer` | `FixtureAnalyzer` | Approved structured analyzer | Exact facts-first fixture responses; no keyword engine |
-| `ObjectStore` | `LocalSyntheticObjectStore` | `PrivateCloudObjectStore` | No object content stored; deployment requires private cloud setting |
-| `Notifier` | `NoOpNotifier` | `SecureReportReadyNotifier` | No-op setting only; no message or delivery code |
+| `ObjectStore` | `LocalSyntheticObjectStore` | Unimplemented private cloud storage | Generated media only; no private-cloud implementation |
+| `Notifier` | No-op notification policy | Unimplemented secure notification delivery | No-op setting only; no message or delivery code |
 
 Future call sources must normalize at the boundary before domain processing. The core pipeline
 must never receive provider credentials or provider URLs. A notification may eventually state
@@ -69,9 +63,6 @@ Broadvoice is explicitly unimplemented and disabled. Account-specific documentat
 access are required before even a synthetic field shape is created. There is no anonymous
 webhook route.
 
-The candidate sends file transcription to `/v1/audio/transcriptions` with configurable model
-identifiers, `diarized_json`, and automatic chunking above 30 seconds. It never uses the Files API,
-Realtime API, streaming, known-speaker names/references, or analysis/report generation. Provider
-speaker labels remain opaque and map only to unverified unknown participants. Normal demo/test
-application factories construct no network client, and live construction remains behind the
-explicit owner-gated hard stop.
+Injected contract tests model file transcription responses. The application uses fixture
+transcription or strict invented-transcript import. Historical ADRs describe prior engineering
+experiments; they are not executable setup instructions.

@@ -143,5 +143,5 @@ def test_slice3a_configuration_rejects_live_or_unsafe_media_settings(
 
 def test_live_factory_remains_blocked_with_safe_defaults() -> None:
     settings = Settings(_env_file=None, app_profile=AppProfile.TEST)
-    with pytest.raises(LiveTranscriptionBlockedError, match="slice3b"):
+    with pytest.raises(LiveTranscriptionBlockedError, match="unsupported_live_transcription"):
         create_live_openai_transcriber(settings)

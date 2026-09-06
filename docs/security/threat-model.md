@@ -24,7 +24,7 @@ environment configuration, container images, logs, and the source repository.
 | Broadvoice contract is guessed | No route, fields, header, signature, URL, fixture, or code | Account-specific feasibility evidence |
 | Overbroad network exposure | Every published local port binds to loopback | TLS, firewall, private networking, and approved ingress in staging |
 | Host-header or browser embedding abuse | API allowlists trusted hosts; API and local web set no-store, noindex, nosniff, deny framing, strict referrer/permissions, resource isolation, and CSP headers; API also sets opener isolation | Approved HTTPS proxy must preserve/strengthen headers and add web opener isolation/HSTS only after TLS is enforced |
-| Denial of service | Local synthetic-only routes, bounded fixture corpus, no ingestion | Rate limits and resource limits before ingestion |
+| Denial of service | Loopback synthetic-only routes, application body caps for declared and streamed input, bounded uploads and retries | Concurrent-request quotas, read timeouts, ingress and process limits before non-local ingestion |
 | CLI argument injection or shell expansion | Direct argument array, `shell=False`, fixed option surface, absolute allowlisted executable | Reassess before any broader command surface |
 | Ambient environment or credential leakage | Rebuilt child environment, named-variable allowlist, no value logging, no command logging | Managed ephemeral credential delivery before any separately authorized live run |
 | Child hangs, floods output, or leaves descendants | Wall-clock timeout, output cap, cancellation, process-group termination, private temporary input, cleanup confirmation | Provider-specific operational limits before production |
@@ -33,6 +33,8 @@ environment configuration, container images, logs, and the source repository.
 | Upload bypasses authenticated role | Principal is resolved before buffering/allocation; request role fields are rejected; reviewer denials are audited | Firm SSO and centralized policy before staging |
 | Filename or multipart input escapes local storage | Single file, strict safe name, no destination field, no path import, opaque object ID, fixed `/tmp` root, no symlinks | Private cloud object boundary before real use |
 | Duplicate or retry creates competing records | Unique submission/content/source IDs; row locks; retry increments attempt on the same call | Distributed idempotency design before external ingestion |
+| Arbitrary media reaches native parsers | Private generated fingerprint checked before allocation/decoding; ffprobe/ffmpeg input protocols restricted to file | Parser filesystem/process isolation before real media |
+| Validation responses echo private input | Stable content-free 422 envelope and warning event; no rejected values or validator context | Client-side validation guidance without private error telemetry |
 | Temporary media survives its lifecycle | Cleanup on validation failure, terminal result, success, cancellation, and unexpected exception; deletion failure is visible and audited | Approved production retention/deletion policy remains external work |
 
 ## Abuse cases checked

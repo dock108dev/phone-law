@@ -8,8 +8,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from decimal import Decimal
 from pathlib import Path
-from urllib.parse import urlsplit
 
+from packages.config.endpoints import safe_endpoint_class as safe_endpoint_class
 from packages.contracts.media import MediaInspectionResult, TranscriptionUsageMetadata
 
 AUTHORIZATION_REFERENCE = "OWNER-CHAT-2026-08-17-SLICE-3B"
@@ -59,35 +59,6 @@ def live_gate_failures(environment: Mapping[str, str]) -> tuple[str, ...]:
     if not safe_endpoint_class(environment.get("OPENAI_BASE_URL", "https://api.openai.com/v1")):
         failures.append("openai_base_url")
     return tuple(sorted(set(failures)))
-
-
-def safe_endpoint_class(value: str) -> dict[str, str] | None:
-    parsed = urlsplit(value)
-    regions = {
-        "api.openai.com": "global",
-        "us.api.openai.com": "us",
-        "eu.api.openai.com": "eu",
-        "au.api.openai.com": "au",
-        "ca.api.openai.com": "ca",
-        "jp.api.openai.com": "jp",
-        "in.api.openai.com": "in",
-        "sg.api.openai.com": "sg",
-        "kr.api.openai.com": "kr",
-        "gb.api.openai.com": "gb",
-        "ae.api.openai.com": "ae",
-    }
-    region = regions.get((parsed.hostname or "").lower())
-    if (
-        parsed.scheme != "https"
-        or region is None
-        or parsed.path.rstrip("/") != "/v1"
-        or parsed.username is not None
-        or parsed.password is not None
-        or parsed.query
-        or parsed.fragment
-    ):
-        return None
-    return {"endpoint_class": "official_openai", "region": region}
 
 
 def asset_fingerprint(items: list[dict[str, object]]) -> str:

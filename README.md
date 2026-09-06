@@ -5,7 +5,7 @@ reviewer feedback, failure recovery, manual submission of invented artifacts, an
 
 This repository contains no client data, real recording, production authentication, external
 notification, Broadvoice integration, or generally enabled provider request. The separately
-gated transcription verification commands are not part of the normal application runtime.
+offline transcription contract tools are not part of the normal application runtime.
 
 The sole roadmap and status source is
 `/Users/michaelfuscoletti/Desktop/colacci_law_next_steps.md`. Do not add a repository-level
@@ -60,8 +60,7 @@ CONFIRM_LOCAL_DATA_DELETE=yes make clean
 | `make smoke` | API, worker, web, dashboard, database, and migration readiness |
 | `make audit` | Separate online Python/npm vulnerability advisory check |
 
-Run `make help` for the complete stable command surface. Provider-facing live verification is
-owner-gated and never part of routine setup, development, or validation.
+Run `make help` for the complete stable command surface. Provider execution is unsupported; the historical factory always rejects construction.
 
 ## Repository map
 
@@ -74,7 +73,7 @@ owner-gated and never part of routine setup, development, or validation.
 - `packages/database`: bounded persistence repositories and migration readiness.
 - `packages/review`: state machine, fixture pipeline, reporting, and transcript import.
 - `packages/manual_upload`: request orchestration for allowlisted generated audio and invented JSON.
-- `packages/transcription`: offline contracts and separately gated CLI/SDK transports.
+- `packages/transcription`: offline contracts, CLI process harness and a retired SDK failure boundary.
 - `fixtures`: deterministic invented inputs; no human or client content.
 - `scripts`: stable command implementations, evidence checks, and scanners.
 - `docs`: developer, architecture, operations, security, and decision documentation.

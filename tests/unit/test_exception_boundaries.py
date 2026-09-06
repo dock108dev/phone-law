@@ -159,7 +159,10 @@ class UnreadableTextPath:
 
 
 def test_secret_scanner_fails_closed_without_disclosing_unreadable_content() -> None:
-    assert secret_scan.scan_paths([cast(Path, UnreadableTextPath())]) == []
+    findings = secret_scan.scan_paths([cast(Path, UnreadableTextPath())])
+    assert len(findings) == 1
+    assert findings[0].kind == "source_unreadable"
+    assert findings[0].line == 0
 
 
 @pytest.mark.parametrize(

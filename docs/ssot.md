@@ -32,9 +32,9 @@ Known callers: review, upload, and operations routes; local operations persisten
 
 Domain: API error envelope  
 SSOT module/file: `apps/api/colacci_api/errors.py`  
-Why this is authoritative: all API/authentication errors use its sanitized error and correlation
+Why this is authoritative: route exceptions, middleware rejections and sanitized 422/500 responses use its error and correlation
 shape.  
-Known callers: demo authentication and all three API routers.
+Known callers: demo authentication, all three API routers, application and body-limit middleware.
 
 Domain: browser API access  
 SSOT module/file: `apps/web/src/api.ts`  
@@ -98,7 +98,8 @@ Known callers: none.
 | `packages.database.local_operations.default_configuration()` | No runtime, script, or test caller | Removed; callers use the validated contract constant |
 | Alembic `0006` default-configuration payload | Historical migration snapshot, not runtime policy | Retained so old databases migrate deterministically; current policy remains the contracts model |
 | Local CLI capability fallback | Called by stable preflight/offline Make targets and recorded by ADR 0008 | Retained as an explicit zero-request engineering path, not an application fallback |
-| `live_test` adapter and gates | Called by separate preflight/live commands and protected by an owner authorization contract | Retained outside normal factories; retirement would require a separate owner decision |
+| Live SDK builder and execution command | No application caller; historical experiment only | Deleted builder, runner and Make target; factory retained solely as unconditional failure |
+| Historical `live_test` gate/budget and metadata contracts | Offline preflight, tests and persisted metadata readers still depend on these shapes | Retained for offline interpretation only; retire together in the follow-up below |
 | Staging/production configuration validation | No deployable adapters exist, but the guard prevents unsafe accidental startup | Retained as an explicit failure boundary, not represented as production capability |
 
 ## Enforcement guards
@@ -107,3 +108,39 @@ Known callers: none.
 actions. `tests/unit/test_ssot_guards.py` prevents route-local role/error policy, the legacy
 transcript fallback, and the unused default wrapper from returning. Supported producers and the
 generated transcript schema must require an explicit provider response version.
+
+
+## September 6 enforcement
+
+Domain: provider endpoint classification
+SSOT module/file: `packages/config/endpoints.py`
+Why this is authoritative: one official-host/URL classifier supplies both settings and historical
+preflight checks; the duplicate settings validator is gone.
+Known callers: `packages/config/settings.py`, `packages/transcription/live.py` and preflight tests.
+
+| Candidate | Usage finding | Disposition |
+|---|---|---|
+| Middleware-local error dictionaries | 500, 422 and body errors duplicated route envelope policy | Routed through `errors.error_detail` / `error_response`; HTTP status, logging and correlation behavior preserved |
+| Settings-local endpoint allowlist | Duplicates preflight host/path/credential rules | Removed; both use `config/endpoints.py` |
+| Demo/test adapter selectors | Accepted arbitrary names although services always use fixtures, local storage, fake auth and no-op notifications | Reject unsupported selections during shared settings validation |
+| `_build_live_client` and `scripts/test_transcription_live.py` | No supported product caller; constructed a network SDK client from historical gates | Deleted along with Make target and obsolete linter exception |
+| `create_live_openai_transcriber` | Existing callers expect a typed failure boundary | Unconditionally raises `LiveTranscriptionBlockedError`; no credentials examined or client constructed |
+| CLI process harness and transcript import | Explicit offline Make targets, manual upload imports, security and integration callers | Keep the bounded process harness and the shared importer; neither is an application fallback |
+| Historical model fallback and metadata fields | Read/write serialized provider metadata; conversion tests exercise missing diarization | Defer schema-sensitive removal; these are offline conversion semantics, not an automatic provider retry or working application mode |
+| Python parse compatibility comments | Explain stale-image diagnostics in supported candidate checks; no alternate execution branch | Keep; source remains valid on the declared runtime |
+| Migration snapshots | Required by database upgrade/downgrade tests | Keep immutable historical payloads; do not rewrite them as current policy |
+
+New guards assert that middleware does not recreate error dictionaries, endpoints have one owner,
+the network builder/runner cannot return, and even fully populated live flags cannot construct a
+client. Twelve configuration cases reject unsupported demo/test adapter selections. Existing
+permission, transcript-version, ingestion, persistence and browser guards remain authoritative.
+
+## Bounded follow-up
+
+Retire historical provider settings, metadata fields, schemas, preflight and CLI experiment tooling
+as one separate pass after inventorying stored transcription metadata and external evidence
+consumers. Do not silently drop persisted fields or re-label prior evidence. The provider factory
+is already unconditionally blocked, so this ambiguity does not expose a working SDK execution
+path. CLI process code remains an explicit engineering harness with version/executable/network
+controls; deciding whether to remove that harness requires the same evidence-consumer inventory.
+No production deployment or usage is claimed by this document.

@@ -84,6 +84,8 @@ class MediaInspector:
 
         command = [
             str(self.ffprobe_binary),
+            "-protocol_whitelist",
+            "file",
             "-v",
             "error",
             "-show_entries",
@@ -195,6 +197,8 @@ class MediaNormalizer:
             "-v",
             "error",
             "-y",
+            "-protocol_whitelist",
+            "file",
             "-i",
             str(input_path),
             "-vn",

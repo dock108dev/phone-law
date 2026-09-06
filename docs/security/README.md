@@ -4,6 +4,7 @@
 - [Initial threat model](threat-model.md)
 - [Logging and secret policy](logging-and-secrets.md)
 - [Repository hardening review](hardening-review.md)
+- [Current security validation](security-validation.md)
 
 The current application is synthetic-only and still treats the future product as a
 high-sensitivity system. Its manual-upload bridge accepts only allowlisted generated non-human

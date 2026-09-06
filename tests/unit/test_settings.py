@@ -204,3 +204,20 @@ def test_safe_authorized_shape_can_be_explicitly_represented() -> None:
         call_source_adapter="manual_upload",
     )
     assert settings.allow_real_call_data is True
+
+
+@pytest.mark.parametrize("profile", [AppProfile.DEMO, AppProfile.TEST])
+@pytest.mark.parametrize(
+    "field",
+    [
+        "auth_mode",
+        "call_source_adapter",
+        "transcriber_adapter",
+        "analyzer_adapter",
+        "notification_adapter",
+        "object_storage_backend",
+    ],
+)
+def test_application_profiles_reject_unimplemented_adapters(profile, field):
+    with pytest.raises(ValidationError, match=field):
+        Settings(_env_file=None, app_profile=profile, **{field: "unsupported"})

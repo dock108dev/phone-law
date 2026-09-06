@@ -7,6 +7,7 @@ import re
 import sys
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from socket import socket
 from urllib.parse import urlsplit
 from uuid import uuid4
 
@@ -28,6 +29,14 @@ class WorkerHealthServer(ThreadingHTTPServer):
     settings: Settings
     engine: Engine
     operational_logger: OperationalLogger
+
+    def handle_error(self, request: socket | tuple[bytes, socket], client_address: object) -> None:
+        """Replace socketserver's raw stderr traceback with content-free diagnostics."""
+        error = sys.exception()
+        if error is not None:
+            self.operational_logger.exception(
+                "worker_health_request_failed", error, component="health_server", status="failed"
+            )
 
 
 class HealthHandler(BaseHTTPRequestHandler):

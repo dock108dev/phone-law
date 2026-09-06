@@ -40,9 +40,8 @@ accepted as candidate evidence without that rebuild and verification.
 | `make test-demo-month` | Month generation, daily/month reconciliation, or month-history UI |
 | `make test-local-acceptance` | Combined acceptance on clean historical slice branches or a verified exact `main` candidate |
 
-`make transcription-live-preflight` and `make test-transcription-live` are not routine tests. The
-first is a network-disabled owner-authorization preflight; the second is a separately authorized
-generated-audio provider verification. Never use the live command as a fallback or CI gate.
+`make transcription-live-preflight` is a network-disabled historical gate/evidence validator.
+Provider execution is unsupported and the live factory always fails before construction.
 
 `make test-local-acceptance` is not a general current-branch gate. Its script requires a clean
 checkout descended from its accepted source and either an allowlisted historical branch or `main`.

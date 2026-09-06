@@ -38,11 +38,25 @@ export async function apiRequest<T>(
       null,
     );
   }
-  const text = await response.text();
+  let text: string;
+  try {
+    text = await response.text();
+  } catch {
+    throw new ApiRequestError(
+      "The service response was interrupted. Check the saved state before retrying.",
+      response.status,
+      response.headers.get("X-Correlation-ID"),
+    );
+  }
   let payload: { detail?: { error?: string; correlation_id?: string } } = {};
+  if (!text && response.ok) {
+    throw new ApiRequestError("The service returned an empty response.", response.status, response.headers.get("X-Correlation-ID"));
+  }
   if (text) {
     try {
-      payload = JSON.parse(text) as typeof payload;
+      const parsed: unknown = JSON.parse(text);
+      if (parsed === null || typeof parsed !== "object") throw new Error("invalid_response");
+      payload = parsed;
     } catch {
       throw new ApiRequestError(
         `The ${path.split("/").filter(Boolean)[1] ?? "requested"} service returned an unexpected response.`,

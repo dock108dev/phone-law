@@ -90,7 +90,7 @@ class ManualUploadService:
         self.normalizer = MediaNormalizer(store=self.store, inspector=self.inspector)
         self.transcriber = FixtureTranscriber()
         self.analyzer = FixtureAnalyzer()
-        self.operational_logger = operational_logger
+        self.operational_logger = operational_logger or OperationalLogger("manual_upload")
         self.correlation_id = correlation_id
 
     def submit_audio(
@@ -104,6 +104,11 @@ class ManualUploadService:
         source_reference: TemporaryObjectReference | None = None
         retained_reference: TemporaryObjectReference | None = None
         try:
+            # Reject arbitrary media before exposing it to ffprobe or creating a temporary file.
+            fingerprint = hashlib.sha256(parsed.payload).hexdigest()
+            manifest_entry = SyntheticFingerprintManifest(
+                self.settings.manual_upload_manifest_path
+            ).entry(fingerprint)
             source_reference, path = self.store.allocate(artifact_id=artifact_id)
             with path.open("wb") as destination:
                 destination.write(parsed.payload)
@@ -115,9 +120,8 @@ class ManualUploadService:
                 or not 8000 <= inspection.sample_rate_hz <= 48000
             ):
                 raise UploadRequestError("unsupported_media_shape")
-            manifest_entry = SyntheticFingerprintManifest(
-                self.settings.manual_upload_manifest_path
-            ).entry(inspection.content_sha256)
+            if inspection.content_sha256 != fingerprint:
+                raise UploadRequestError("uploaded_media_changed")
             expected_language = "es" if manifest_entry.fixture_id == "CL-FX-003" else "en"
             if parsed.metadata.language_hint != expected_language:
                 raise UploadRequestError("declared_language_mismatch")
@@ -205,13 +209,13 @@ class ManualUploadService:
             try:
                 final = self._process_transcript(claimed, artifact)
             except Exception as exc:
+                self._record_unexpected_failure("unexpected_transcript_processing_failure", exc)
                 self.receipts.complete(
                     claimed.receipt.upload_id,
                     state=UploadState.ANALYSIS_FAILED,
                     diagnostic_code="transcript_processing_failed",
                     retryable=False,
                 )
-                self._record_unexpected_failure("unexpected_transcript_processing_failure")
                 raise ManualUploadUnexpectedError("transcript_processing_failed") from exc
             return CreateReceiptResult(stored=final, duplicate=False)
         return created
@@ -238,8 +242,8 @@ class ManualUploadService:
                 claimed, manifest_entry.fixture_id, manifest_entry.outcome
             )
         except Exception as exc:
+            self._record_unexpected_failure("unexpected_audio_processing_failure", exc)
             self._unexpected_audio_failure(claimed)
-            self._record_unexpected_failure("unexpected_audio_processing_failure")
             raise ManualUploadUnexpectedError("unexpected_processing_failure") from exc
 
     def cancel(self, upload_id: str) -> StoredUpload:
@@ -471,12 +475,10 @@ class ManualUploadService:
             deleted_at=deleted_at,
         )
 
-    def _record_unexpected_failure(self, error_code: str) -> None:
-        if self.operational_logger is None:
-            return
-        self.operational_logger.event(
+    def _record_unexpected_failure(self, error_code: str, error: Exception) -> None:
+        self.operational_logger.exception(
             "manual_upload_processing_failed",
-            level="error",
+            error,
             component="manual_upload",
             correlation_id=self.correlation_id or "correlation-unavailable",
             error_code=error_code,
@@ -611,7 +613,22 @@ class ManualUploadService:
         retained: TemporaryObjectReference | None,
     ) -> None:
         seen: set[str] = set()
+        failed = False
         for reference in (source, retained):
             if reference is not None and reference.object_id not in seen:
                 seen.add(reference.object_id)
-                self.store.delete(reference)
+                try:
+                    deletion = self.store.delete(reference)
+                    failed = failed or not deletion.deletion_confirmed
+                except (SyntheticObjectStoreError, OSError) as exc:
+                    failed = True
+                    self._record_unexpected_failure("temporary_media_deletion_failed", exc)
+        if failed:
+            self.operational_logger.event(
+                "temporary_media_cleanup_failed",
+                level="error",
+                error_code="temporary_media_deletion_failed",
+                correlation_id=self.correlation_id or "correlation-unavailable",
+                status="failed",
+            )
+            raise UploadRequestError("temporary_media_deletion_failed", status_code=500)

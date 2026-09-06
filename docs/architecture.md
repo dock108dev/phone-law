@@ -83,14 +83,13 @@ stores no media reference, records source mode and safe transport provenance, an
 existing state machine, fixture analyzer, immutable report, evidence, and feedback flows. Its
 deterministic identifiers make repeated import idempotent.
 
-## Gated live-verification isolation
+## Authoritative policy boundaries
 
-The `live_test` path is a separate command-line verification boundary, not part of the
-demo application factory. Fresh local synthetic media moves through the restrictive
-temporary object store, the gated transcription adapter, strict response validation,
-and a disposable evidence database. Downstream analysis and report generation are not
-connected. Terminal cleanup removes media and the database while retaining only
-sanitized preflight and designated synthetic evaluation evidence outside the repository.
+[Current sources of truth](ssot.md) lists domain owners and callers. API error responses and
+exceptions share `apps/api/colacci_api/errors.py`; settings and historical preflight share
+`packages/config/endpoints.py`. Demo/test configuration rejects adapter selections that the
+application does not implement. The retired provider factory fails unconditionally; no normal
+application or command constructs a live SDK client.
 
 The supported application is a four-component local stack with immutable daily report snapshots,
 reviewer feedback/audit events, a failure queue, and playbook lifecycle routes:

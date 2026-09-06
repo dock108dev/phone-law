@@ -11,6 +11,8 @@ from urllib.parse import urlsplit
 from pydantic import Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from packages.config.endpoints import safe_endpoint_class
+
 
 class AppProfile(StrEnum):
     TEST = "test"
@@ -146,6 +148,18 @@ class Settings(BaseSettings):
         if self.transcription_timeout_seconds <= 0 or self.transcription_timeout_seconds > 120:
             issues.add("transcription_timeout_seconds")
 
+        if self.app_profile in {AppProfile.DEMO, AppProfile.TEST}:
+            for name, expected in {
+                "auth_mode": "fake",
+                "call_source_adapter": "fixture",
+                "transcriber_adapter": "fixture",
+                "analyzer_adapter": "fixture",
+                "notification_adapter": "noop",
+                "object_storage_backend": "local_synthetic",
+            }.items():
+                if getattr(self, name) != expected:
+                    issues.add(name)
+
         if self.app_profile is AppProfile.LIVE_TEST:
             self._collect_live_test_issues(issues)
         elif self.app_profile is AppProfile.LOCAL_DEV:
@@ -258,7 +272,7 @@ class Settings(BaseSettings):
             == "OWNER-CHAT-2026-08-19-SLICE-3B-REENTRY-PREFLIGHT-ONLY"
         ):
             issues.add("transcription_live_execution_authorization_id")
-        if not _safe_openai_base_url(self.openai_base_url):
+        if safe_endpoint_class(self.openai_base_url) is None:
             issues.add("openai_base_url")
         if self.call_source_adapter != "generated_synthetic":
             issues.add("call_source_adapter")
@@ -348,32 +362,6 @@ def _safe_host(value: str) -> bool:
 
 def _local_or_internal_host(value: str) -> bool:
     return value in {"localhost", "127.0.0.1", "0.0.0.0", "api", "web", "testserver"}
-
-
-def _safe_openai_base_url(value: str) -> bool:
-    parsed = urlsplit(value)
-    allowed_hosts = {
-        "api.openai.com",
-        "us.api.openai.com",
-        "eu.api.openai.com",
-        "au.api.openai.com",
-        "ca.api.openai.com",
-        "jp.api.openai.com",
-        "in.api.openai.com",
-        "sg.api.openai.com",
-        "kr.api.openai.com",
-        "gb.api.openai.com",
-        "ae.api.openai.com",
-    }
-    return (
-        parsed.scheme == "https"
-        and (parsed.hostname or "").lower() in allowed_hosts
-        and parsed.path.rstrip("/") == "/v1"
-        and parsed.username is None
-        and parsed.password is None
-        and not parsed.query
-        and not parsed.fragment
-    )
 
 
 def _unsafe_database_url(value: str) -> bool:

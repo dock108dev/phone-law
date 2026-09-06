@@ -7,10 +7,14 @@ from contextlib import asynccontextmanager
 from time import monotonic
 
 from fastapi import FastAPI, Request, Response, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from starlette.middleware.base import RequestResponseEndpoint
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+from apps.api.colacci_api.body_limits import RequestBodyLimitMiddleware
+from apps.api.colacci_api.errors import error_response
 from apps.api.colacci_api.operations_routes import router as operations_router
 from apps.api.colacci_api.review_routes import router as review_router
 from apps.api.colacci_api.upload_routes import router as upload_router
@@ -53,44 +57,30 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.operational_logger = logger
 
     app.add_middleware(
-        CORSMiddleware,
-        allow_origins=configured.cors_origins,
-        allow_credentials=False,
-        allow_methods=["GET", "POST", "DELETE"],
-        allow_headers=[
-            "Content-Type",
-            "X-Correlation-ID",
-            "X-Demo-Principal",
-            "X-Demo-Role",
-            "X-Demo-Session",
-            "X-Client-Submission-ID",
-            "X-Generated-Only-Attestation",
-            "X-Upload-Direction",
-            "X-Upload-Captured-At",
-            "X-Upload-Language",
-            "X-Upload-Staff-Extension",
-        ],
+        RequestBodyLimitMiddleware, media_max_bytes=configured.media_max_bytes, logger=logger
     )
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=configured.trusted_hosts)
 
     @app.middleware("http")
-    async def operational_request_log(request: Request, call_next: object) -> Response:
+    async def operational_request_log(
+        request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
         correlation_id = normalize_correlation_id(request.headers.get("X-Correlation-ID"))
         request.state.correlation_id = correlation_id
         started = monotonic()
         response: Response
         try:
-            response = await call_next(request)  # type: ignore[operator]
-        except Exception:
-            logger.event(
+            response = await call_next(request)
+        except Exception as exc:
+            logger.exception(
                 "http_request_failed",
-                level="error",
+                exc,
                 correlation_id=correlation_id,
                 method=request.method,
                 route=request.url.path,
                 status="internal_error",
             )
-            raise
+            response = error_response(500, "internal_error", correlation_id)
         response.headers["X-Correlation-ID"] = correlation_id
         response.headers["Cache-Control"] = "no-store"
         response.headers["Content-Security-Policy"] = (
@@ -105,6 +95,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         response.headers["X-Robots-Tag"] = "noindex, nofollow, noarchive"
         logger.event(
             "http_request_completed",
+            level=(
+                "error"
+                if response.status_code >= 500
+                else "warning"
+                if response.status_code >= 400
+                else "info"
+            ),
             correlation_id=correlation_id,
             duration_ms=(monotonic() - started) * 1000,
             method=request.method,
@@ -112,6 +109,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             status=str(response.status_code),
         )
         return response
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_error(request: Request, _: RequestValidationError) -> JSONResponse:
+        # FastAPI's default error details include rejected input and caller-controlled keys.
+        correlation_id = getattr(request.state, "correlation_id", "correlation-unavailable")
+        logger.event(
+            "request_validation_rejected",
+            level="warning",
+            error_code="request_validation_failed",
+            correlation_id=correlation_id,
+            status="rejected",
+        )
+        return error_response(422, "request_validation_failed", correlation_id)
 
     @app.get("/health/live", response_model=HealthResponse)
     async def liveness() -> HealthResponse:
@@ -155,4 +165,25 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(review_router)
     app.include_router(upload_router)
     app.include_router(operations_router)
+    # CORS wraps the error boundary so allowed browser clients can read sanitized 500s.
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=configured.cors_origins,
+        allow_credentials=False,
+        expose_headers=["X-Correlation-ID"],
+        allow_methods=["GET", "POST", "DELETE"],
+        allow_headers=[
+            "Content-Type",
+            "X-Correlation-ID",
+            "X-Demo-Principal",
+            "X-Demo-Role",
+            "X-Demo-Session",
+            "X-Client-Submission-ID",
+            "X-Generated-Only-Attestation",
+            "X-Upload-Direction",
+            "X-Upload-Captured-At",
+            "X-Upload-Language",
+            "X-Upload-Staff-Extension",
+        ],
+    )
     return app

@@ -7,6 +7,7 @@ import logging
 import re
 import sys
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Final
 from uuid import uuid4
 
@@ -16,6 +17,8 @@ SAFE_METADATA_KEYS: Final[frozenset[str]] = frozenset(
         "correlation_id",
         "duration_ms",
         "error_code",
+        "exception_type",
+        "exception_frames",
         "method",
         "migration_current",
         "profile",
@@ -54,6 +57,24 @@ class OperationalLogger:
         log_method = getattr(self._logger, level, self._logger.info)
         log_method(json.dumps(payload, separators=(",", ":"), sort_keys=True))
 
+    def exception(self, event: str, error: BaseException, **metadata: object) -> None:
+        """Preserve source locations, never exception text, source lines or locals."""
+        root = Path(__file__).resolve().parents[2]
+        frames: list[str] = []
+        traceback = error.__traceback__
+        while traceback is not None:
+            filename = Path(traceback.tb_frame.f_code.co_filename)
+            if filename.is_relative_to(root):
+                frames.append(f"{filename.relative_to(root)}/{traceback.tb_lineno}")
+            traceback = traceback.tb_next
+        self.event(
+            event,
+            level="error",
+            exception_type=type(error).__name__,
+            exception_frames=frames[-32:],
+            **metadata,
+        )
+
 
 def configure_logging(level: str = "INFO") -> None:
     root = logging.getLogger()
@@ -91,6 +112,12 @@ def _safe_label(value: object, *, fallback: str) -> str:
 
 
 def _safe_metadata_value(key: str, value: object) -> object:
+    if key == "exception_frames":
+        return (
+            [_safe_label(frame, fallback="unknown") for frame in value[-32:]]
+            if isinstance(value, list)
+            else []
+        )
     if key == "route":
         return value if value in SAFE_ROUTE_VALUES else "unknown"
     if key in {"duration_ms"} and isinstance(value, int | float):

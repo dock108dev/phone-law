@@ -70,3 +70,46 @@ def test_removed_fallbacks_and_wrappers_stay_removed() -> None:
     assert "legacy-review-contract-v1" not in contract_source
     assert "legacy-review-contract-v1" not in generated_schema
     assert "def default_configuration(" not in operations_source
+
+
+def test_endpoint_policy_is_shared_with_preflight() -> None:
+    from packages.config.endpoints import safe_endpoint_class
+    from packages.transcription.live import safe_endpoint_class as preflight_policy
+
+    assert preflight_policy is safe_endpoint_class
+    assert "def _safe_openai_base_url" not in (ROOT / "packages/config/settings.py").read_text()
+
+
+def test_removed_live_execution_stays_removed() -> None:
+    source = (ROOT / "packages/transcription/openai_adapter.py").read_text()
+    assert "def _build_live_client" not in source
+    assert "OpenAI(" not in source
+    assert not (ROOT / "scripts/test_transcription_live.py").exists()
+    assert "test-transcription-live:" not in (ROOT / "Makefile").read_text()
+
+
+def test_middleware_cannot_reintroduce_error_envelopes() -> None:
+    for name in ("app.py", "body_limits.py"):
+        source = (ROOT / "apps/api/colacci_api" / name).read_text()
+        assert '"error":' not in source
+
+
+def test_routes_and_responses_share_error_detail(monkeypatch) -> None:
+    import json
+
+    from starlette.requests import Request
+
+    from apps.api.colacci_api import errors
+
+    calls = []
+
+    def detail(message, correlation):
+        calls.append((message, correlation))
+        return {"error": message, "correlation_id": correlation}
+
+    monkeypatch.setattr(errors, "error_detail", detail)
+    request = Request({"type": "http", "state": {"correlation_id": "corr-test"}})
+    raised = errors.api_error(request, 403, "forbidden")
+    response = errors.error_response(403, "forbidden", "corr-test")
+    assert json.loads(response.body)["detail"] == raised.detail
+    assert calls == [("forbidden", "corr-test"), ("forbidden", "corr-test")]

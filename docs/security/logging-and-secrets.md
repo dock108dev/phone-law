@@ -2,11 +2,12 @@
 
 Application logs are newline-delimited JSON and contain only event, service, timestamp, level,
 component, opaque correlation ID, safe health route, HTTP method, status, duration, profile,
-version, migration boolean, and a named error code. Unknown metadata keys are dropped.
+version, migration boolean, a named error code, exception class and bounded repository-relative
+source locations. Source locations omit raw exception text, locals, absolute paths and source lines. Unknown metadata keys are dropped.
 
 The following are forbidden in logs: transcript or analysis text, audio, caller/staff identity,
 phone number, request/query bodies, authorization or cookie headers, secrets, database/provider
-URLs, exception details, and provider payloads. Uvicorn, worker HTTP, and SQL access logs are
+URLs, raw exception details, rejected validation inputs, and provider payloads. Uvicorn, worker HTTP, and SQL access logs are
 disabled.
 
 The local CLI boundary additionally forbids a rendered command string, raw argument dump, raw
@@ -29,3 +30,8 @@ filenames and high-signal credential formats without printing matched values.
 
 Deployment credentials must come from a future firm-owned secret manager. They must not appear
 in Compose files, image layers, frontend variables, screenshots, incident tickets, or chat.
+
+HTTP body rejections emit `request_body_rejected` with `invalid_content_length`
+or `request_body_too_large`; model validation emits `request_validation_rejected`
+with `request_validation_failed`. Both are warning events with correlation IDs.
+Default framework validation bodies are not returned to the client.

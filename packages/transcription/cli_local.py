@@ -473,11 +473,18 @@ class OpenAICliLocalClient:
             return payload
         finally:
             shutil.rmtree(temporary_directory, ignore_errors=True)
-            self.cleanup_confirmations.append(not temporary_directory.exists())
+            cleaned = not temporary_directory.exists()
+            self.cleanup_confirmations.append(cleaned)
+            if not cleaned:
+                raise SafeTranscriptionTransportError(
+                    error_class=MediaErrorClass.MEDIA_DELETION_FAILED,
+                    retryable=False,
+                )
             try:
                 if self.input_root.exists() and not any(self.input_root.iterdir()):
                     self.input_root.rmdir()
             except OSError:
+                # Only the empty shared parent is optional; request media was verified gone.
                 pass
 
     @staticmethod

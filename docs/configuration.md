@@ -67,30 +67,21 @@ operations may review configuration history but cannot publish.
 `America/New_York` is the explicit local default only. The retention values are accelerated
 synthetic defaults only. Neither represents client approval. See [the operator guide](local-operations.md).
 
-## Gated live-test profile
+## Historical provider configuration
 
-`live_test` is a fail-closed, generated-media-only verification profile. It requires the
-exact owner authorization, the approved transcription model, an explicit project-scoped
-credential, official OpenAI endpoint selection, and the exact request, retry, duration,
-byte, and application-budget caps. It disables analysis, notifications, real-data modes,
-manual upload, and Broadvoice. The normal application and Compose defaults remain the
-offline `demo` profile.
-
-Use `make transcription-live-preflight` first. It runs without network access and emits
-sanitized evidence at
-`/tmp/colacci-law-slice3b-final-preflight/evidence/slice3b-final-preflight.json`. Only a fresh passing report
-allows `make test-transcription-live`, which also requires
-`TRANSCRIPTION_LIVE_EXECUTION_CONFIRMED=true`. Credentials must arrive through an
-approved ephemeral environment and must never be written to `.env` or repository files.
-The account-specific data-control state must also be explicitly attested with
-`OPENAI_PROJECT_DATA_CONTROLS_APPROVED=true`; credentials alone do not satisfy the gate.
+The provider execution command has been removed. The former factory always raises
+`LiveTranscriptionBlockedError` before client construction, even with fully populated gates.
+`live_test` settings and the network-disabled `make transcription-live-preflight` remain only
+for historical contract/evidence validation; a successful preflight cannot enable execution.
+Do not populate credentials for ordinary development. Retirement of these historical fields
+and persisted metadata is tracked in [SSOT enforcement](ssot.md).
 
 | Profile | Purpose | Real data | Adapters | Storage/auth |
 |---|---|---|---|---|
 | `test` | Deterministic automated checks | Always rejected | Fixture adapters | Local synthetic/fake |
 | `demo` | Default local application | Always rejected | Fixture adapters | Local synthetic/fake |
 | `local_dev` | Bounded local CLI or transcript-only development | Always rejected | Exact allowlisted synthetic triples | Temporary local synthetic/fake |
-| `live_test` | Owner-gated generated-audio verification | Always rejected | Gated file transcription; analysis disabled | Temporary local synthetic/project credential |
+| `live_test` | Historical offline gate validation only | Always rejected | Execution unconditionally rejected | No client construction |
 | `staging` | Future firm-owned preproduction | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 | `production` | Future authorized deployment | Disabled unless separately authorized | Fixture adapters rejected | Private cloud/SSO required |
 

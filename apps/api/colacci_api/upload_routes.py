@@ -6,6 +6,7 @@ from typing import Annotated, NoReturn
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 
+from apps.api.colacci_api.body_limits import RequestBodyBoundaryError
 from apps.api.colacci_api.demo_auth import demo_principal
 from apps.api.colacci_api.errors import api_error
 from packages.authorization import DemoPermission, has_permission
@@ -109,13 +110,15 @@ def _audit_deletion_failure(
 
 
 def _safe_upload_error(request: Request, exc: Exception) -> HTTPException:
+    if isinstance(exc, RequestBodyBoundaryError):
+        return exc
     if isinstance(exc, UploadRequestError):
         return api_error(request, exc.status_code, exc.code)
     if isinstance(exc, SubmissionConflictError):
         return api_error(request, status.HTTP_409_CONFLICT, "submission_content_conflict")
     if isinstance(exc, UploadStateConflictError):
         return api_error(request, status.HTTP_409_CONFLICT, str(exc))
-    if isinstance(exc, LookupError):
+    if type(exc) is LookupError:
         return api_error(request, status.HTTP_404_NOT_FOUND, "upload_receipt_not_found")
     if isinstance(exc, ManualUploadUnexpectedError):
         return api_error(request, status.HTTP_500_INTERNAL_SERVER_ERROR, "manual_upload_failed")
@@ -123,17 +126,20 @@ def _safe_upload_error(request: Request, exc: Exception) -> HTTPException:
 
 
 def _raise_safe_upload_error(request: Request, exc: Exception) -> NoReturn:
-    if not isinstance(
-        exc,
-        UploadRequestError
-        | SubmissionConflictError
-        | UploadStateConflictError
-        | LookupError
-        | ManualUploadUnexpectedError,
+    if (
+        not isinstance(
+            exc,
+            RequestBodyBoundaryError
+            | UploadRequestError
+            | SubmissionConflictError
+            | UploadStateConflictError
+            | ManualUploadUnexpectedError,
+        )
+        and type(exc) is not LookupError
     ):
-        request.app.state.operational_logger.event(
+        request.app.state.operational_logger.exception(
             "manual_upload_request_failed",
-            level="error",
+            exc,
             component="manual_upload",
             correlation_id=str(getattr(request.state, "correlation_id", "correlation-unavailable")),
             error_code="unexpected_manual_upload_failure",
