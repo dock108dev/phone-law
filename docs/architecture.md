@@ -20,7 +20,8 @@ The browser exposes month history, daily reports, call evidence/review, manual u
 playbooks, local operations, and a content-free health page. Host ports are mapped separately in
 `docker-compose.yml` and remain loopback-only.
 
-PostgreSQL is the only durable runtime component. See [Data model and migrations](data-models.md)
+PostgreSQL owns durable review records; generated upload inputs and temporary media use a
+host-mounted runtime directory with an explicit cleanup lifecycle. See [Data model and migrations](data-models.md)
 for the persisted domains, migration sequence, and database-enforced immutability rules.
 
 ## Local operations control plane
@@ -66,7 +67,7 @@ events; accepted transcripts, analyses, feedback, playbooks, and audit history r
 
 Invented transcript JSON passes whole-artifact validation before any database write, creates no
 media object, and reuses fixture analysis, reports and review flows. Deterministic identity makes
-repeated imports idempotent. Manual upload and the offline import command share this path.
+repeated imports idempotent. Manual upload and the fixture verification harness share this path.
 
 [Source ownership](ssot.md) identifies domain owners. API errors use `errors.py`; settings reject
 unsupported adapters. `App.tsx` owns routing and principal state, `pages/` owns page views and
@@ -93,15 +94,30 @@ a persistent synthetic-data banner on every review route.
 
 There is no real-data upload, external source, identity integration, notification delivery, or
 normal-runtime vendor request. Locally generated non-human media stays outside the repository in
-restrictive temporary synthetic objects, and provider-shaped responses remain mocked in routine
-tests. The demo principal header is allowlisted and accepted only in
+restrictive temporary synthetic objects, and no provider execution code is present. The demo principal header is allowlisted and accepted only in
 demo/test. Fixture processing is an explicit local command; the worker remains a process and
 readiness boundary. There is no automatic scheduler: report generation, retry, retention,
 backup/restore drill, and notification preview behavior is initiated explicitly by scripts or
 authorized local API/UI actions.
 
-Docker Compose publishes every port to loopback only. PostgreSQL is the only stateful service.
-The database contains only typed synthetic review records and the non-sensitive schema marker.
+Default Compose ports bind to loopback; isolated campaign overrides remove published ports.
+The database holds synthetic review records, operational metadata and retained historical provenance.
+
+## When work runs
+
+| Work | Trigger |
+|---|---|
+| Schema setup | Explicit `make bootstrap` or `make dev` migration step |
+| Fixture/report seeding | Explicit `make seed-demo` or `make seed-demo-month` |
+| Audio upload processing | The upload page waits briefly, then sends `POST /api/uploads/{id}/process`; no worker consumes it |
+| Transcript upload processing | Synchronous import during the authenticated submission request |
+| Failed-call or upload retry | Explicit authorized API/UI action |
+| Retention and interrupted-job recovery | Explicit Operations action; recovery runs inside retention execution, not process startup |
+| Backup/restore drill | Explicit Operations action against disposable invented-data SQLite stores |
+| Notification preview | Explicit Operations action; no delivery occurs |
+
+Closing the upload page before its processing request can leave a `ready` receipt; there is no
+independent background scheduler. The worker's only responsibility is health/readiness.
 
 ## Shared boundaries
 

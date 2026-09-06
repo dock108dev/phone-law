@@ -79,7 +79,7 @@ stateDiagram-v2
     DELETION_FAILED --> DELETION_FAILED: terminal and visible
 ```
 
-At restart, any abandoned `DELETING` job becomes `RETRY_SCHEDULED` with `restart_recovered`. Job target, resource type, configuration version, and original schedule time never change.
+When retention execution next runs after a restart, any abandoned `DELETING` job becomes `RETRY_SCHEDULED` with `restart_recovered`. Job target, resource type, configuration version, and original schedule time never change. Restart alone does not run recovery; an authorized retention action is required.
 
 ## Controlled content destruction
 

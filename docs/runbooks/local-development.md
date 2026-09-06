@@ -13,8 +13,8 @@ If a port is occupied, stop the conflicting local process or update only the hos
 mapping. Do not publish services on all interfaces. If API or worker readiness fails, confirm
 PostgreSQL is healthy and rerun `docker compose run --rm api alembic upgrade head`.
 
-If a clean reset is necessary, `CONFIRM_LOCAL_DATA_DELETE=yes make clean` removes only Compose
-resources named `colacci-law`, including its synthetic database volume. Then rerun bootstrap.
+If a clean reset is necessary, `CONFIRM_LOCAL_DATA_DELETE=yes make clean` removes the currently selected Compose
+project, including its synthetic database volume (`colacci-law` by default). Then rerun bootstrap.
 
 If a locked package changes, update the exact direct version first and mechanically regenerate
 the relevant lock; run every stable command plus the separate advisory audit. Do not hand-edit a
@@ -77,6 +77,19 @@ E2E no longer stops or restores its caller's stack. Its separate technical retry
 probe begins in an empty database, preserves a permanent failure, simulates an
 interrupted retryable call, and retains one expected missing call. It is separate
 from both the ordinary v2 month and the exhaustive acceptance fixtures.
+
+## Default service addresses
+
+| Service | Host address | Purpose |
+|---|---|---|
+| Web | `http://localhost:15173` | Browser UI and same-origin API proxy |
+| API | `http://localhost:18000` | `/health/live`, `/health/ready`, authenticated `/api` routes |
+| Worker | `http://localhost:18001` | Health/readiness only |
+| PostgreSQL | `127.0.0.1:54329` | Synthetic local databases; credentials are in Compose |
+
+These mappings apply to default Compose only. Campaign overrides may publish no ports; the
+isolated desktop launcher uses its own documented relay. `make dev` reports actual Compose
+mappings rather than assuming the default URL.
 
 ## Routine validation
 

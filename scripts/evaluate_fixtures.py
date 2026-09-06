@@ -24,7 +24,11 @@ from packages.contracts.review import (
     StructuredAnalysis,
     ValueState,
 )
-from packages.database.health import create_database_engine
+from packages.database.health import (
+    EXPECTED_ALEMBIC_REVISION,
+    create_database_engine,
+    database_readiness,
+)
 from packages.database.repository import ReviewRepository
 from packages.database.review_schema import calls, processing_attempts, transcripts
 from packages.review.fixtures import FixtureCallSource, FixtureManifest
@@ -197,6 +201,8 @@ def main() -> None:
     report_directory = Path(os.environ.get("FIXTURE_REPORT_DIRECTORY", DEFAULT_REPORT_DIRECTORY))
     report_directory.mkdir(parents=True, exist_ok=True)
     try:
+        if not database_readiness(engine).ready:
+            raise RuntimeError("fixture database is not at the required migration")
         _reset_test_data(engine)
         manifest = FixtureManifest()
         source = FixtureCallSource(manifest)
@@ -265,7 +271,7 @@ def main() -> None:
         )
         output = {
             "manifest_version": manifest.version,
-            "migration_revision": "0002_synthetic_review_contracts",
+            "migration_revision": EXPECTED_ALEMBIC_REVISION,
             "fixture_count": len(reports),
             "passed": len(reports),
             "failed": 0,

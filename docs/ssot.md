@@ -52,7 +52,7 @@ Domain: invented transcript ingestion
 SSOT module/file: `packages/review/transcript_import.py`
 Why this is authoritative: it performs whole-artifact validation, deterministic identity,
 idempotent persistence, and fixture analysis for the supported transcript-only contract.
-Known callers: manual-upload service and the explicit offline import command.
+Known callers: manual-upload service and the isolated transcript verification harness.
 
 Domain: interactive manual upload
 SSOT module/file: `packages/manual_upload/service.py`
@@ -93,7 +93,7 @@ Known callers: none.
 The provider SDK, CLI process runner, preflights, execution factory, mock-provider harnesses,
 provider-only fixtures, settings and five generated metadata schemas have been removed. No
 provider credential or model selector is part of current configuration. `local_dev` supports
-fixture processing and strict invented-transcript import only; `live_test` is invalid.
+fixture processing and strict invented-transcript verification only; `live_test` is invalid.
 
 Historical migration files, the three media/provider metadata tables, and serialized review
 provenance enum values remain for data readability and existing retention operations. They are

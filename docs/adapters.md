@@ -20,7 +20,9 @@ Cleanup failure is visible. No provider client or process is constructed.
 JSON uploads use `packages/review/transcript_import.py`. Whole-artifact validation precedes
 persistence; deterministic IDs make duplicate import a no-op. Transcript import creates no
 media object and invokes no transcriber. It reuses analysis, reports, evidence and feedback.
-The explicit `scripts/import_transcript_only.py` command uses the same importer.
+The fixture verification harness `scripts/verify_transcript_import.py` uses the same importer
+but also writes test feedback and report evidence. It accepts only an empty `_test` database;
+it is not a general import utility. See [testing](testing.md#transcript-fixture-verification).
 
 ## Historical compatibility
 

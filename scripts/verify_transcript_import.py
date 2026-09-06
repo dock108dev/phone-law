@@ -1,8 +1,7 @@
-"""Explicit local_dev transcript-only command and sanitized full-loop evidence."""
+"""Validate the invented transcript fixture in an empty disposable test database."""
 
 from __future__ import annotations
 
-import argparse
 import json
 import os
 import shutil
@@ -90,14 +89,16 @@ def _prove_invalid_inputs_create_no_state(engine: sa.Engine, valid_path: Path) -
     shutil.rmtree(INVALID_ROOT)
 
 
+def require_empty_test_database(engine: sa.Engine) -> None:
+    """Refuse retained databases before the harness connects or writes fixture evidence."""
+
+    if not (engine.url.database or "").endswith("_test"):
+        raise ValueError("transcript verification requires a disposable _test database")
+    if any(_database_counts(engine).values()):
+        raise ValueError("transcript verification requires empty review tables")
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--artifact",
-        type=Path,
-        default=Path("/workspace/fixtures/transcript-only/invented-call.json"),
-    )
-    args = parser.parse_args()
     settings = Settings(  # type: ignore[call-arg]
         _env_file=None,
         app_profile=AppProfile.LOCAL_DEV,
@@ -108,9 +109,12 @@ def main() -> None:
             "/tmp/colacci-law-slice3c/objects"  # noqa: S108  # nosec B108
         ),
     )
-    artifact_path = args.artifact.resolve()
+    artifact_path = Path("fixtures/transcript-only/invented-call.json").resolve()
     engine = create_engine(settings.sqlalchemy_database_url)
+    target_verified = False
     try:
+        require_empty_test_database(engine)
+        target_verified = True
         _prove_invalid_inputs_create_no_state(engine, artifact_path)
         artifact = load_transcript_only_artifact(artifact_path)
         importer = TranscriptOnlyImporter(ReviewRepository(engine))
@@ -200,7 +204,8 @@ def main() -> None:
             os.chmod(path, 0o600)
     finally:
         engine.dispose()
-        shutil.rmtree(INVALID_ROOT, ignore_errors=True)
+        if target_verified:
+            shutil.rmtree(INVALID_ROOT, ignore_errors=True)
     print("transcript-only-full-loop call=1 analysis=1 report=complete feedback=persisted")
 
 

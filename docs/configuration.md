@@ -18,6 +18,12 @@ should not rely on ignored keys as configuration.
 | Retention | `AUDIO_RETENTION_DAYS`, `TRANSCRIPT_RETENTION_DAYS`, `ANALYSIS_RETENTION_DAYS`, `AUDIT_RETENTION_DAYS`, `RETENTION_POLICY_APPROVED` |
 | HTTP and operations | `DEBUG`, `CORS_ORIGINS`, `TRUSTED_HOSTS`, `FIRM_TIMEZONE`, `LOG_LEVEL` |
 
+Most service environment values in `docker-compose.yml` are fixed synthetic defaults. A host
+`.env` changes Compose values only where the Compose file explicitly uses `${...}` interpolation;
+it is not a general replacement for that service environment. Direct Python tools use environment values and Settings defaults; they also read `.env`
+unless they explicitly select `_env_file=None`. Explicit constructor values take precedence. Do not put secrets
+in browser build variables or assume changing a host file changes an already running container.
+
 The browser has a separate build-time boundary: `VITE_APP_PROFILE` accepts only `test` or `demo`,
 and `VITE_ALLOW_REAL_CALL_DATA` must be `false`. `VITE_API_BASE_URL` optionally selects the API
 origin; otherwise Vite proxies `/api` through `VITE_API_PROXY_TARGET`, which defaults to
