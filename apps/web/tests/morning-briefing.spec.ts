@@ -31,6 +31,7 @@ test("ten-call morning, dates, original evidence and keyboard return", async ({ 
     expect(recap.href).not.toBe('');
     await page.locator(`#${recap.id}`).getByRole('link').focus();
     await page.keyboard.press('Enter');
+    await page.locator('.transcript-disclosure summary').click();
     await expect(page.locator('.segment').first()).toBeVisible();
     const ids = await page.locator('.segment').evaluateAll((nodes) => nodes.map((node) => node.id));
     expect(ids.length).toBeGreaterThan(0);
@@ -45,6 +46,7 @@ test("ten-call morning, dates, original evidence and keyboard return", async ({ 
     await expect(page.locator(`#${recap.id}`)).toBeFocused();
   }
   await page.locator('.briefing-recap').nth(2).getByRole('link').first().click();
+  await page.locator('.transcript-disclosure summary').click();
   await expect(page.getByText('Buenos días, soy Lucía Soto. ¿Puedo entregar una copia en vez del documento original?', { exact: true })).toBeVisible();
   await page.screenshot({ path: `${evidenceDirectory}/morning-spanish-evidence.png`, fullPage: true });
   await page.getByRole('link', { name: '← Back to morning briefing' }).click();

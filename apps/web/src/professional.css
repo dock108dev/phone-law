@@ -377,3 +377,28 @@ main { container: review-main / inline-size; }
 .briefing-heading button { min-height: 40px; padding: 8px 16px; border: 1px solid #173a63; border-radius: 5px; background: #173a63; color: #fff; cursor: pointer; }
 .briefing-heading button:hover { background: #102c4c; }
 footer > a { font-size: 13px; }
+
+/* The review loop shares the briefing's reading-first hierarchy. */
+.call-context, .identity-context, .translation-note, .saved-assessment { color: var(--ink-muted, #52616b); font-size: .9rem; }
+.conversation-facts { display: grid; gap: 1.5rem; padding: 1.5rem 0; border-bottom: 1px solid #d9dfe3; margin-bottom: 1.5rem; }
+.conversation-facts h2 { font-size: 1.1rem; margin: 0 0 .5rem; }
+.conversation-facts p { margin: .5rem 0; }
+.assessment-disclosure, .missing-disclosure { margin-top: 1rem; }
+.assessment-disclosure summary, .missing-disclosure summary, .transcript-disclosure summary, .side-card summary, .month-reconciliation summary, .failure-card summary { cursor: pointer; padding: .75rem 0; font-weight: 600; }
+.transcript-disclosure > .transcript { margin-top: 1rem; }
+.analysis-layout { grid-template-columns: minmax(0, 1fr); }
+.analysis-side { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+.call-heading, .conversation-facts, .finding-card, .segment, .side-card, .review-history, .calendar-day, .failure-card { min-width: 0; overflow-wrap: anywhere; }
+.calendar-day { min-height: 112px; }
+.calendar-day small { display: block; }
+.coverage-warning { color: #8a341e; }
+@media (max-width: 600px) {
+  .analysis-side { grid-template-columns: minmax(0, 1fr); }
+  .calendar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .calendar-weekdays, .calendar-blank { display: none; }
+  .feedback-options { flex-wrap: wrap; }
+}
+
+.call-heading > div > p:not(.call-context):not(.identity-context):not(.translation-note) { font-size: 1rem; line-height: 1.6; }
+.detail-panel > p, .missing-disclosure > summary, .transcript-disclosure > summary { padding-left: 1rem; padding-right: 1rem; }
+.calendar-day[aria-current="date"] { outline: 2px solid #285a82; outline-offset: -3px; }

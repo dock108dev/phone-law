@@ -10,12 +10,9 @@ export async function expectMonthCountsFit(page: Page): Promise<void> {
       const name = day.getAttribute("aria-label") ?? "unknown day";
       if (day.classList.contains("state-zero_activity")) continue;
       const bounds = day.getBoundingClientRect();
-      const values = day.querySelectorAll("dd");
-      if (values.length !== 5) failures.push(`${name}: expected five count values`);
-      for (const value of values) {
-        if (!/^\d+$/.test(value.textContent.trim())) failures.push(`${name}: missing numeric value`);
-      }
-      for (const item of day.querySelectorAll("dt, dd")) {
+      const activity = day.querySelector("small");
+      if (!activity || !/^\d+ received · \d+ recaps$/.test(activity.textContent.trim())) failures.push(`${name}: missing received and recap counts`);
+      for (const item of day.querySelectorAll(".calendar-date, .day-state, small")) {
         const range = document.createRange();
         range.selectNodeContents(item);
         const text = range.getBoundingClientRect();

@@ -1,7 +1,7 @@
 import { Fragment, type ReactNode, type SubmitEvent, useEffect, useRef, useState } from "react";
 import { ApiRequestError, apiRequest } from "../api";
 import type { CallDetail, DemoPrincipal, Evidence, Finding, ReviewEvent } from "../types";
-import { feedbackLabels, humanize, provenanceValue, clock, RequestState } from "../shared";
+import { feedbackLabels, humanize, provenanceValue, clock, briefingReturn, RequestState } from "../shared";
 
 function EvidenceButton({ evidence, jump }: { evidence: Evidence; jump: (id: string) => void }): ReactNode {
   return <button className="evidence-link button-link" type="button" onClick={() => { jump(evidence.segment_id); }}>Jump to {clock(evidence.start_seconds)} · {humanize(evidence.speaker)}</button>;
@@ -19,7 +19,7 @@ function useReviewSave(detail: CallDetail, target: string | null, principal: Dem
   });
   const lock = useRef(false);
   const [working, setWorking] = useState(false);
-  const [message, setMessage] = useState(pending ? "Previous save not confirmed. Retry the same assessment to check its persisted result." : "");
+  const [message, setMessage] = useState(pending ? "Save not confirmed. Retry to check the saved result." : "");
   async function save(label: string, note: string): Promise<boolean> {
     if (lock.current) return false;
     lock.current = true;
@@ -34,9 +34,9 @@ function useReviewSave(detail: CallDetail, target: string | null, principal: Dem
       setPending(null);
       try {
         await reload();
-        setMessage(target ? "Feedback saved as a new review event." : "Missing finding saved as a new review event.");
+        setMessage(target ? "Assessment saved." : "Missing finding saved.");
       } catch {
-        setMessage(`Assessment saved (${result.event_id}). History could not refresh; reload to see the persisted result.`);
+        setMessage(`Assessment saved (${result.event_id}). History could not refresh; reload to see it.`);
       }
       return true;
     } catch (reason) {
@@ -66,6 +66,7 @@ function FindingFeedback({
   const [label, setLabel] = useState(pending?.label ?? "");
   const [note, setNote] = useState(pending?.note ?? "");
   const messageRef = useRef<HTMLAnchorElement>(null);
+  const [expanded, setExpanded] = useState(!!pending);
   useEffect(() => {
     if (!message) return undefined;
     const focusMessage = window.setTimeout(() => {
@@ -79,14 +80,16 @@ function FindingFeedback({
   }
   return (
     <article className="finding-card">
-      <div className="content-origin inference-origin">Fixture/model inference</div>
-      <div className="item-topline"><span className="finding-kind">{humanize(finding.kind)}</span><span>{finding.material ? "Material finding" : "Supporting finding"}</span></div>
+      <div className="item-topline"><span className="finding-kind">{humanize(finding.kind)}</span></div>
       <h3>{finding.statement}</h3>
       <div className="evidence-list">{finding.evidence.map((evidence) => <EvidenceButton evidence={evidence} jump={jump} key={evidence.segment_id} />)}</div>
+      {detail.review_history.filter((event) => event.finding_id === finding.finding_id).slice(-1).map((event) => <p className="saved-assessment" key={event.event_id}>Last assessment: {humanize(event.label)}</p>)}
+      <details className="assessment-disclosure" open={expanded || !!pending} onToggle={(event) => { setExpanded(event.currentTarget.open); }}>
+        <summary>Assess this finding</summary>
       <form className="feedback-form" onSubmit={(event) => void submit(event)}>
         <fieldset disabled={working || !!pending}>
           <legend>Assess the finding above</legend>
-          <p>Correct confirms this analysis; Incorrect rejects it. Neither completes any real-world action.</p>
+
           <div className="feedback-options">
             {feedbackLabels.map((value) => (
               <label key={value}>
@@ -97,11 +100,12 @@ function FindingFeedback({
           </div>
         </fieldset>
         <label className="note-field"><span>Reviewer note <small>(optional)</small></span><textarea disabled={working || !!pending} value={note} onChange={(event) => { setNote(event.target.value); }} rows={2} /></label>
-        <button className="primary-button" disabled={working || (!label && !pending)} type="submit">{working ? "Saving assessment…" : pending ? "Retry same assessment" : "Save feedback"}</button>
+        <button className="primary-button" disabled={working || (!label && !pending)} type="submit">{working ? "Saving assessment…" : pending ? "Retry same assessment" : "Save assessment"}</button>
         <div aria-live="polite">
           {message ? <a className="form-message" ref={messageRef} href="#review-history-title" autoFocus>{message}</a> : <p className="form-message" />}
         </div>
       </form>
+      </details>
     </article>
   );
 }
@@ -110,6 +114,7 @@ function MissingFeedback({ detail, principal, reload }: { detail: CallDetail; pr
   const { pending, working, message, save } = useReviewSave(detail, null, principal, reload);
   const [note, setNote] = useState(pending?.note ?? "");
   const messageRef = useRef<HTMLAnchorElement>(null);
+  const [expanded, setExpanded] = useState(!!pending);
   useEffect(() => {
     if (!message) return undefined;
     const focusMessage = window.setTimeout(() => {
@@ -122,16 +127,14 @@ function MissingFeedback({ detail, principal, reload }: { detail: CallDetail; pr
     if (await save("missing", note)) setNote("");
   }
   return (
-    <form className="missing-form" onSubmit={(event) => void submit(event)}>
-      <div className="content-origin human-origin">Human review</div>
+    <details className="missing-disclosure" open={expanded || !!pending} onToggle={(event) => { setExpanded(event.currentTarget.open); }}><summary>Something missing?</summary><form className="missing-form" onSubmit={(event) => void submit(event)}>
       <h3>Add a missing finding</h3>
-      <p>Record an omission without changing the original analysis or playbook.</p>
       <label className="note-field"><span>What is missing? <b>(required)</b></span><textarea disabled={working || !!pending} required value={note} onChange={(event) => { setNote(event.target.value); }} rows={3} /></label>
       <button className="secondary-button" disabled={working} type="submit">{working ? "Saving assessment…" : pending ? "Retry same assessment" : "Add missing finding"}</button>
       <div aria-live="polite">
         {message ? <a className="form-message" ref={messageRef} href="#review-history-title" autoFocus>{message}</a> : <p className="form-message" />}
       </div>
-    </form>
+    </form></details>
   );
 }
 
@@ -141,6 +144,8 @@ export function CallPage({ callId, principal }: { callId: string; principal: Dem
   const [error, setError] = useState<string | null>(null);
   const [highlighted, setHighlighted] = useState("");
   const handledInitialHash = useRef(false);
+  const evidenceOrigin = useRef<HTMLElement | null>(null);
+  const transcriptRef = useRef<HTMLDetailsElement>(null);
 
   async function load(): Promise<void> {
     setError(null);
@@ -150,6 +155,8 @@ export function CallPage({ callId, principal }: { callId: string; principal: Dem
   useEffect(() => {
     let active = true;
     setLoading(true);
+    const returnPath = briefingReturn();
+    if (returnPath.startsWith("/briefing/")) window.sessionStorage.setItem("colacci-briefing-return", returnPath);
     apiRequest<CallDetail>(`/api/calls/${callId}`, principal)
       .then((result) => { if (active) setDetail(result); })
       .catch((reason: unknown) => { if (active) setError(reason instanceof Error ? reason.message : "Unknown request error"); })
@@ -158,7 +165,10 @@ export function CallPage({ callId, principal }: { callId: string; principal: Dem
   }, [callId, principal]);
 
   function jump(segmentId: string): void {
+    if (["main-content", "review-history-title", "findings-title"].includes(segmentId)) { document.getElementById(segmentId)?.focus(); return; }
     handledInitialHash.current = true;
+    if (document.activeElement instanceof HTMLElement && document.activeElement.classList.contains("evidence-link")) evidenceOrigin.current = document.activeElement;
+    if (transcriptRef.current) transcriptRef.current.open = true;
     setHighlighted(segmentId);
     window.history.replaceState(null, "", `#${segmentId}`);
     window.setTimeout(() => {
@@ -185,37 +195,36 @@ export function CallPage({ callId, principal }: { callId: string; principal: Dem
       {new URLSearchParams(window.location.search).get("briefing")?.match(/^\d{4}-\d{2}-\d{2}$/) ? <a className="back-link" href={`/briefing/${new URLSearchParams(window.location.search).get("briefing") ?? ""}#call-${detail.call_id}`}>← Back to morning briefing</a> : <a className="back-link" href={`/reports/${detail.occurred_at.slice(0, 10)}?month=${detail.occurred_at.slice(0, 7)}`}>← Back to daily report</a>}
       <section className="call-heading">
         <div>
-          <div className="eyebrow">Call review</div>
-          <h1>{detail.synthetic_reference}</h1>
+          <p className="call-context">{new Date(detail.occurred_at).toLocaleString("en-US", { timeZone: "America/New_York", timeZoneName: "short" })} · {clock(detail.duration_seconds)} · {detail.language === "es" ? "Spanish" : "English"}</p>
+          <h1>{detail.identity_label ?? "Caller not identified"}</h1>
+          <p className="identity-context">{humanize(detail.identity_state)} · {detail.synthetic_reference}</p>
           <p>{detail.summary}</p>
+          {detail.language === "es" && <p className="translation-note">English paraphrases below; original Spanish in the transcript.</p>}
         </div>
-        <span className={`priority priority-${detail.priority}`}>Priority: {humanize(detail.priority)}</span>
       </section>
-      <aside className="advisory-notice"><b>Human review required.</b> This is synthetic advisory output. It does not create a task, deadline, communication, or legal conclusion.</aside>
-
-      <section className="metadata-grid" aria-label="Synthetic call metadata">
-        <div className="metadata"><span>Direction</span><strong>{humanize(detail.direction)}</strong></div>
-        <div className="metadata"><span>Time</span><strong>{new Date(detail.occurred_at).toLocaleString("en-US", { timeZone: "America/New_York", timeZoneName: "short" })}</strong></div>
-        <div className="metadata"><span>Duration</span><strong>{clock(detail.duration_seconds)}</strong></div>
-        <div className="metadata"><span>Language</span><strong>{detail.language === "es" ? "Spanish" : "English"}</strong></div>
-        <div className="metadata"><span>Staff extension</span><strong>{detail.staff_extension ?? "Unknown"}</strong></div>
-        <div className="metadata"><span>Caller identity</span><strong>{humanize(detail.identity_state)}{detail.identity_label ? ` · ${detail.identity_label}` : ""}</strong></div>
+      {detail.uncertainty.length > 0 && <aside className="uncertainty"><b>Uncertainty</b><ul>{detail.uncertainty.map((item) => <li key={item}>{item}</li>)}</ul></aside>}
+      <section className="conversation-facts" aria-label="Conversation and next steps">
+        <div><h2>Caller request</h2><p>{detail.facts.caller_request.value ?? humanize(detail.facts.caller_request.state)}</p><div className="evidence-list">{detail.facts.caller_request.evidence.map((evidence) => <EvidenceButton key={evidence.segment_id} evidence={evidence} jump={jump} />)}</div></div>
+        {detail.facts.staff_commitments.length > 0 && <div><h2>Staff promises</h2>{detail.facts.staff_commitments.map((fact, index) => <div key={index}><p>{fact.commitment ?? humanize(fact.state)}</p><div className="evidence-list">{fact.evidence.map((evidence) => <EvidenceButton key={evidence.segment_id} evidence={evidence} jump={jump} />)}</div></div>)}</div>}
+        {detail.proposed_next_steps.length > 0 && <div><h2>Analysis suggestions</h2><ul>{detail.proposed_next_steps.map((step) => <li key={step}>{step}</li>)}</ul><p>Suggested role: {humanize(detail.responsible_role)} · Timing: {detail.suggested_response_timing ?? "Not specified"}</p></div>}
       </section>
 
       <div className="analysis-layout">
         <div className="analysis-main">
           <section className="detail-panel" aria-labelledby="findings-title">
-            <div className="panel-title"><div><span className="content-origin inference-origin">Fixture/model inference</span><h2 id="findings-title">Structured findings</h2></div><span>{humanize(detail.confidence)} confidence</span></div>
-            {detail.uncertainty.length > 0 && <div className="uncertainty"><b>Uncertainty remains</b><ul>{detail.uncertainty.map((item) => <li key={item}>{item}</li>)}</ul></div>}
+            <div className="panel-title"><h2 id="findings-title" tabIndex={-1}>Findings to review</h2></div><p>Assess the analysis. Saving an assessment does not complete a callback or other action.</p>
             <div className="finding-list">
               {detail.findings.map((finding) => <FindingFeedback finding={finding} detail={detail} principal={principal} jump={jump} reload={load} key={`${principal}:${finding.finding_id}`} />)}
-              {detail.findings.length === 0 && <div className="empty-section">No original finding was produced. Use the missing-finding control when needed.</div>}
+              {detail.findings.length === 0 && <div className="empty-section">No findings available.</div>}
             </div>
             <MissingFeedback key={principal} detail={detail} principal={principal} reload={load} />
           </section>
 
-          <section className="detail-panel" aria-labelledby="transcript-title">
-            <div className="panel-title"><div><span className="content-origin fact-origin">Transcript fact</span><h2 id="transcript-title">Original-language transcript</h2></div><span>{detail.language.toUpperCase()}</span></div>
+          <details className="detail-panel transcript-disclosure" ref={transcriptRef}>
+            <summary id="transcript-title">Original-language transcript · {detail.language.toUpperCase()}</summary>
+            {highlighted && <button className="button-link" type="button" onClick={() => { if (evidenceOrigin.current?.isConnected) { evidenceOrigin.current.focus(); evidenceOrigin.current.scrollIntoView({ block: "center" }); } else document.getElementById("findings-title")?.focus(); }}>Return to statement</button>}
+            {highlighted && !detail.transcript_segments.some((segment) => segment.segment_id === highlighted) && <p role="status">This supporting passage is unavailable. Check the remaining transcript for context.</p>}
+            {detail.transcript_segments.length === 0 && <p>Transcript unavailable. Supporting passages cannot be checked.</p>}
             <div className="transcript" lang={detail.language}>
               {detail.transcript_segments.map((segment) => (
                 <article
@@ -231,21 +240,18 @@ export function CallPage({ callId, principal }: { callId: string; principal: Dem
                 </article>
               ))}
             </div>
-          </section>
+          </details>
         </div>
 
         <aside className="analysis-side">
-          <section className="side-card"><span className="content-origin fact-origin">Transcript fact</span><h2>Extracted facts</h2><dl><dt>Caller request</dt><dd>{detail.facts.caller_request.value ?? humanize(detail.facts.caller_request.state)}</dd>{detail.facts.reported_facts.map((fact, index) => <Fragment key={`${fact.value ?? "reported"}-${index.toString()}`}><dt>Reported fact</dt><dd>{fact.value ?? humanize(fact.state)}</dd></Fragment>)}{detail.facts.dates.map((fact, index) => <Fragment key={`${fact.expression ?? "date"}-${index.toString()}`}><dt>Date</dt><dd>{fact.expression ?? "Unknown"} · {humanize(fact.state)}{fact.is_deadline ? " · deadline" : ""}</dd></Fragment>)}</dl></section>
-          <section className="side-card"><h2>Proposed next steps</h2><ol>{detail.proposed_next_steps.map((step) => <li key={step}>{step}</li>)}</ol><p><b>Role:</b> {humanize(detail.responsible_role)}</p><p><b>Timing:</b> {detail.suggested_response_timing ?? "Not specified"}</p></section>
-          <section className="side-card"><h2>Processing attempts</h2><ol className="attempt-list">{detail.attempts.map((attempt) => <li key={attempt.attempt_id}><b>Attempt {attempt.attempt_number}</b><span>{attempt.state}</span>{attempt.diagnostic_code && <small>{attempt.diagnostic_code}</small>}</li>)}</ol></section>
-          <section className="side-card provenance"><h2>Provenance</h2><dl>{Object.entries(detail.provenance).map(([key, value]) => <Fragment key={key}><dt>{humanize(key)}</dt><dd>{provenanceValue(value)}</dd></Fragment>)}</dl></section>
+          <details className="side-card"><summary>More call details</summary><dl><dt>Direction</dt><dd>{humanize(detail.direction)}</dd><dt>Staff extension</dt><dd>{detail.staff_extension ?? "Unknown"}</dd><dt>Analysis confidence</dt><dd>{humanize(detail.confidence)}</dd>{detail.facts.reported_facts.map((fact, index) => <Fragment key={index}><dt>Reported fact</dt><dd>{fact.value ?? humanize(fact.state)}<div className="evidence-list">{fact.evidence.map((evidence) => <EvidenceButton key={evidence.segment_id} evidence={evidence} jump={jump} />)}</div></dd></Fragment>)}{detail.facts.dates.map((fact, index) => <Fragment key={index}><dt>Date</dt><dd>{fact.expression ?? "Unknown"} · {humanize(fact.state)}{fact.is_deadline ? " · deadline" : ""}<div className="evidence-list">{fact.evidence.map((evidence) => <EvidenceButton key={evidence.segment_id} evidence={evidence} jump={jump} />)}</div></dd></Fragment>)}</dl>{detail.facts.missing_context.length > 0 && <><h3>Missing context</h3><ul>{detail.facts.missing_context.map((item) => <li key={item}>{item}</li>)}</ul></>}</details>
+          <details className="side-card provenance"><summary>Processing and provenance</summary><h2>Processing attempts</h2><ol className="attempt-list">{detail.attempts.map((attempt) => <li key={attempt.attempt_id}><b>Attempt {attempt.attempt_number}</b><span>{attempt.state}</span>{attempt.diagnostic_code && <small>{attempt.diagnostic_code}</small>}</li>)}</ol><h2>Provenance</h2><dl>{Object.entries(detail.provenance).map(([key, value]) => <Fragment key={key}><dt>{humanize(key)}</dt><dd>{provenanceValue(value)}</dd></Fragment>)}</dl></details>
         </aside>
       </div>
 
       <section className="review-history" aria-labelledby="review-history-title">
-        <div className="content-origin human-origin">Human review</div>
-        <h2 id="review-history-title" tabIndex={-1}>Append-only review history</h2>
-        {detail.review_history.length === 0 ? <p>No feedback recorded yet.</p> : <ol>{detail.review_history.map((event) => <li key={event.event_id}><b>{humanize(event.label)}</b><span>{detail.findings.find((finding) => finding.finding_id === event.finding_id)?.statement ?? event.finding_id ?? "Analysis-level missing finding"}</span>{event.note && <p>{event.note}</p>}<small>{event.principal.principal_id} · {new Date(event.created_at).toLocaleString()}</small></li>)}</ol>}
+          <h2 id="review-history-title" tabIndex={-1}>Saved assessments</h2>
+        {detail.review_history.length === 0 ? <p>No assessments yet.</p> : <ol>{detail.review_history.map((event) => <li key={event.event_id}><b>{humanize(event.label)}</b><span>{detail.findings.find((finding) => finding.finding_id === event.finding_id)?.statement ?? event.finding_id ?? "Analysis-level missing finding"}</span>{event.note && <p>{event.note}</p>}<small>{event.principal.principal_id} · {new Date(event.created_at).toLocaleString()}</small></li>)}</ol>}
       </section>
     </>
   );

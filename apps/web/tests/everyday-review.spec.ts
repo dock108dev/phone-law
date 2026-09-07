@@ -1,3 +1,4 @@
+import type { CallDetail } from "../src/types";
 import { writeFile } from "node:fs/promises";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
@@ -17,13 +18,14 @@ test("everyday assessments, uncertain saves, return context and coverage", async
   await recap.getByRole("link", { name: /Open call/ }).click();
   const callUrl = page.url();
   const finding = page.locator(".finding-card").first();
+  await finding.locator("summary").click();
   const before = await page.locator(".review-history li").count();
   for (const [label, note] of [["Correct", "Engineering confirmation"], ["Incorrect", "Engineering rejection"], ["Partially Correct", "Engineering revised assessment"]]) {
     if (!label || !note) throw new Error("Assessment case is incomplete");
     await finding.getByRole("radio", { name: label, exact: true }).check();
     await finding.getByRole("textbox").fill(note);
-    await finding.getByRole("button", { name: "Save feedback" }).dblclick();
-    await expect(finding.getByText("Feedback saved as a new review event.")).toBeFocused();
+    await finding.getByRole("button", { name: "Save assessment" }).dblclick();
+    await expect(finding.getByText("Assessment saved.")).toBeFocused();
     await expect(page.locator(".review-history li").last()).toContainText(note);
   }
   await expect(page.locator(".review-history li")).toHaveCount(before + 3);
@@ -40,20 +42,20 @@ test("everyday assessments, uncertain saves, return context and coverage", async
   });
   await finding.getByRole("radio", { name: "Unsupported", exact: true }).check();
   await finding.getByRole("textbox").fill("Engineering response-loss probe");
-  await finding.getByRole("button", { name: "Save feedback" }).click();
+  await finding.getByRole("button", { name: "Save assessment" }).click();
   await expect(finding.getByText(/Save not confirmed/)).toBeVisible();
   await expect(finding.getByRole("textbox")).toHaveValue("Engineering response-loss probe");
   await page.reload();
   await expect(finding.getByRole("textbox")).toHaveValue("Engineering response-loss probe");
   await finding.getByRole("button", { name: "Retry same assessment" }).click();
-  await expect(finding.getByText("Feedback saved as a new review event.")).toBeVisible();
+  await expect(finding.getByText("Assessment saved.")).toBeVisible();
   await expect(page.locator(".review-history li")).toHaveCount(before + 4);
   await page.unroute("**/api/analyses/*/reviews");
   // Definite denial preserves entered information without claiming success.
   await page.route("**/api/analyses/*/reviews", (route) => route.fulfill({ status: 403, contentType: "application/json", body: JSON.stringify({ detail: { error: "Engineering denied-save probe" } }) }));
   await finding.getByRole("radio", { name: "Correct", exact: true }).check();
   await finding.getByRole("textbox").fill("Engineering unsaved draft");
-  await finding.getByRole("button", { name: "Save feedback" }).click();
+  await finding.getByRole("button", { name: "Save assessment" }).click();
   await expect(finding.getByText(/Assessment was not saved/)).toBeVisible();
   await expect(finding.getByRole("textbox")).toHaveValue("Engineering unsaved draft");
   await expect(page.locator(".review-history li")).toHaveCount(before + 4);
@@ -87,6 +89,7 @@ test("everyday assessments, uncertain saves, return context and coverage", async
   await expect(page.getByRole("heading", { name: "Calls from August 1, 2026" })).toBeVisible();
   await page.goto(callUrl);
   await expect(page.locator(".review-history li")).toHaveCount(before + 4);
+  await finding.locator("summary").click();
   let refreshFailed = false;
   await page.route("**/api/calls/*", async (route) => {
     if (!refreshFailed) {
@@ -96,7 +99,7 @@ test("everyday assessments, uncertain saves, return context and coverage", async
   });
   await finding.getByRole("radio", { name: "Correct", exact: true }).check();
   await finding.getByRole("textbox").fill("Engineering saved despite refresh failure");
-  await finding.getByRole("button", { name: "Save feedback" }).click();
+  await finding.getByRole("button", { name: "Save assessment" }).click();
   await expect(finding.getByText(/Assessment saved .*History could not refresh/)).toBeVisible();
   await page.reload();
   await expect(page.locator(".review-history li")).toHaveCount(before + 5);
@@ -140,4 +143,91 @@ test("briefing loading and recoverable error remain readable", async ({ page }) 
   await page.unroute("**/api/briefing*");
   await page.getByRole("button", { name: "Reload morning briefing" }).click();
   await expect(page.locator(".briefing-recap")).toHaveCount(10);
+});
+
+test("call disclosures preserve unavailable evidence, long text and missing-assessment retries", async ({ page }) => {
+  test.setTimeout(90_000);
+  await page.goto("/");
+  await page.locator(".briefing-recap").nth(2).getByRole("link").click();
+  const url = page.url();
+  await expect(page.locator(".translation-note")).toContainText("English paraphrases");
+  const evidence = page.getByRole("button", { name: /^Jump to/ }).first();
+  await evidence.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".segment.highlighted")).toBeFocused();
+  await expect(page.locator(".segment.highlighted")).toContainText("Buenos días, soy Lucía Soto");
+  await page.getByRole("button", { name: "Return to statement" }).click();
+  await expect(evidence).toBeFocused();
+  await page.goto(`${url}#unavailable-passage`);
+  await expect(page.getByText("This supporting passage is unavailable.", { exact: false })).toBeVisible();
+  await page.route("**/api/calls/*", async (route) => {
+    const response = await route.fetch();
+    const data = await response.json() as CallDetail;
+    data.identity_label = "NombreSintéticoLargo".repeat(20);
+    const firstSegment = data.transcript_segments[0];
+    if (!firstSegment) throw new Error("Long-content probe requires a segment");
+    firstSegment.text = "Pasaje sintético largo con contexto. ".repeat(100) + "PalabraLarga".repeat(50);
+    await route.fulfill({ response, json: data });
+  });
+  await page.goto(`${url}#am03-s1`);
+  await page.reload();
+  await expect(page.locator(".segment.highlighted")).toContainText("Pasaje sintético largo");
+  await page.setViewportSize({ width: 390, height: 950 });
+  await page.locator(".analysis-side summary").first().click();
+  await page.locator(".provenance summary").click();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: `${evidenceDirectory}/long-spanish-details-mobile.png`, fullPage: true });
+  await page.unroute("**/api/calls/*");
+  await page.goto(url);
+  const before = await page.locator(".review-history li").count();
+  await page.locator(".missing-disclosure summary").click();
+  await page.getByLabel(/What is missing/).fill("Engineering missing-assessment response loss");
+  await page.route("**/api/analyses/*/reviews", async (route) => {
+    const response = await route.fetch();
+    expect(response.status()).toBe(201);
+    await route.abort("failed");
+  });
+  await page.getByRole("button", { name: "Add missing finding" }).click();
+  await expect(page.getByText(/Save not confirmed/)).toBeVisible();
+  await page.unroute("**/api/analyses/*/reviews");
+  await page.reload();
+  await expect(page.getByLabel(/What is missing/)).toHaveValue("Engineering missing-assessment response loss");
+  await page.getByRole("button", { name: "Retry same assessment" }).click();
+  await expect(page.getByText("Missing finding saved.", { exact: true })).toBeFocused();
+  await expect(page.locator(".review-history li")).toHaveCount(before + 1);
+  await page.route("**/api/calls/*", async (route) => {
+    const response = await route.fetch();
+    const data = await response.json() as CallDetail; data.transcript_segments = [];
+    await route.fulfill({ response, json: data });
+  });
+  await page.reload();
+  await page.locator(".transcript-disclosure summary").click();
+  await expect(page.getByText("Transcript unavailable.", { exact: false })).toBeVisible();
+  await page.unroute("**/api/calls/*");
+  await page.route("**/api/calls/*", (route) => route.fulfill({status:503,contentType:"application/json",body:JSON.stringify({detail:{error:"Call temporarily unavailable"}})}));
+  await page.reload();
+  await expect(page.getByRole("alert")).toContainText("Call temporarily unavailable");
+  await page.unroute("**/api/calls/*");
+  await page.getByRole("button", { name: "Reload call review" }).click();
+  await expect(page.locator(".call-heading")).toBeVisible();
+});
+
+test("direct call links retain their day through history and report date changes", async ({ page, context }) => {
+  await page.goto("/");
+  const href = await page.locator(".briefing-recap").nth(4).getByRole("link").getAttribute("href");
+  if (!href) throw new Error("A direct call link is required");
+  const direct = await context.newPage();
+  await direct.goto(href);
+  const returnHref = await direct.getByRole("link", { name: "← Back to morning briefing" }).getAttribute("href");
+  await expect(direct.getByRole("link", { name: "Morning briefing", exact: true })).toHaveAttribute("href", returnHref ?? "");
+  await direct.getByRole("link", { name: "Month history" }).click();
+  await expect(direct.locator('.calendar-day[aria-current="date"]')).toHaveAttribute("href", "/briefing/2026-07-15");
+  await direct.getByRole("link", { name: "← Return to selected briefing" }).click();
+  await expect(direct.locator('.briefing-recap:focus')).toContainText("Priya Lane");
+  await direct.getByRole("link", { name: "Coverage details" }).click();
+  await direct.getByLabel("Report date").selectOption("2026-07-08");
+  await expect(direct).toHaveURL(/\/reports\/2026-07-08$/);
+  await direct.reload();
+  await expect(direct.getByRole("heading", { name: "Call review · 2026-07-08" })).toBeVisible();
+  await direct.close();
 });

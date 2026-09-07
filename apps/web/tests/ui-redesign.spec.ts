@@ -67,7 +67,8 @@ test("professional internal-firm workspace routes, states, recovery, and evidenc
   await page.goto("/reports/2026-07-08");
   const englishLink = page.locator('a.call-reference[href^="/calls/"]').first();
   await englishLink.click();
-  await expect(page.getByRole("heading", { name: "Original-language transcript" })).toBeVisible();
+  await page.locator(".transcript-disclosure summary").click();
+  await expect(page.locator(".segment").first()).toBeVisible();
   await shot(page, "english-call-review");
   await page.locator(".review-history").screenshot({ path: `${evidenceDirectory}/after/feedback-history.png` });
   await accessible(page, "English call review");

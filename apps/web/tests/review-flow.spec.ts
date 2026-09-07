@@ -24,6 +24,7 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
   await page.getByRole("link", { name: "Coverage details" }).click();
   await selectDemoRole(page, "demo-reviewer");
   await expect(page.getByRole("heading", { name: "Coverage is partial." })).toBeVisible();
+  await page.locator(".completeness summary").click();
   await expect(page.getByText("Expected").locator("..").getByText("11")).toBeVisible();
   await expect(page.getByText("Analyzed").locator("..").getByText("10")).toBeVisible();
   await expect(page.getByText("Failed").locator("..").getByText("1")).toBeVisible();
@@ -57,11 +58,12 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
   await page.screenshot({ path: `${evidenceDirectory}/laptop-report.png`, fullPage: true });
 
   await page.getByRole("link", { name: "CL-FX-003" }).first().click();
+  await page.locator(".transcript-disclosure summary").click();
   await expect(page.getByText("Hola. Tuve una caída en una tienda la semana pasada y me lastimé la muñeca.")).toBeVisible();
   await page.getByRole("link", { name: "← Back to daily report" }).click();
 
   await page.getByRole("link", { name: "CL-FX-002" }).first().click();
-  await expect(page.getByRole("heading", { name: "CL-FX-002" })).toBeVisible();
+  await expect(page.locator(".identity-context")).toContainText("CL-FX-002");
   const callUrl = page.url();
   const provenanceBefore = await page.locator(".provenance").textContent();
   expect(provenanceBefore).toContain("synthetic-draft-v1");
@@ -73,18 +75,20 @@ test("complete synthetic reviewer flow, roles, persistence, accessibility, and p
   await expect(highlighted).toBeFocused();
   await highlighted.screenshot({ path: `${evidenceDirectory}/highlighted-evidence.png` });
 
+  await page.locator(".assessment-disclosure summary").first().click();
   await page.getByLabel("Correct", { exact: true }).check();
-  await page.getByRole("button", { name: "Save feedback" }).click();
-  await expect(page.getByText("Feedback saved as a new review event.")).toBeFocused();
-  await expect(page.getByRole("heading", { name: "Append-only review history" }).locator("..")).toContainText("Correct");
+  await page.getByRole("button", { name: "Save assessment" }).click();
+  await expect(page.getByText("Assessment saved.")).toBeFocused();
+  await expect(page.getByRole("heading", { name: "Saved assessments" }).locator("..")).toContainText("Correct");
   await page.reload();
-  await expect(page.getByRole("heading", { name: "Append-only review history" }).locator("..")).toContainText("Correct");
+  await expect(page.getByRole("heading", { name: "Saved assessments" }).locator("..")).toContainText("Correct");
 
   const missingNote = "Synthetic browser review records a missing context finding.";
+  await page.locator(".missing-disclosure summary").click();
   await page.getByRole("textbox", { name: /What is missing/ }).fill(missingNote);
   await page.getByRole("button", { name: "Add missing finding" }).click();
-  await expect(page.getByText("Missing finding saved as a new review event.")).toBeFocused();
-  await expect(page.getByRole("heading", { name: "Append-only review history" }).locator("..")).toContainText(missingNote);
+  await expect(page.getByText("Missing finding saved.")).toBeFocused();
+  await expect(page.getByRole("heading", { name: "Saved assessments" }).locator("..")).toContainText(missingNote);
   await page.locator(".review-history").screenshot({ path: `${evidenceDirectory}/persisted-feedback.png` });
 
   const callAccessibility = await new AxeBuilder({ page })

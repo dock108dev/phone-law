@@ -45,6 +45,7 @@ test("Slice 6A reviewer, administrator, and operations acceptance journey", asyn
   await page.getByRole("link", { name: "Coverage details" }).click();
   await selectDemoRole(page, "demo-reviewer");
   await expect(page.getByRole("heading", { name: "Coverage is partial." })).toBeVisible();
+  await page.locator(".completeness summary").click();
   const reconciliationCounts: [string, string][] = [["Expected", "11"], ["Received", "11"], ["Analyzed", "10"], ["Failed", "1"], ["Missing", "0"], ["Late", "0"]];
   for (const [label, value] of reconciliationCounts) {
     await expect(page.locator(".metric").filter({ hasText: new RegExp(`^${label}${value}$`) })).toBeVisible();
@@ -64,22 +65,25 @@ test("Slice 6A reviewer, administrator, and operations acceptance journey", asyn
   for (const fixture of ["CL-FX-005", "CL-FX-003", "CL-FX-006", "CL-FX-004"]) {
     await page.goto("/reports/2026-08-17");
     await page.getByRole("link", { name: fixture }).first().click();
-    await expect(page.getByRole("heading", { name: fixture })).toBeVisible();
-    await expect(page.getByText("Human review required.", { exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Original-language transcript" })).toBeVisible();
-    if (fixture === "CL-FX-006") await expect(page.getByText("Uncertainty remains")).toBeVisible();
+    await expect(page.locator(".identity-context")).toContainText(fixture);
+    await expect(page.getByText("Assess the analysis. Saving an assessment does not complete a callback or other action.", { exact: true })).toBeVisible();
+    await page.locator(".transcript-disclosure summary").click();
+    await expect(page.locator(".segment").first()).toBeVisible();
+    if (fixture === "CL-FX-006") await expect(page.getByText("Uncertainty", { exact: true })).toBeVisible();
   }
   await page.goto("/reports/2026-08-17");
   await page.getByRole("link", { name: "CL-FX-002" }).first().click();
   const originalProvenance = await page.locator(".provenance").textContent();
   await page.getByRole("button", { name: /Jump to .* Staff/ }).first().click();
   await expect(page.locator(".segment.highlighted")).toBeFocused();
+  await page.locator(".assessment-disclosure summary").first().click();
   await page.getByLabel("Incorrect", { exact: true }).first().check();
-  await page.getByRole("button", { name: "Save feedback" }).first().click();
-  await expect(page.getByText("Feedback saved as a new review event.")).toBeFocused();
+  await page.getByRole("button", { name: "Save assessment" }).first().click();
+  await expect(page.getByText("Assessment saved.")).toBeFocused();
+  await page.locator(".missing-disclosure summary").click();
   await page.getByRole("textbox", { name: /What is missing/ }).fill("Invented acceptance omission.");
   await page.getByRole("button", { name: "Add missing finding" }).click();
-  await expect(page.getByText("Missing finding saved as a new review event.")).toBeFocused();
+  await expect(page.getByText("Missing finding saved.")).toBeFocused();
   await page.reload();
   await expect(page.locator(".review-history")).toContainText("Incorrect");
   await expect(page.locator(".review-history")).toContainText("Missing");

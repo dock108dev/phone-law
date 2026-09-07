@@ -22,7 +22,7 @@ test("July month history and representative daily reports remain usable", async 
   await expect(page.getByRole("heading", { name: "July 2026" })).toBeVisible();
   await expect(page.locator(".calendar-day")).toHaveCount(31);
   await expect(page.locator(".calendar-day.state-zero_activity")).toHaveCount(9);
-  await expect(page.getByLabel("July monthly reconciliation")).toContainText("227");
+  await expect(page.getByLabel("Monthly reconciliation")).toContainText("227");
   await expect(page.getByRole("link", { name: "Previous month" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Next month" })).toBeVisible();
   const accessibility = await new AxeBuilder({ page })
@@ -56,6 +56,7 @@ test("July month history and representative daily reports remain usable", async 
   for (const [journey, path, visibleText] of journeys) {
     const journeyStarted = Date.now();
     await page.goto(path);
+    if (journey === "duplicates") await page.locator(".completeness summary").click();
     await expect(page.getByText(visibleText, { exact: false }).first()).toBeVisible();
     await expect(page.locator(".report-section")).toHaveCount(8);
     if (journey === "missing") {
@@ -109,8 +110,9 @@ test("July month history and representative daily reports remain usable", async 
   const spanishStarted = Date.now();
   await page.goto("/reports/2026-07-01");
   await page.getByRole("link", { name: "CL-M2-20260701-08" }).first().click();
-  await expect(page.getByText("Spanish", { exact: true })).toBeVisible();
-  await expect(page.locator(".metadata").filter({ hasText: "Time" })).toContainText("7/1/2026, 3:08:00 PM EDT");
+  await expect(page.locator(".call-context")).toContainText("Spanish");
+  await page.locator(".transcript-disclosure summary").click();
+  await expect(page.locator(".call-context")).toContainText("7/1/2026, 3:08:00 PM EDT");
   await expect(page.getByText(/¿Puedo pedir información/).first()).toBeVisible();
   await page.screenshot({ path: `${evidenceDirectory}/spanish-call.png`, fullPage: true });
   results.push({ journey: "spanish_heavy", duration_ms: Date.now() - spanishStarted });

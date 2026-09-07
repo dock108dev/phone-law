@@ -58,6 +58,9 @@ export function SyntheticBanner(): ReactNode {
 export function briefingReturn(): string {
   if (typeof window === "undefined") return "/";
   if (window.location.pathname.startsWith("/briefing/")) return window.location.pathname + window.location.hash;
+  const day = new URLSearchParams(window.location.search).get("briefing");
+  const call = window.location.pathname.match(/^\/calls\/([a-f0-9]+)$/)?.[1];
+  if (call && day?.match(/^\d{4}-\d{2}-\d{2}$/)) return `/briefing/${day}#call-${call}`;
   return window.sessionStorage.getItem("colacci-briefing-return") ?? "/";
 }
 

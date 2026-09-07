@@ -159,7 +159,7 @@ export function UploadPage({ principal }: { principal: DemoPrincipal }): ReactNo
   return (
     <>
       <section className="page-title upload-title">
-        <div className="eyebrow">Local single-item bridge</div>
+
         <h1>Submit one invented call artifact.</h1>
         <p>Only locally generated non-human audio or a fully invented transcript-only JSON artifact is permitted.</p>
       </section>

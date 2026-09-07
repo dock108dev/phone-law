@@ -108,7 +108,7 @@ export function OperationsPage({ principal }: { principal: DemoPrincipal }): Rea
       <section className="page-title operations-title">
         <div className="eyebrow">Operations</div>
         <h1>Local controls and recovery</h1>
-        <p>Configuration, reconciliation, retention, deletion, and recovery controls for invented data only.</p>
+        <p>Settings and maintenance for synthetic data.</p>
         <div className="operations-boundary" role="note"><b>{overview.data_label}</b><span>{overview.environment}</span><span>Zero external requests</span></div>
       </section>
       <div className="operations-message" ref={messageRef} role="status" tabIndex={-1}>{message}</div>

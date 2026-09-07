@@ -37,9 +37,9 @@ export function PlaybookPage({ principal }: { principal: DemoPrincipal }): React
   if (loading || error) return <RequestState loading={loading} error={error} area="playbook" />;
   return <>
     <section className="page-title">
-      <div className="eyebrow">Versioned synthetic rules</div>
+
         <h1>Playbook lifecycle</h1>
-      <p>Create a bounded synthetic draft from an existing version, then publish it immutably. Earlier analyses are never reprocessed or rewritten.</p>
+      <p>Publish new rules from a draft. Earlier analyses keep their original rules.</p>
     </section>
     <p className="authorization-message" role="status" tabIndex={-1}>{message}</p>
     <form className="playbook-card playbook-draft-form" onSubmit={(event) => void createDraft(event)}>

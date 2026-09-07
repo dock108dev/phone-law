@@ -50,11 +50,11 @@ export function ReportPage({ principal, initialDate = "" }: { principal: DemoPri
         <div>
           <div className="eyebrow">Daily report</div>
           <h1 id="report-title">Call review · {report.business_date}</h1>
-          <p>{report.advisory_notice}</p>
+          <a href={`/briefing/${report.business_date}`}>Open this day’s briefing</a>
         </div>
         <label className="date-control">
           <span>Report date</span>
-          <select value={selectedDate} onChange={(event) => { setSelectedDate(event.target.value); }}>
+          <select value={selectedDate} onChange={(event) => { window.location.assign(`/reports/${event.target.value}`); }}>
             {dates.map((date) => <option value={date} key={date}>{date}</option>)}
           </select>
         </label>
@@ -65,22 +65,22 @@ export function ReportPage({ principal, initialDate = "" }: { principal: DemoPri
           <span className="status-badge">{humanize(report.completeness.status)} report</span>
           <h2 id="completeness-title">Coverage is {report.completeness.status === "zero_activity" ? "zero activity" : report.completeness.status}.</h2>
           <p>{report.completeness.explanation}</p>
-          <small>Cutoff: 6:00 PM America/New_York · Duplicate deliveries excluded from call totals.</small>
+
         </div>
-        <div className="metric-grid" aria-label="Report reconciliation counts">
+        <details><summary>Coverage details</summary><p>Cutoff: 6:00 PM America/New_York. Duplicate deliveries excluded.</p><div className="metric-grid" aria-label="Report reconciliation counts">
           <Metric label="Expected" value={counts.expected} />
           <Metric label="Received" value={counts.received} />
           <Metric label="Analyzed" value={counts.analyzed} />
           <Metric label="Failed" value={counts.failed} />
           <Metric label="Missing" value={counts.missing} />
           <Metric label="Late" value={counts.late} />
-        </div>
+        </div></details>
       </section>
 
       {counts.failed > 0 && (
         <aside className="warning-strip" aria-label="Processing failure warning">
           <b>{counts.failed} call did not produce a reviewable result.</b>
-          <span>The report is not complete. Authorized roles can inspect the content-free failure queue.</span>
+          <span>Coverage is incomplete. An operator can inspect the failure.</span>
           <a href="/failures">Open failure queue</a>
         </aside>
       )}
@@ -92,7 +92,7 @@ export function ReportPage({ principal, initialDate = "" }: { principal: DemoPri
             <div className="section-heading">
               <div>
                 <h2 id={`section-${section.kind}`}>{section.title}</h2>
-                <p>{section.description}</p>
+
               </div>
               <span className="count-badge" aria-label={`${section.items.length.toString()} items`}>{section.items.length}</span>
             </div>
@@ -107,12 +107,12 @@ export function ReportPage({ principal, initialDate = "" }: { principal: DemoPri
                       <span className={`priority priority-${item.priority}`}>Priority: {humanize(item.priority)}</span>
                     </div>
                     <h3>{item.summary}</h3>
-                    <dl className="item-meta">
+                    <details><summary>Analysis details</summary><dl className="item-meta">
                       {item.category && <><dt>Category</dt><dd>{humanize(item.category)}</dd></>}
                       {item.confidence && <><dt>Confidence</dt><dd>{humanize(item.confidence)}</dd></>}
                       {item.responsible_role && <><dt>Responsible role</dt><dd>{humanize(item.responsible_role)}</dd></>}
                       {item.suggested_timing && <><dt>Suggested timing</dt><dd>{item.suggested_timing}</dd></>}
-                    </dl>
+                    </dl></details>
                     {item.failure && <div className="failure-summary">{item.failure.failed_stage} · {item.failure.diagnostic_code} · {item.failure.retryable ? "Retryable" : "Permanent"}</div>}
                     {item.evidence.length > 0 && <div className="evidence-list">{item.evidence.map((evidence) => <EvidenceLink callId={item.call_id} evidence={evidence} key={evidence.segment_id} />)}</div>}
                   </article>

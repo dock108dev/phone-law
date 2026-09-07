@@ -88,9 +88,10 @@ test("manual upload local synthetic audio and transcript bridge", async ({ page 
     content: ".call-heading p,.finding-card h3,.segment p,.side-card dd,.review-history p { color: transparent !important; }",
   });
   await page.screenshot({ path: `${evidenceDirectory}/uploaded-call-evidence.png`, fullPage: true });
+  await page.locator(".assessment-disclosure summary").first().click();
   await page.getByLabel("Correct", { exact: true }).first().check();
-  await page.getByRole("button", { name: "Save feedback" }).first().click();
-  await expect(page.getByText("Feedback saved as a new review event.")).toBeFocused();
+  await page.getByRole("button", { name: "Save assessment" }).first().click();
+  await expect(page.getByText("Assessment saved.")).toBeFocused();
   await page.reload();
   await expect(page.locator(".review-history")).toContainText("Correct");
 
