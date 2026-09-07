@@ -1,3 +1,4 @@
+import { selectDemoRole } from "./operator-access";
 import { writeFile } from "node:fs/promises";
 
 import AxeBuilder from "@axe-core/playwright";
@@ -12,8 +13,7 @@ test("Slice 6A persisted state survives a complete local service restart", async
     if (!new Set(["web", "api", "localhost", "127.0.0.1"]).has(target.hostname)) unexpectedHosts.push(target.hostname);
   });
   await page.goto("/reports/2026-08-17");
-  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
+  await selectDemoRole(page, "demo-reviewer");
   await page.getByRole("link", { name: "CL-FX-002" }).first().click();
   await expect(page.locator(".review-history")).toContainText("Incorrect");
   await expect(page.locator(".review-history")).toContainText("Missing");
@@ -21,8 +21,7 @@ test("Slice 6A persisted state survives a complete local service restart", async
 
   await page.goto("/playbooks");
   await expect(page.locator("article.playbook-card").filter({ hasText: "synthetic-acceptance-v2" })).toContainText("Published");
-  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-admin");
+  await selectDemoRole(page, "demo-admin");
   await page.goto("/operations");
   await expect(page.getByText(/Config v\d+/, { exact: true })).toBeVisible();
   await expect(page.getByText("Reconciliation exact", { exact: true })).toBeVisible();

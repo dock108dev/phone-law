@@ -1,3 +1,4 @@
+import { selectDemoRole } from "./operator-access";
 import { writeFile } from "node:fs/promises";
 
 import AxeBuilder from "@axe-core/playwright";
@@ -41,9 +42,8 @@ test("Slice 6A reviewer, administrator, and operations acceptance journey", asyn
   // Reviewer: report reconciliation, eight sections, key examples, evidence, feedback, persistence.
   await page.goto("/briefing/2026-08-17");
   await expect(page.locator(".briefing-recap")).toHaveCount(11);
-  await page.getByRole("link", { name: "Detailed coverage report" }).click();
-  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
+  await page.getByRole("link", { name: "Coverage details" }).click();
+  await selectDemoRole(page, "demo-reviewer");
   await expect(page.getByRole("heading", { name: "Coverage is partial." })).toBeVisible();
   const reconciliationCounts: [string, string][] = [["Expected", "11"], ["Received", "11"], ["Analyzed", "10"], ["Failed", "1"], ["Missing", "0"], ["Late", "0"]];
   for (const [label, value] of reconciliationCounts) {
@@ -52,7 +52,7 @@ test("Slice 6A reviewer, administrator, and operations acceptance journey", asyn
   for (const section of ["Immediate attention", "Potential new matters", "Time-sensitive dates", "Dissatisfaction and escalation", "Staff commitments", "Administrative tasks", "Routine / no action", "Processing failures"]) {
     await expect(page.getByRole("heading", { name: section })).toBeVisible();
   }
-  await expect(page.getByText("Local / synthetic", { exact: true }).last()).toBeVisible();
+  await expect(page.getByText("Synthetic demo", { exact: true }).last()).toBeVisible();
   await assertAccessible(page, "review report");
   for (const viewport of [{ width: 1440, height: 1000 }, { width: 1280, height: 800 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);
@@ -95,8 +95,7 @@ test("Slice 6A reviewer, administrator, and operations acceptance journey", asyn
   }
 
   // Administrator: inspect audit, create/publish a new version, configure, and preserve provenance.
-  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-admin");
+  await selectDemoRole(page, "demo-admin");
   await page.getByRole("button", { name: "Create synthetic draft" }).click();
   await expect(page.locator(".authorization-message")).toContainText("New synthetic draft created");
   const candidate = page.locator("article.playbook-card").filter({ hasText: "synthetic-acceptance-v2" });
@@ -119,8 +118,7 @@ test("Slice 6A reviewer, administrator, and operations acceptance journey", asyn
   expect(await page.locator(".provenance").textContent()).toBe(originalProvenance);
 
   // Operations: content-free triage, retry history, cancellation, recovery, no-op notification.
-  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-operations");
+  await selectDemoRole(page, "demo-operations");
   await page.goto("/failures");
   await expect(page.getByRole("heading", { name: "Synthetic failure queue" })).toBeVisible();
   await expect(page.locator(".failure-card").filter({ hasText: "CL-FX-010" })).toContainText("Attempt 2");

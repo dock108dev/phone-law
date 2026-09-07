@@ -11,10 +11,10 @@ test("everyday assessments, uncertain saves, return context and coverage", async
     if (!["web", "api", "localhost", "127.0.0.1"].includes(new URL(request.url()).hostname)) external.push(request.url());
   });
   await page.goto("/");
-  await expect(page.getByText("Dataset: demo-month-2026-07-v2")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Calls from July 15, 2026" })).toBeVisible();
   const recap = page.locator(".briefing-recap").nth(3);
   const recapId = await recap.getAttribute("id");
-  await recap.getByRole("link", { name: "Inspect call and assess findings" }).click();
+  await recap.getByRole("link", { name: /Open call/ }).click();
   const callUrl = page.url();
   const finding = page.locator(".finding-card").first();
   const before = await page.locator(".review-history li").count();
@@ -65,20 +65,22 @@ test("everyday assessments, uncertain saves, return context and coverage", async
   await expect(page).toHaveURL(callUrl);
   await page.goForward();
   await expect(page.locator(`[id="${recapId ?? ""}"]`)).toBeFocused();
-  await page.locator(".briefing-attention-item").first().getByRole("link", { name: "Supporting passage" }).click();
+  await page.locator(".briefing-recap").nth(3).getByRole("link", { name: /Open call/ }).click();
+  await page.getByRole("button", { name: /^Jump to/ }).first().click();
   await expect(page.locator(".segment.highlighted")).toBeFocused();
   await page.goBack();
   await expect(page.locator(`[id="${recapId ?? ""}"]`)).toBeFocused();
-  await page.getByRole("link", { name: "Browse month history" }).click();
+  await page.getByRole("link", { name: "Month history" }).click();
   await page.getByRole("link", { name: /^2026-07-03,/ }).click();
   await expect(page.getByRole("heading", { name: "Calls from July 3, 2026" })).toBeVisible();
-  await expect(page.getByText(/No eligible synthetic calls were expected/)).toBeVisible();
-  for (const [date, text] of [["2026-07-06", "Late arrival"], ["2026-07-07", "Some received calls have no usable result"], ["2026-07-23", "Expected input has not arrived"], ["2026-07-27", "Some received calls have no usable result"], ["2026-08-01", "Coverage is unavailable"]]) {
+  await expect(page.getByText(/No calls expected or received/)).toBeVisible();
+  for (const [date, text] of [["2026-07-06", "late arrival"], ["2026-07-07", "no usable analysis"], ["2026-07-23", "missing. No recap"], ["2026-07-27", "no usable analysis"], ["2026-08-01", "Coverage is unavailable"]]) {
     if (!date || !text) throw new Error("Coverage case is incomplete");
     await page.getByLabel("Review another date").fill(date);
     await page.getByRole("button", { name: "Open day" }).click();
     await expect(page.getByText(text, { exact: false }).first()).toBeVisible();
   }
+  await page.getByRole("link", { name: "Operator access", exact: true }).click();
   await page.getByRole("link", { name: "Manual upload", exact: true }).click();
   await expect(page.getByText("Upload access denied for the reviewer role.")).toBeVisible();
   await page.getByRole("link", { name: "Morning briefing", exact: true }).click();

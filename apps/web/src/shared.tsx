@@ -50,7 +50,7 @@ export function SyntheticBanner(): ReactNode {
   return (
     <div className="environment-indicator" role="status">
       <span className="banner-dot" aria-hidden="true" />
-      <span><strong>Local / synthetic</strong><small>No client data or live services</small></span>
+      <span>Synthetic demo</span>
     </div>
   );
 }
@@ -70,39 +70,31 @@ export function Header({
   setPrincipal: (principal: DemoPrincipal) => void;
   path: string;
 }): ReactNode {
-  const selectedRole = principals.find((item) => item.id === principal)?.role ?? "Reviewer";
-  const workArea = path === "/uploads" ? "Manual upload" : path === "/failures" ? "Failure queue" : path === "/playbooks" ? "Playbook" : path === "/operations" ? "Operations" : path.startsWith("/calls/") ? "Call review" : path.startsWith("/reports/") ? "Daily report" : path === "/" || path.startsWith("/briefing/") ? "Morning briefing" : "Month history";
-  const reportDate = path.match(/^\/reports\/(\d{4}-\d{2}-\d{2})$/)?.[1];
+  const operatorArea = ["/operator", "/uploads", "/failures", "/playbooks", "/operations"].includes(path);
   return (
     <header className="site-header">
       <a className="brand" href="/" aria-label="Colacci Law Call Review home">
         <span className="brand-mark" aria-hidden="true">CL</span>
-        <span><b>Colacci Law</b><small>{workArea}{reportDate ? ` · ${reportDate}` : ""}</small></span>
+        <span><b>Colacci Law</b><small>Call review</small></span>
       </a>
       <nav aria-label="Primary navigation">
         <a className={`nav-link ${path === "/" || path.startsWith("/briefing/") ? "active" : ""}`} href={briefingReturn()}>Morning briefing</a>
         <a className="nav-link" href="/months/2026-07">Month history</a>
-        <a className={`nav-link ${path === "/uploads" ? "active" : ""}`} href="/uploads">Manual upload</a>
-        <a className={`nav-link ${path === "/failures" ? "active" : ""}`} href="/failures">Failures</a>
-        <a className={`nav-link ${path === "/playbooks" ? "active" : ""}`} href="/playbooks">Playbook</a>
-        <a className={`nav-link ${path === "/operations" ? "active" : ""}`} href="/operations">Operations</a>
       </nav>
       <SyntheticBanner />
-      <details className="demo-controls"><summary>Demo controls</summary><label className="identity-control">
-        <span>Engineering identity</span>
-        <select
-          aria-label="Demo identity and role"
-          value={principal}
-          onChange={(event) => {
+      {operatorArea && <div className="operator-access">
+        <label className="identity-control"><span>Demo identity and role</span>
+          <select aria-label="Demo identity and role" value={principal} onChange={(event) => {
             const next = event.target.value as DemoPrincipal;
             window.localStorage.setItem("colacci-demo-principal", next);
             setPrincipal(next);
-          }}
-        >
-          {principals.map((item) => <option value={item.id} key={item.id}>{item.label}</option>)}
-        </select>
-        <small>{selectedRole}</small>
-      </label></details>
+          }}>{principals.map((item) => <option value={item.id} key={item.id}>{item.label}</option>)}</select>
+        </label>
+        <nav aria-label="Operator navigation">
+          <a href="/uploads">Manual upload</a><a href="/failures">Failures</a>
+          <a href="/playbooks">Playbook</a><a href="/operations">Operations</a>
+        </nav>
+      </div>}
     </header>
   );
 }
@@ -123,6 +115,7 @@ export function Shell({
       <a className="skip-link" href="#main-content">Skip to main content</a>
       <Header principal={principal} setPrincipal={setPrincipal} path={path} />
       <main id="main-content" tabIndex={-1}>{children}</main>
+      <footer><a href="/operator">Operator access</a></footer>
     </>
   );
 }

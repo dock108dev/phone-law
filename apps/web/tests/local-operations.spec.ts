@@ -1,3 +1,4 @@
+import { selectDemoRole } from "./operator-access";
 import { writeFile } from "node:fs/promises";
 
 import AxeBuilder from "@axe-core/playwright";
@@ -34,10 +35,9 @@ test("local operations administrator, operations, reviewer denial, responsivenes
   expect(headers["x-content-type-options"]).toBe("nosniff");
   expect(headers["x-frame-options"]).toBe("DENY");
   expect(headers["x-robots-tag"]).toBe("noindex, nofollow, noarchive");
-  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-admin");
+  await selectDemoRole(page, "demo-admin");
   await expect(page.getByRole("heading", { name: "Local controls and recovery" })).toBeVisible();
-  await expect(page.getByText("Local / synthetic", { exact: true }).last()).toBeVisible();
+  await expect(page.getByText("Synthetic demo", { exact: true }).last()).toBeVisible();
   await expect(page.getByText("Local development", { exact: true })).toBeVisible();
   await expect(page.getByText("Zero external requests", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Operational reconciliation" })).toBeVisible();
@@ -62,8 +62,7 @@ test("local operations administrator, operations, reviewer denial, responsivenes
   await expect(page.getByText("Config v2", { exact: true })).toBeVisible();
   await expect(page.locator(".configuration-history")).toContainText("Version 2");
 
-  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-operations");
+  await selectDemoRole(page, "demo-operations");
   await expect(page.getByText("Only the demo administrator may publish configuration.")).toBeVisible();
   await page.getByRole("button", { name: "Run backup / restore drill" }).focus();
   await expect(page.getByRole("button", { name: "Run backup / restore drill" })).toBeFocused();
@@ -78,8 +77,7 @@ test("local operations administrator, operations, reviewer denial, responsivenes
   }
   expect(bodyText).not.toMatch(/\+1[ .-]?\(?\d{3}\)?[ .-]?\d{3}[ .-]?\d{4}/);
 
-  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
+  await selectDemoRole(page, "demo-reviewer");
   await expect(page.getByRole("alert")).toContainText("Operations access denied for the reviewer role.");
   await page.screenshot({ path: `${evidenceDirectory}/operations-reviewer-denial-redacted.png`, fullPage: true });
   const denialAccessibility = await new AxeBuilder({ page })

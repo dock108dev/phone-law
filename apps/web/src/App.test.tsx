@@ -7,10 +7,19 @@ import { loadWebConfiguration } from "./config";
 describe("Colacci Law workspace shell", () => {
   it("renders the persistent synthetic boundary and morning-briefing loading state", () => {
     const html = renderToStaticMarkup(<App path="/" />);
-    expect(html).toContain("Local / synthetic");
-    expect(html).toContain("No client data or live services");
+    expect(html).toContain("Synthetic demo");
+    expect(html).not.toContain("Demo identity and role");
+    expect(html).not.toContain("Manual upload");
+    expect(html).toContain("Operator access");
     expect(html).toContain("Loading morning briefing");
     expect(html).toContain("Month history");
+  });
+
+  it("provides role selection only within operator access", () => {
+    const html = renderToStaticMarkup(<App path="/operator" />);
+    expect(html).toContain("Demo identity and role");
+    expect(html).toContain("Operator navigation");
+    expect(html).toContain("Manual upload");
   });
 
   it("renders the content-free health page", () => {

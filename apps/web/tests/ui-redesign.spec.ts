@@ -1,3 +1,4 @@
+import { selectDemoRole, expectDemoRole } from "./operator-access";
 import { chmod, writeFile } from "node:fs/promises";
 
 import AxeBuilder from "@axe-core/playwright";
@@ -76,8 +77,7 @@ test("professional internal-firm workspace routes, states, recovery, and evidenc
   await expect(page.getByText("Spanish", { exact: true })).toBeVisible();
   await shot(page, "spanish-call-review");
 
-  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-admin");
+  await selectDemoRole(page, "demo-admin");
   for (const [path, heading, name] of [
     ["/uploads", "Submit one invented call artifact.", "manual-upload"],
     ["/failures", "Synthetic failure queue", "failure-queue"],
@@ -93,13 +93,11 @@ test("professional internal-firm workspace routes, states, recovery, and evidenc
   await expect(page.locator(".configuration-panel")).toBeVisible();
   await page.locator(".configuration-panel").screenshot({ path: `${evidenceDirectory}/after/configuration-retention.png` });
 
-  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-reviewer");
+  await selectDemoRole(page, "demo-reviewer");
   await expect(page.getByRole("alert")).toContainText("Operations access denied");
   await shot(page, "reviewer-denial");
 
-  await page.locator(".demo-controls").evaluate((node) => { (node as HTMLDetailsElement).open = true; });
-  await page.getByRole("combobox", { name: "Demo identity and role" }).selectOption("demo-admin");
+  await selectDemoRole(page, "demo-admin");
   await page.waitForLoadState("networkidle");
   await page.addInitScript(() => {
     const nativeFetch = window.fetch.bind(window);
@@ -119,8 +117,7 @@ test("professional internal-firm workspace routes, states, recovery, and evidenc
   await shot(page, "recoverable-error");
   await page.getByRole("button", { name: "Reload daily report" }).click();
   await expect(page.getByRole("heading", { name: "Call review · 2026-07-08" })).toBeVisible();
-  await page.getByText("Demo controls", { exact: true }).click();
-  await expect(page.getByRole("combobox", { name: "Demo identity and role" })).toHaveValue("demo-admin");
+  await expectDemoRole(page, "demo-admin");
 
   const slowReport = /\/api\/reports\/2026-07-06(?:\?.*)?$/;
   await page.route(slowReport, async (route) => {

@@ -30,6 +30,7 @@ export function App({ path = window.location.pathname }: { path?: string }): Rea
   else if (path === "/failures") page = <FailurePage principal={principal} />;
   else if (path === "/playbooks") page = <PlaybookPage principal={principal} />;
   else if (path === "/operations") page = <OperationsPage principal={principal} />;
+  else if (path === "/operator") page = <section className="page-title"><h1>Operator access</h1><p>Select a demo role above to access supporting tools. Service permissions still apply.</p></section>;
   else if (path === "/health") page = <HealthPage />;
   else page = <BriefingPage principal={principal} selectedDate={path.match(/^\/briefing\/(\d{4}-\d{2}-\d{2})$/)?.[1]} />;
   return <Shell principal={principal} setPrincipal={setPrincipal} path={path}>{page}</Shell>;
