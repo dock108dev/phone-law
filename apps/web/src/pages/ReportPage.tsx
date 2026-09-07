@@ -54,7 +54,7 @@ export function ReportPage({ principal, initialDate = "" }: { principal: DemoPri
         </div>
         <label className="date-control">
           <span>Report date</span>
-          <select value={selectedDate} onChange={(event) => { window.location.assign(`/reports/${event.target.value}`); }}>
+          <select value={selectedDate} onChange={(event) => { window.location.assign(`/reports/${encodeURIComponent(event.target.value)}`); }}>
             {dates.map((date) => <option value={date} key={date}>{date}</option>)}
           </select>
         </label>
