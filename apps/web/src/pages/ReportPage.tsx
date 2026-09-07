@@ -7,12 +7,14 @@ export function ReportPage({ principal, initialDate = "" }: { principal: DemoPri
   const [dates, setDates] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState(initialDate);
   const [report, setReport] = useState<DailyReport | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [datesLoading, setDatesLoading] = useState(true);
+  const [reportLoading, setReportLoading] = useState(false);
+  const loading = datesLoading || reportLoading;
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
+    setDatesLoading(true);
     setError(null);
     apiRequest<{ dates: string[] }>("/api/reports/dates", principal)
       .then((result) => {
@@ -23,19 +25,19 @@ export function ReportPage({ principal, initialDate = "" }: { principal: DemoPri
       .catch((reason: unknown) => {
         if (active) setError(reason instanceof Error ? reason.message : "Unknown request error");
       })
-      .finally(() => { if (active) setLoading(false); });
+      .finally(() => { if (active) setDatesLoading(false); });
     return () => { active = false; };
   }, [principal]);
 
   useEffect(() => {
     if (!selectedDate) return;
     let active = true;
-    setLoading(true);
+    setReportLoading(true);
     setError(null);
     apiRequest<DailyReport>(`/api/reports/${selectedDate}`, principal)
       .then((value) => { if (active) setReport(value); })
       .catch((reason: unknown) => { if (active) setError(reason instanceof Error ? reason.message : "The daily report request failed."); })
-      .finally(() => { if (active) setLoading(false); });
+      .finally(() => { if (active) setReportLoading(false); });
     return () => { active = false; };
   }, [principal, selectedDate]);
 
@@ -125,4 +127,3 @@ export function ReportPage({ principal, initialDate = "" }: { principal: DemoPri
     </>
   );
 }
-

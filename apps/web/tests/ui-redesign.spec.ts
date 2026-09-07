@@ -75,7 +75,10 @@ test("professional internal-firm workspace routes, states, recovery, and evidenc
 
   await page.goto("/reports/2026-07-28");
   await page.getByRole("link", { name: "CL-MONTH-202607-422" }).first().click();
-  await expect(page.getByText("Spanish", { exact: true })).toBeVisible();
+  await expect(page.locator(".call-context")).toContainText("Spanish");
+  await expect(page.locator(".translation-note")).toHaveText("English paraphrases below; original Spanish in the transcript.");
+  await page.locator(".transcript-disclosure summary").click();
+  await expect(page.locator('.transcript[lang="es"] .segment').first()).toBeVisible();
   await shot(page, "spanish-call-review");
 
   await selectDemoRole(page, "demo-admin");
@@ -121,12 +124,22 @@ test("professional internal-firm workspace routes, states, recovery, and evidenc
   await expectDemoRole(page, "demo-admin");
 
   const slowReport = /\/api\/reports\/2026-07-06(?:\?.*)?$/;
+  let releaseReport: (() => void) | undefined;
+  const heldReport = new Promise<void>((resolve) => { releaseReport = resolve; });
   await page.route(slowReport, async (route) => {
-    await new Promise((resolve) => setTimeout(resolve, 3_000));
+    await heldReport;
     await route.continue();
   });
-  await page.getByRole("combobox", { name: "Report date" }).selectOption("2026-07-06");
-  await expect(page.getByRole("status").filter({ hasText: "Loading daily report" })).toBeVisible();
+  const datesLoaded = page.waitForResponse((response) => new URL(response.url()).pathname === "/api/reports/dates");
+  const changeDate = page.getByRole("combobox", { name: "Report date" }).selectOption("2026-07-06");
+  try {
+    await datesLoaded;
+    await expect(page.getByRole("status").filter({ hasText: "Loading daily report" })).toBeVisible();
+    await expect(page.getByText("No report exists for this work date.", { exact: false })).toHaveCount(0);
+  } finally {
+    releaseReport?.();
+    await changeDate;
+  }
   await expect(page.getByRole("heading", { name: "Call review · 2026-07-06" })).toBeVisible();
   await page.unroute(slowReport);
 
