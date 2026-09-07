@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.62.1-noble
+FROM mcr.microsoft.com/playwright:v1.63.0-noble
 
 ARG COLACCI_CANDIDATE_COMMIT=unbound
 ARG COLACCI_CANDIDATE_TREE=unbound
