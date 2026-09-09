@@ -1,4 +1,4 @@
-FROM node:26.3.0-alpine3.22
+FROM node:26.8.1-alpine3.24
 
 ARG COLACCI_CANDIDATE_COMMIT=unbound
 ARG COLACCI_CANDIDATE_TREE=unbound
