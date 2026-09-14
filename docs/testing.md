@@ -1,5 +1,10 @@
 # Testing and validation
 
+P1 scope note: the application still uses offline fixture/import paths. A separate,
+explicitly invoked [generated-only P1 harness](runbooks/controlled-openai-p1.md) now implements controlled
+OpenAI verification. Statements below about retired provider tooling refer to the
+application and old SDK/CLI path; no application provider setting is re-enabled.
+
 Tests use deterministic invented data. Routine gates do not call OpenAI, telephony, email, cloud
 storage, identity, or notification services. Docker and Compose run project dependencies; host
 `python3` is used only by deterministic fixture/evidence helpers.

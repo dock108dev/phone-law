@@ -1,5 +1,10 @@
 # Logging and secret-handling policy
 
+P1 scope note: the application still uses offline fixture/import paths. A separate,
+explicitly invoked [generated-only P1 harness](../runbooks/controlled-openai-p1.md) now implements controlled
+OpenAI verification. Statements below about retired provider tooling refer to the
+application and old SDK/CLI path; no application provider setting is re-enabled.
+
 Application logs are newline-delimited JSON and contain only event, service, timestamp, level,
 component, opaque correlation ID, safe health route, HTTP method, status, duration, profile,
 version, migration boolean, a named error code, exception class and bounded repository-relative

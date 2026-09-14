@@ -1,5 +1,10 @@
 # Architecture and repository layout
 
+P1 scope note: the application still uses offline fixture/import paths. A separate,
+explicitly invoked [generated-only P1 harness](runbooks/controlled-openai-p1.md) now implements controlled
+OpenAI verification. Statements below about retired provider tooling refer to the
+application and old SDK/CLI path; no application provider setting is re-enabled.
+
 The authoritative module and caller inventory is maintained in
 [Current implementation sources of truth](ssot.md). That inventory describes runtime ownership;
 the Desktop tracker remains the only roadmap and status source.

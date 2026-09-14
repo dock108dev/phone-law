@@ -1,0 +1,23 @@
+{
+  "campaign": "colacci-law-p1-20260913",
+  "model": "whisper-1",
+  "source_sha256": "",
+  "project_id": "",
+  "organization_id": "",
+  "firm_owned_project_confirmed": false,
+  "project_scoped_key_confirmed": false,
+  "transcription_permission_confirmed": false,
+  "billing_active_confirmed": false,
+  "terms_reviewed": false,
+  "data_controls_reviewed": false,
+  "data_sharing_disabled_confirmed": false,
+  "generated_only_authorized": false,
+  "global_endpoint_approved": false,
+  "ownership_evidence_reference": "",
+  "terms_evidence_reference": "",
+  "data_controls_evidence_reference": "",
+  "price_per_minute_micro_usd": 6000,
+  "max_requests": 6,
+  "max_spend_micro_usd": 2000000,
+  "expires_at": 0
+}

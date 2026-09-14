@@ -1,5 +1,10 @@
 # Local development and troubleshooting
 
+P1 scope note: the application still uses offline fixture/import paths. A separate,
+explicitly invoked [generated-only P1 harness](controlled-openai-p1.md) now implements controlled
+OpenAI verification. Statements below about retired provider tooling refer to the
+application and old SDK/CLI path; no application provider setting is re-enabled.
+
 Docker, Compose, `make`, a POSIX shell, and host `python3` are required. Host Python runs only
 deterministic fixture/evidence helpers; application code and dependencies run in the Python 3.14.7
 container. Host Node is not required.

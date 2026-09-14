@@ -1,5 +1,10 @@
 # Current implementation sources of truth
 
+P1 scope note: the application still uses offline fixture/import paths. A separate,
+explicitly invoked [generated-only P1 harness](runbooks/controlled-openai-p1.md) now implements controlled
+OpenAI verification. Statements below about retired provider tooling refer to the
+application and old SDK/CLI path; no application provider setting is re-enabled.
+
 This inventory describes the supported local synthetic system at the current repository head.
 The Desktop roadmap remains the sole planning source of truth; this document identifies runtime
 and policy ownership only.

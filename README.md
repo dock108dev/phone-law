@@ -1,5 +1,10 @@
 # Colacci Law Call Review
 
+P1 scope note: the application still uses offline fixture/import paths. A separate,
+explicitly invoked [generated-only P1 harness](docs/runbooks/controlled-openai-p1.md) now implements controlled
+OpenAI verification. Statements below about retired provider tooling refer to the
+application and old SDK/CLI path; no application provider setting is re-enabled.
+
 A local application for reviewing synthetic calls: daily briefings, evidence-linked reports,
 reviewer feedback, failure recovery, invented-artifact uploads and local operations.
 There is no production deployment, client-data workflow or live provider integration.
