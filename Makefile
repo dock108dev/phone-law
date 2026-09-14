@@ -13,7 +13,7 @@ help:
 		"  bootstrap  prepare-candidate-images  seed-demo  seed-demo-month  dev  stop  clean" \
 		"  generate-contract-schemas  generate-test-audio" \
 		"  lint  typecheck  test  test-integration  test-fixtures  test-e2e  build  smoke  audit" \
-		"  test-audio" \
+		"  test-audio  p1-cli-check (host; zero provider requests)" \
 		"  test-manual-upload  test-local-operations  test-local-acceptance" \
 		"  test-demo-month  test-demo-release  test-ui-redesign  secret-scan  logs"
 
@@ -116,3 +116,7 @@ secret-scan:
 
 logs:
 	$(COMPOSE) logs --no-color api worker
+
+.PHONY: p1-cli-check
+p1-cli-check:
+	@python3 -m scripts.p1.cli_check

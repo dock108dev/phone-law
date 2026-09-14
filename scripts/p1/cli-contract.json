@@ -1,0 +1,16 @@
+{
+  "contract": "openai-cli-audio-transcriptions-p1a-v1",
+  "version": "1.15.0",
+  "platform": "darwin-arm64",
+  "relative_install_path": ".local/lib/colacci-law/openai-cli/1.15.0/bin/openai",
+  "binary_sha256": "db54c56a0df645a261095808cd83c5a6690b89589145859719229d32ac4c46db",
+  "archive_url": "https://github.com/openai/openai-cli/releases/download/v1.15.0/openai_1.15.0_macos_arm64.zip",
+  "archive_sha256": "406b6c59ba43849850fa8ab02ef8191dac718b58d6044c5759741ff166fa8001",
+  "tap_commit": "9df0601f09dcafd260bf1e667486e9839bc486b9",
+  "help_sha256": {
+    "version": "ccacd3090ce8697b5fc9a7d13e3d2d2dbf04e8e83a4f1b4029c6a2486abbe1f7",
+    "root": "705a153b5b9e06b84a0e4f95f1e749dd648b45fa49c8d90365ec13cc538b73b0",
+    "transcription": "4a6074c3b6babebbad2e89763cf7aac777e286eabb5621ee1838877f320874a3"
+  },
+  "legacy_sha256": "907519ce0c45c8e4b59a74c0aad8489a86c27f77b7b7a88b37982d92c043e32e"
+}

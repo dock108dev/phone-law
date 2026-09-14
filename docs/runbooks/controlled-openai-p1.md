@@ -1,5 +1,20 @@
 # Post-demo P1 — controlled OpenAI verification
 
+## Current direction: P1B offline implementation; P1C next
+
+Use the pinned CLI 1.15.0, `gpt-4o-transcribe-diarize` and `diarized_json`.
+[P1A setup](p1-cli-setup.md) and [P1B adapter](p1-cli-adapter.md) describe the
+implemented offline boundaries and checks. Live execution is blocked pending durable
+P1C preflight/budget controls. The original six-request/$2 campaign is preserved;
+P1B consumes zero provider requests. The older HTTP/Whisper harness below remains
+historical and is not the selected CLI transport.
+
+## Historical standalone HTTP harness — retained implementation record
+
+The remaining sections document the earlier HTTP/Whisper attempt. Its source and
+ledger are preserved for reuse of controls; its contract/pricing do not govern
+the selected CLI model. These are historical instructions, not the next action.
+
 P1 is a standalone local engineering harness, `scripts/p1/controlled_openai.py`.
 It is not wired into API, worker, manual upload, demo settings, database provenance,
 or application startup. The retired SDK/CLI commands remain retired. The owner

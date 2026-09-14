@@ -1,9 +1,10 @@
 # Local development and troubleshooting
 
-P1 scope note: the application still uses offline fixture/import paths. A separate,
-explicitly invoked [generated-only P1 harness](controlled-openai-p1.md) now implements controlled
-OpenAI verification. Statements below about retired provider tooling refer to the
-application and old SDK/CLI path; no application provider setting is re-enabled.
+P1A: the official host CLI is installed and `make p1-cli-check` verifies it with
+zero provider requests and no credentials. See [pinned setup and contract](p1-cli-setup.md).
+P1B adds the explicit offline `local_dev` / `openai_cli_local` operator adapter;
+live execution is blocked pending P1C, and application startup remains fixture/import based. The earlier standalone
+HTTP/Whisper harness is historical implementation material, not the selected P1 path.
 
 Docker, Compose, `make`, a POSIX shell, and host `python3` are required. Host Python runs only
 deterministic fixture/evidence helpers; application code and dependencies run in the Python 3.14.7
@@ -109,7 +110,8 @@ running. It selects a separate Compose project, runtime directory and unpublishe
 Use the manual-upload page to submit the strict artifact produced by
 `scripts/generate_manual_upload_assets.py`. The API and explicit offline importer share
 `packages/review/transcript_import.py`; `make test-integration` covers idempotency and rollback.
-Provider preflight and CLI commands are removed.
+Retired provider commands remain removed. The new host-only `p1-cli-check`
+inspects the pinned CLI without invoking an API action.
 
 ## Local synthetic manual upload
 

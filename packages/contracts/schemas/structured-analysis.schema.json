@@ -709,6 +709,7 @@
         "result_kind": {
           "enum": [
             "deterministic_fixture",
+            "mocked_cli",
             "separately_authorized_live",
             "transcript_only"
           ],

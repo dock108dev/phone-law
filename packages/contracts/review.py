@@ -261,7 +261,9 @@ class TranscriptionTransportProvenance(StrictModel):
         Annotated[str, StringConstraints(pattern=r"^sha256:[a-f0-9]{12}$")] | None
     ) = None
     attempt_number: Annotated[int, Field(ge=1, le=3)]
-    result_kind: Literal["deterministic_fixture", "separately_authorized_live", "transcript_only"]
+    result_kind: Literal[
+        "deterministic_fixture", "mocked_cli", "separately_authorized_live", "transcript_only"
+    ]
 
 
 class Provenance(StrictModel):

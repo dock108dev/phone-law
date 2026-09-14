@@ -1,6 +1,25 @@
 # ADR 0008: local CLI development bridge
 
-Historical record: provider/CLI experiments are now retired. Use [current documentation](../README.md) for supported commands.
+## Current decision — P1B, 2026-09-13
+
+Status: **CLI installed; explicit offline adapter implemented; live execution blocked pending P1C**.
+The owner authorized lead agents to install/update tools as needed. Select official
+resource CLI 1.15.0 at the dedicated absolute path in the
+[verified setup and contract](../runbooks/p1-cli-setup.md). `make p1-cli-check`
+checks its approved binary, version and help with zero provider requests.
+The pin, integrity checks, language-flag collision, chunking encoding, credential,
+endpoint and source-established zero upload retries are recorded there.
+
+Preserve `gpt-4o-transcribe-diarize`, `diarized_json`, original-language output and
+`auto` chunking beyond 30 seconds. No Whisper/HTTP/SDK substitute is selected.
+P1B implements the [offline adapter and serialization/process tests](../runbooks/p1-cli-adapter.md);
+P1C–P1E controls/workflow/full qualification and P1F live verification are pending.
+API/worker/browser startup has no host CLI dependency. The explicit operator selection is separate from application settings. Owner demo acceptance remains closed/resolved.
+
+## Historical decision — retired implementation, preserved verbatim below
+
+The old 1.6.0 declaration and implementation claims below describe the retired
+August experiment. They are not current version requirements or current behavior.
 
 - Status: implemented for offline acceptance
 - Authorization: owner direction in chat on 2026-08-17
