@@ -61,7 +61,7 @@ def _execute(
         parsed = urlsplit(endpoint)
         port = parsed.port
     except ValueError, TypeError:
-        raise AdapterError("p1c_required") from None
+        raise AdapterError("admission_required") from None
     if (
         port is None
         or parsed.scheme != "http"
@@ -69,7 +69,7 @@ def _execute(
         or parsed.username
         or parsed.password
     ):
-        raise AdapterError("p1c_required")
+        raise AdapterError("admission_required")
     if type(credential) is not str or not credential or "\0" in credential:
         raise AdapterError("invalid_input")
     if cancel is not None and cancel.is_set():

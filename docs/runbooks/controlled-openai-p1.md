@@ -140,3 +140,7 @@ Run repository lint, strict types and unit checks plus this focused suite. Host
 qualifies live provider access. After missing prerequisites are supplied, run a fresh
 zero-request preflight and the three fixed live cases using the same campaign ledger;
 stop at the first failed case. All later phases remain separately authorized.
+
+## P1C accounting update
+
+See [P1C campaign admission](./p1-campaign.md) for current zero-request preflight, durable reservations, reconciliation and explicit live blocks. P1B/retired HTTP instructions above are historical where superseded. P1D reproducible product rehearsal is next; live verification remains P1F.

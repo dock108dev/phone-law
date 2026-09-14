@@ -21,7 +21,9 @@ class AdmissionError(Exception):
 
 
 def encoded(value: Any) -> bytes:
-    return (json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False) + "\n").encode()
+    return (
+        json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False) + "\n"
+    ).encode()
 
 
 def digest(data: bytes) -> str:
@@ -106,21 +108,32 @@ class Debit:
 
     def __post_init__(self) -> None:
         caps = (6, 540_000_000, 24 * 1024 * 1024, 2_000_000)
-        if any(type(v) is not int or not 0 <= v <= cap for v, cap in zip(asdict(self).values(), caps, strict=True)):
+        if any(
+            type(v) is not int or not 0 <= v <= cap
+            for v, cap in zip(asdict(self).values(), caps, strict=True)
+        ):
             raise AdmissionError("capacity_exceeded")
 
     def plus(self, other: Debit) -> Debit:
         return Debit(**{k: v + asdict(other)[k] for k, v in asdict(self).items()})
 
     def remaining(self) -> dict[str, int]:
-        return {k: v - asdict(self)[k] for k, v in asdict(Debit(6, 540_000_000, 24 * 1024 * 1024, 2_000_000)).items()}
+        return {
+            k: v - asdict(self)[k]
+            for k, v in asdict(Debit(6, 540_000_000, 24 * 1024 * 1024, 2_000_000)).items()
+        }
 
 
 def reconciliation(raw: bytes) -> tuple[Debit, bool]:
     record = decode(raw)
     if set(record) != {"schema", "campaign", "status", "evidence", "debit", "unknown", "reviewer"}:
         raise AdmissionError("reconciliation_invalid")
-    if record["schema"] != 1 or record["campaign"] != CAMPAIGN or record["status"] != "reconciled" or not record["reviewer"]:
+    if (
+        record["schema"] != 1
+        or record["campaign"] != CAMPAIGN
+        or record["status"] != "reconciled"
+        or not record["reviewer"]
+    ):
         raise AdmissionError("reconciliation_required")
     if not isinstance(record["unknown"], list) or not record["evidence"]:
         raise AdmissionError("reconciliation_invalid")
@@ -138,6 +151,7 @@ class Campaign:
     """
 
     def __init__(self, root: Path) -> None:
+        self._held = False
         self.root = root
         self.ledger = root / (CAMPAIGN + ".jsonl")
         self.marker = root / (CAMPAIGN + ".initialized")
@@ -152,8 +166,10 @@ class Campaign:
                 fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
             except BlockingIOError:
                 raise AdmissionError("campaign_busy") from None
+            self._held = True
             yield
         finally:
+            self._held = False
             os.close(fd)
 
     def initialize(self, record: bytes) -> None:
@@ -163,9 +179,15 @@ class Campaign:
         with self.locked():
             if any(p.exists() or p.is_symlink() for p in (self.marker, self.ledger, self.head)):
                 raise AdmissionError("already_initialized_or_legacy_state")
-            create_private(self.marker, encoded({"schema": 1, "campaign": CAMPAIGN, "reconciliation": digest(record)}))
+            create_private(
+                self.marker,
+                encoded({"schema": 1, "campaign": CAMPAIGN, "reconciliation": digest(record)}),
+            )
             create_private(self.ledger, b"")
-            self._append({"kind": "initialized", "reconciliation": record.decode(), "debit": asdict(debit)}, b"")
+            self._append(
+                {"kind": "initialized", "reconciliation": record.decode(), "debit": asdict(debit)},
+                b"",
+            )
 
     def state(self) -> tuple[Debit, str, bytes]:
         if not self.marker.exists():
@@ -173,7 +195,11 @@ class Campaign:
                 raise AdmissionError("missing_initialized_marker")
             raise AdmissionError("first_initialization_required")
         marker = decode(read_private(self.marker))
-        if set(marker) != {"schema", "campaign", "reconciliation"} or marker["schema"] != 1 or marker["campaign"] != CAMPAIGN:
+        if (
+            set(marker) != {"schema", "campaign", "reconciliation"}
+            or marker["schema"] != 1
+            or marker["campaign"] != CAMPAIGN
+        ):
             raise AdmissionError("incompatible_state")
         try:
             raw, head = read_private(self.ledger), read_private(self.head)
@@ -188,20 +214,31 @@ class Campaign:
                 raise AdmissionError("chain_invalid")
             kind = event.get("kind")
             if number == 0:
-                if set(event) != {"kind", "reconciliation", "debit"} or kind != "initialized" or digest(event["reconciliation"].encode()) != marker["reconciliation"]:
+                if (
+                    set(event) != {"kind", "reconciliation", "debit"}
+                    or kind != "initialized"
+                    or digest(event["reconciliation"].encode()) != marker["reconciliation"]
+                ):
                     raise AdmissionError("genesis_invalid")
                 total, unknown = reconciliation(event["reconciliation"].encode())
                 if unknown or asdict(total) != event["debit"]:
                     raise AdmissionError("history_unresolved")
             elif kind == "reserved" and not pending:
-                if set(event) != {"kind", "debit", "identity"} or not isinstance(event["identity"], str) or len(event["identity"]) != 64:
+                if (
+                    set(event) != {"kind", "debit", "identity"}
+                    or not isinstance(event["identity"], str)
+                    or len(event["identity"]) != 64
+                ):
                     raise AdmissionError("reservation_invalid")
                 debit = Debit(**event["debit"])
                 self.validate_input_debit(debit)
                 total = total.plus(debit)
                 pending = "reserved"
             elif kind in ("dispatched", "completed"):
-                if set(event) != {"kind"} or pending != {"dispatched": "reserved", "completed": "dispatched"}[kind]:
+                if (
+                    set(event) != {"kind"}
+                    or pending != {"dispatched": "reserved", "completed": "dispatched"}[kind]
+                ):
                     raise AdmissionError("transition_invalid")
                 pending = "dispatched" if kind == "dispatched" else ""
             else:
@@ -211,10 +248,17 @@ class Campaign:
 
     @staticmethod
     def validate_input_debit(debit: Debit) -> None:
-        if debit.requests != 1 or not 0 < debit.microseconds <= 90_000_000 or not 0 < debit.bytes <= 4 * 1024 * 1024 or debit.micro_usd <= 0:
+        if (
+            debit.requests != 1
+            or not 0 < debit.microseconds <= 90_000_000
+            or not 0 < debit.bytes <= 4 * 1024 * 1024
+            or debit.micro_usd <= 0
+        ):
             raise AdmissionError("input_cap_exceeded")
 
     def reserve(self, debit: Debit, identity: str) -> None:
+        if not self._held:
+            raise AdmissionError("lock_required")
         total, pending, raw = self.state()
         if pending:
             raise AdmissionError("unresolved_debit")
@@ -225,8 +269,13 @@ class Campaign:
         self._append({"kind": "reserved", "debit": asdict(debit), "identity": identity}, raw)
 
     def transition(self, kind: str) -> None:
+        if not self._held:
+            raise AdmissionError("lock_required")
         _, pending, raw = self.state()
-        if kind not in ("dispatched", "completed") or pending != {"dispatched": "reserved", "completed": "dispatched"}[kind]:
+        if (
+            kind not in ("dispatched", "completed")
+            or pending != {"dispatched": "reserved", "completed": "dispatched"}[kind]
+        ):
             raise AdmissionError("transition_invalid")
         self._append({"kind": kind}, raw)
 

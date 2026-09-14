@@ -112,3 +112,7 @@ Run lint, types, unit tests and generated-schema checks on final source. This sl
 also runs integration and smoke for the shared provenance schema. No UI code changed;
 browser qualification and P1D/P1E workflow work are not claimed. Keep all evidence
 private and clean up only attempt-owned resources. Never reuse the owner demo.
+
+## P1C accounting update
+
+See [P1C campaign admission](./p1-campaign.md) for current zero-request preflight, durable reservations, reconciliation and explicit live blocks. P1B/retired HTTP instructions above are historical where superseded. P1D reproducible product rehearsal is next; live verification remains P1F.

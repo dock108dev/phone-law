@@ -324,52 +324,12 @@ def test_cli_zero_request_block(tmp_path: Path, monkeypatch: pytest.MonkeyPatch)
     sender.assert_not_called()
 
 
-@pytest.mark.parametrize("failure", [False, True])
-def test_cli_live_mock_cleanup_and_sanitization(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, failure: bool
-) -> None:
-    out = tmp_path / "evidence"
-    approval_path = tmp_path / "approval.json"
-    record = approval()
-    record["expires_at"] = p1.time.time() + 3600
-    p1.write_record(approval_path, record)
-    monkeypatch.setattr(p1.Path, "home", lambda: tmp_path)
-    generated_roots = []
-
-    def generate(root: Path) -> list[p1.Audio]:
-        generated_roots.append(root)
-        (root / "generated.wav").write_bytes(audio().content)
-        return [audio(), audio("spanish"), audio("long", 40)]
-
-    monkeypatch.setattr(p1, "generate", generate)
-    sender = Mock(
-        side_effect=(
-            TimeoutError("sensitive") if failure else lambda a, key, approval: (200, response(a))
-        )
-    )
+def test_retired_live_cli_cannot_bypass_admission(tmp_path, monkeypatch, capsys):
+    sender = Mock(side_effect=AssertionError("network forbidden"))
     monkeypatch.setattr(p1, "send", sender)
-    read_fd, write_fd = os.pipe()
-    os.write(write_fd, ("sk-proj-" + "synthetic" * 4).encode())
-    os.close(write_fd)
-    monkeypatch.setattr(
-        "sys.argv",
-        [
-            "p1",
-            "live",
-            "--evidence",
-            str(out),
-            "--approval",
-            str(approval_path),
-            "--key-fd",
-            str(read_fd),
-        ],
-    )
-    assert p1.main() == (2 if failure else 0)
-    result = json.loads((out / "outcome.json").read_text())
-    assert result["provider_requests"] == (1 if failure else 3)
-    assert sender.call_count == result["provider_requests"]
-    assert result["generated_media_removed"]
-    assert all(not root.exists() for root in generated_roots)
-    assert "sensitive" not in (out / "outcome.json").read_text()
-    with pytest.raises(OSError):
-        os.fstat(read_fd)
+    monkeypatch.setattr(p1, "read_key", Mock(side_effect=AssertionError("credential forbidden")))
+    monkeypatch.setattr("sys.argv", ["p1", "live", "--evidence", str(tmp_path / "unused")])
+    assert p1.main() == 2
+    assert "retired_transport_use_cli_operator" in capsys.readouterr().out
+    sender.assert_not_called()
+    assert not (tmp_path / "unused").exists()

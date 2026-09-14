@@ -122,7 +122,7 @@ def test_serialization_and_default_live_lock():
     assert json.loads(request.body) == {"language": "es"}
     assert "--language" not in request.arguments
     assert request.arguments[-4:] == ("--chunking-strategy", "auto", "--format", "json")
-    with pytest.raises(AdapterError, match="p1c_required"):
+    with pytest.raises(AdapterError, match="admission_required"):
         transcribe(OperatorSelection(), request, context(), "call-001")
 
 
@@ -171,7 +171,7 @@ def forbid_processes(monkeypatch):
 def test_private_primitive_cannot_address_provider():
     from scripts.p1.cli_process import _execute
 
-    with pytest.raises(AdapterError, match="p1c_required"):
+    with pytest.raises(AdapterError, match="admission_required"):
         _execute(
             Path("/unavailable"),
             Request(b"generated", 1, "en"),
@@ -186,7 +186,7 @@ def test_operator_offline_and_live_lock(monkeypatch, capsys):
     args = ["operator", "--profile", "local_dev", "--transport", "openai_cli_local"]
     monkeypatch.setattr("sys.argv", args)
     assert main() == 2
-    assert "p1c_required" in capsys.readouterr().out
+    assert "preflight_rejected" in capsys.readouterr().out
     monkeypatch.setattr("sys.argv", [*args, "--offline"])
     assert main() == 0
     assert "mocked_cli" in capsys.readouterr().out

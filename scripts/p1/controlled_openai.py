@@ -461,6 +461,9 @@ def main() -> int:
     parser.add_argument("--approval", type=Path)
     parser.add_argument("--key-fd", type=int)
     args = parser.parse_args()
+    if args.mode == "live":
+        print(json.dumps({"result": "retired_transport_use_cli_operator", "provider_requests": 0}))
+        return 2
     os.umask(0o077)
     args.evidence.mkdir(mode=0o700, parents=False, exist_ok=False)
     outcome: dict[str, Any] = {

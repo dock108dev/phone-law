@@ -205,3 +205,7 @@ Candidate build labels (`COLACCI_CANDIDATE_COMMIT`, `COLACCI_CANDIDATE_TREE`,
 `COLACCI_RUNTIME_CONTRACT`) propagate through Compose builds, including the
 launcher. Independently verify actual image IDs, runtimes and installed dependency
 versions for each execution image; a label alone is not qualification.
+
+## P1C accounting update
+
+See [P1C campaign admission](./p1-campaign.md) for current zero-request preflight, durable reservations, reconciliation and explicit live blocks. P1B/retired HTTP instructions above are historical where superseded. P1D reproducible product rehearsal is next; live verification remains P1F.

@@ -111,3 +111,7 @@ fresh `COLACCI_SYNTHETIC_ROOT`. Builds, audits and workflow linting fetch public
 candidate and are separate from this working-tree check. Hosted action execution and artifact
 uploads require a GitHub run. No production deployment workflow exists; see
 [deployment boundaries](runbooks/staging-production-safety.md).
+
+## P1C accounting update
+
+See [P1C campaign admission](./runbooks/p1-campaign.md) for current zero-request preflight, durable reservations, reconciliation and explicit live blocks. P1B/retired HTTP instructions above are historical where superseded. P1D reproducible product rehearsal is next; live verification remains P1F.

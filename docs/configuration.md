@@ -109,3 +109,7 @@ Configuration values are never dumped or included in an exception log. Only the 
 No provider credential, endpoint, model, execution gate or CLI capability is consumed by current
 settings. Generated media remains bounded to local synthetic roots. Historical database and
 provenance compatibility do not enable execution.
+
+## P1C accounting update
+
+See [P1C campaign admission](./runbooks/p1-campaign.md) for current zero-request preflight, durable reservations, reconciliation and explicit live blocks. P1B/retired HTTP instructions above are historical where superseded. P1D reproducible product rehearsal is next; live verification remains P1F.

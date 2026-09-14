@@ -31,7 +31,7 @@ class AdapterError(Exception):
     def __init__(self, code: str) -> None:
         allowed = {
             "selection_rejected",
-            "p1c_required",
+            "admission_required",
             "invalid_input",
             "invalid_output",
             "spawn_failed",
@@ -110,7 +110,7 @@ class MockRunner:
 class LiveRunner:
     def run(self, request: Request) -> bytes:
         # No credential access, executable checks or child starts before durable admission.
-        raise AdapterError("p1c_required")
+        raise AdapterError("admission_required")
 
 
 def _reject_constant(value: str) -> None:
