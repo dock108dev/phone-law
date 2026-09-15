@@ -1,4 +1,15 @@
-# P1C campaign admission (offline engineering)
+# P1 campaign accounting and admission
+
+**Current scope correction, 2026-09-13:** P1D is paused. The separate
+[one supervised local probe](p1-local-probe.md) is the current immediate scope.
+Firm ownership, hosted staging, P1D/P1E and full P1F qualification are not
+prerequisites for that probe. Its narrow admission requires actual owner project,
+history, estimated-spend and residual-redirect decisions. The $2 ceiling is not
+silently replaced by an estimate. Durable accounting and production/client blocks
+remain. The sections below preserve the P1C implementation contract and historical
+outcome; their broader live prerequisites apply to the later full campaign.
+
+## Preserved P1C offline engineering contract
 
 P1C implements shared durable accounting and zero-request preflight. It does not
 qualify or enable live transcription. P1D is the next development slice; P1F is the

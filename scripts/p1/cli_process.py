@@ -1,8 +1,7 @@
-"""Bounded POSIX process primitive, exercised only by isolated offline harnesses in P1B.
+"""Bounded CLI process shared by isolated harnesses and the explicit local probe.
 
-No operator entry point calls this primitive. LiveRunner fails before it; P1C must
-add durable admission before connecting the two. Test endpoint/executable injection
-belongs only to the separate harness, never operator configuration.
+The probe owns durable admission and the fixed TLS relay; ordinary LiveRunner and
+application startup remain blocked. No public endpoint/executable overrides exist.
 """
 
 from __future__ import annotations
@@ -52,17 +51,28 @@ def _execute(
     endpoint: str = "http://127.0.0.1:1/v1",
     timeout: float = 120,
     cancel: threading.Event | None = None,
+    _probe_port: int | None = None,
+    _project: str | None = None,
 ) -> bytes:
     """Private primitive; test overrides only under enforced OS network isolation."""
     if not executable.is_absolute() or not 0 < timeout <= 120:
         raise AdapterError("tool_rejected")
-    # P1B cannot address a provider even by calling this private primitive directly.
+    # Only the separate supervised probe can select the fixed TLS tunnel.
+    probe = _probe_port is not None
+    if probe and (
+        type(_probe_port) is not int
+        or not 1 <= _probe_port <= 65535
+        or endpoint != "https://api.openai.com/v1"
+        or not _project
+        or not _project.startswith("proj_")
+    ):
+        raise AdapterError("admission_required")
     try:
         parsed = urlsplit(endpoint)
         port = parsed.port
     except ValueError, TypeError:
         raise AdapterError("admission_required") from None
-    if (
+    if not probe and (
         port is None
         or parsed.scheme != "http"
         or parsed.hostname != "127.0.0.1"
@@ -87,7 +97,7 @@ def _execute(
             os.fchmod(stream.fileno(), 0o600)
             stream.write(request.media)
         args = [
-            *_network_prefix(endpoint),
+            *_network_prefix(f"http://127.0.0.1:{_probe_port}" if probe else endpoint),
             str(executable),
             *request.arguments,
             "--file",
@@ -108,6 +118,15 @@ def _execute(
                     "PATH": "/usr/bin:/bin",
                     "LC_ALL": "C",
                     "OPENAI_API_KEY": credential,
+                    **(
+                        {
+                            "HTTPS_PROXY": f"http://127.0.0.1:{_probe_port}",
+                            "HTTP_PROXY": f"http://127.0.0.1:{_probe_port}",
+                            "OPENAI_PROJECT_ID": str(_project),
+                        }
+                        if probe
+                        else {}
+                    ),
                 },
                 close_fds=True,
                 start_new_session=True,
