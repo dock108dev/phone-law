@@ -6,6 +6,9 @@ request code without secrets, and time out rather than consuming a runner indefi
 
 Expected pull-request status checks:
 
+- `Dependencies` checks declaration/lock agreement before any application build, then installs
+  the exact npm graph in both web and Playwright images with strict peer checking and `npm ls`.
+  Its logs are retained on failure. All three application jobs require this check to pass.
 - `Quality` validates workflows with checksum-pinned actionlint and validates Compose,
   builds the pinned API and web images, then runs formatting,
   linting, type checking, unit/security tests, the production web build, and dependency audits.
@@ -65,3 +68,52 @@ CodeQL was configured for Actions, Python and JavaScript/TypeScript; its additio
 `Analyze (actions)`, `Analyze (python)` and `Analyze (javascript-typescript)`. These repository
 settings may change independently of source. See [CI validation](ci-validation.md) for the
 working-tree evidence and the distinction from prior hosted results.
+
+## Dependency update procedure
+
+The September 15 failure was TypeScript 7.0.2 paired with typescript-eslint 8.70.0,
+whose peer range is `>=4.8.4 <6.1.0`. Keep TypeScript at 6.0.3 until a coordinated
+compiler/linter upgrade is supported. Dependabot excludes TypeScript >=6.1.0 and
+npm major updates; minor/patch updates for the other npm packages continue weekly.
+Revisit the ceiling when upgrading typescript-eslint. Do not use `--force` or
+`--legacy-peer-deps` to hide incompatibilities.
+
+Node, Python and Playwright runtime images, plus `@playwright/test`, require manual
+coordinated updates because Dependabot's separate Docker/npm jobs cannot update
+all their companion declarations. Review these weekly alongside the automated PRs:
+
+- Node image tag and `.nvmrc` together; check npm's supported Node range.
+- Python image, `.python-version`, and `pyproject.toml` together.
+- Playwright image and `@playwright/test` together; regenerate the npm lock.
+- npm version in `packageManager`, `engines.npm`, and both Dockerfiles together.
+- For each Python requirements PR, regenerate `requirements.lock` with
+  `pip-compile --generate-hashes --output-file=requirements.lock requirements.in`
+  under the pinned Python runtime before merging. Dependabot's update to
+  `requirements.in` alone is incomplete; the early gate will reject it.
+
+Regenerate the npm lock with the Dockerfile's pinned Node/npm versions, then run
+`python scripts/verify_dependency_pins.py` and build both Dockerfiles. Each has a
+`dependencies` target for an install-only check. Full builds retain the runtime
+candidate labels and non-root users. Run lint, typecheck, tests, build and audits
+against the resulting candidate before merging.
+
+Configure branch protection to require `Dependencies`, `Quality`, `Integration`,
+and `Browser` on `main`. Source checks alone cannot prevent a failed PR from being
+merged. A read-only check on September 15 found that `main` is still unprotected;
+this repair does not change repository settings or establish hosted CI success.
+
+### Local repair verification — September 15, 2026
+
+Working-tree repair based on `a6ed03d`:
+
+- Fresh, uncached web and Playwright image builds passed; Python image built with
+  the regenerated hash-locked Ruff 0.16.7 dependency.
+- Dependency declaration checks and all seven existing drift regression tests passed.
+- Web lint, typecheck, 11 unit tests, production build, and npm audit passed
+  (zero reported vulnerabilities).
+- The new dependency target rejected the original merged TypeScript 7.0.2
+  manifest/lock with `ERESOLVE`, reproducing the reported failure.
+- Workflow lint, Compose configuration, and diff whitespace checks passed.
+
+This is local dependency-repair evidence, not a full integration/browser journey
+run, hosted CI result, new owner acceptance, or production qualification.

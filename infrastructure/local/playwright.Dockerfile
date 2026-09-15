@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.63.0-noble
+FROM mcr.microsoft.com/playwright:v1.63.0-noble AS dependencies
 
 ARG COLACCI_CANDIDATE_COMMIT=unbound
 ARG COLACCI_CANDIDATE_TREE=unbound
@@ -11,7 +11,9 @@ LABEL io.colacci-law.candidate.commit="$COLACCI_CANDIDATE_COMMIT" \
 WORKDIR /workspace/apps/web
 RUN npm install --global npm@12.0.2
 COPY apps/web/package.json apps/web/package-lock.json ./
-RUN npm ci
+RUN npm ci --strict-peer-deps && npm ls --all
+
+FROM dependencies AS runtime
 COPY apps/web ./
 RUN chown -R pwuser:pwuser /workspace/apps/web
 

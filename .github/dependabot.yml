@@ -16,6 +16,15 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    # TypeScript must stay within typescript-eslint's declared peer range.
+    # Revisit this ceiling together with the linter when upgrading the compiler.
+    ignore:
+      - dependency-name: typescript
+        versions: [">=6.1.0"]
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+      # The browser package and Docker image must be upgraded in one change.
+      - dependency-name: "@playwright/test"
     groups:
       web-dependencies:
         patterns:
@@ -36,6 +45,13 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    # These images have matching declarations outside Dependabot's Docker scope.
+    # Upgrade Node with .nvmrc, Python with .python-version/pyproject.toml,
+    # and Playwright with @playwright/test in a coordinated maintenance change.
+    ignore:
+      - dependency-name: node
+      - dependency-name: python
+      - dependency-name: mcr.microsoft.com/playwright
     groups:
       runtime-images:
         patterns:

@@ -1,4 +1,4 @@
-FROM node:26.8.2-alpine3.24
+FROM node:26.8.2-alpine3.24 AS dependencies
 
 ARG COLACCI_CANDIDATE_COMMIT=unbound
 ARG COLACCI_CANDIDATE_TREE=unbound
@@ -12,7 +12,9 @@ WORKDIR /workspace/apps/web
 
 RUN npm install --global npm@12.0.2
 COPY --chown=node:node apps/web/package.json apps/web/package-lock.json ./
-RUN npm ci
+RUN npm ci --strict-peer-deps && npm ls --all
+
+FROM dependencies AS runtime
 COPY --chown=node:node apps/web ./
 RUN chown -R node:node /workspace/apps/web
 
