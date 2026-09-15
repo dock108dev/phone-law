@@ -39,7 +39,10 @@ from .controlled_openai import BlockedError, read_key
 from .probe_transport import fixed_tunnel
 
 SCOPE = "single-supervised-local-probe-20260913"
-DIRECTORY = Path("/tmp/colacci-law-local-probe-20260913").resolve()  # noqa: S108 - checked 0700 owner directory
+# Fixed evidence location; private_directory checks ownership, permissions and ancestors.
+DIRECTORY = Path(
+    "/tmp/colacci-law-local-probe-20260913"  # noqa: S108  # nosec B108
+).resolve()
 TEXT = (
     "This is an invented local development test. The blue bicycle is beside the garden. "
     "Tomorrow we will count yellow flowers and write a short note."
