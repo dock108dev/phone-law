@@ -85,7 +85,7 @@ def test_runtime_declarations_agree_on_python_3147() -> None:
     contract = declared_runtime_contract(ROOT)
     assert contract["python"] == "3.14.7"
     assert contract["pip"] == "26.2.1"
-    assert contract["node"] == "26.8.1"
+    assert contract["node"] == (ROOT / ".nvmrc").read_text().strip()
     assert contract["npm"] == "12.0.2"
     assert contract["playwright"] == "1.63.0"
 

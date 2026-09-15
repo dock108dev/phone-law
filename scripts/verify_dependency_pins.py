@@ -18,7 +18,10 @@ def verify(root: Path) -> None:
         if requirement and not requirement.startswith("#") and "==" not in requirement:
             failures.append(f"unbounded Python requirement: {requirement.split('[')[0]}")
 
-    lock_text = (root / "requirements.lock").read_text(encoding="utf-8")
+    # Dependabot discovers pip-compile output as .txt paired with requirements.in.
+    if (root / "requirements.lock").exists():
+        failures.append("obsolete Python lock: use only requirements.txt")
+    lock_text = (root / "requirements.txt").read_text(encoding="utf-8")
     requirement_pattern = re.compile(r"^([A-Za-z0-9_.-]+)(?:\[[^]]+\])?==([^\s;\\]+)", re.MULTILINE)
     locked = {
         name.lower().replace("_", "-"): version

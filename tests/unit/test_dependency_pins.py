@@ -10,7 +10,7 @@ from scripts.verify_dependency_pins import verify
 ROOT = Path(__file__).resolve().parents[2]
 FILES = (
     "requirements.in",
-    "requirements.lock",
+    "requirements.txt",
     "pyproject.toml",
     ".python-version",
     ".nvmrc",
@@ -39,7 +39,7 @@ def test_current_declarations_agree(declarations: Path) -> None:
 @pytest.mark.parametrize(
     ("name", "message"),
     [
-        ("requirements.lock", "Python direct/lock mismatch"),
+        ("requirements.txt", "Python direct/lock mismatch"),
         (".nvmrc", "Node runtime declarations disagree"),
         (".python-version", "Python runtime declarations disagree"),
         ("infrastructure/local/web.Dockerfile", "npm runtime"),
@@ -53,7 +53,7 @@ def test_drift_fails_before_installation(declarations, name, message):
 
     path = declarations / name
     source = path.read_text()
-    if name == "requirements.lock":
+    if name == "requirements.txt":
         changed = re.sub(r"(?m)^fastapi==[^\s]+", "fastapi==0.0.0", source)
     elif name in {".nvmrc", ".python-version"}:
         changed = "0.0.0\n"
@@ -68,4 +68,10 @@ def test_drift_fails_before_installation(declarations, name, message):
     assert changed != source
     path.write_text(changed)
     with pytest.raises(SystemExit, match=message):
+        verify(declarations)
+
+
+def test_obsolete_lock_is_rejected(declarations: Path) -> None:
+    shutil.copyfile(declarations / "requirements.txt", declarations / "requirements.lock")
+    with pytest.raises(SystemExit, match="obsolete Python lock"):
         verify(declarations)

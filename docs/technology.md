@@ -31,7 +31,7 @@ and CLI dependencies are removed; historical migration/provenance contracts rema
 
 All direct Python requirements are exact in `requirements.in`; Linux's conditional SQLAlchemy
 `greenlet` dependency is explicit so the macOS-generated lock remains complete in Linux
-containers. `requirements.lock` freezes the
+containers. `requirements.txt` freezes the
 complete transitive graph with SHA-256 hashes. JavaScript direct and transitive dependencies are
 exact in `package.json` and lockfile v3. Python, Node, npm, and PostgreSQL container tags include
 patch versions. Images are not digest-pinned because the supported local platforms differ; this

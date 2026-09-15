@@ -19,8 +19,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN python -m pip install --no-cache-dir --upgrade pip==26.2.1
-COPY requirements.lock /workspace/requirements.lock
-RUN python -m pip install --no-cache-dir --require-hashes -r /workspace/requirements.lock
+COPY requirements.txt /workspace/requirements.txt
+RUN python -m pip install --no-cache-dir --require-hashes -r /workspace/requirements.txt
 
 RUN addgroup --system app && adduser --system --ingroup app --home /home/app app
 COPY --chown=app:app . /workspace

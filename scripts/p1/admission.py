@@ -47,7 +47,7 @@ def implementation_identity() -> str:
         for p in base.rglob("*")
         if p.is_file() and p.suffix in (".py", ".json") and "__pycache__" not in p.parts
     )
-    paths += [ROOT / "requirements.lock", ROOT / "pyproject.toml"]
+    paths += [ROOT / "requirements.txt", ROOT / "pyproject.toml"]
     return digest(encoded({str(p.relative_to(ROOT)): digest(p.read_bytes()) for p in paths}))
 
 

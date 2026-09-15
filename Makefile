@@ -108,7 +108,7 @@ smoke:
 	$(COMPOSE) run --rm api python scripts/smoke.py
 
 audit:
-	$(PY_RUN) pip-audit --require-hashes -r requirements.lock
+	$(PY_RUN) pip-audit --require-hashes -r requirements.txt
 	$(WEB_RUN) npm audit --audit-level=high
 
 secret-scan:

@@ -86,10 +86,12 @@ all their companion declarations. Review these weekly alongside the automated PR
 - Python image, `.python-version`, and `pyproject.toml` together.
 - Playwright image and `@playwright/test` together; regenerate the npm lock.
 - npm version in `packageManager`, `engines.npm`, and both Dockerfiles together.
-- For each Python requirements PR, regenerate `requirements.lock` with
-  `pip-compile --generate-hashes --output-file=requirements.lock requirements.in`
-  under the pinned Python runtime before merging. Dependabot's update to
-  `requirements.in` alone is incomplete; the early gate will reject it.
+- For each Python requirements PR, regenerate `requirements.txt` with
+  `pip-compile --generate-hashes --output-file=requirements.txt requirements.in`
+  under the pinned Python runtime before merging when repairing a lock manually.
+  The canonical pip-compile pair is `requirements.in` and `requirements.txt`.
+  Dependabot recognizes the `.txt` output and can update the pair together.
+  An input-only change remains incomplete; the early gate rejects it.
 
 Regenerate the npm lock with the Dockerfile's pinned Node/npm versions, then run
 `python scripts/verify_dependency_pins.py` and build both Dockerfiles. Each has a
@@ -117,3 +119,22 @@ Working-tree repair based on `a6ed03d`:
 
 This is local dependency-repair evidence, not a full integration/browser journey
 run, hosted CI result, new owner acceptance, or production qualification.
+
+### Python lock discovery repair — September 15, 2026
+
+Dependabot updated Alembic to 1.20.0 in `requirements.in` while the old
+`requirements.lock` retained 1.19.2. Dependabot's Python fetcher discovers `.in`
+and `.txt` files, and its pip-compile matcher requires a `.txt` output. Renamed
+the canonical hash lock to `requirements.txt` and updated Docker, audits, pin
+checks, tests, and the probe source-identity calculation. Historical validation
+reports retain the old filename. No duplicate lock is maintained.
+
+Source: [Dependabot pip-compile matcher](https://github.com/dependabot/dependabot-core/blob/main/python/lib/dependabot/python/pip_compile_file_matcher.rb).
+This removes the discovery mismatch; a future hosted Dependabot run is still
+needed to confirm its complete update behavior on this repository.
+
+Local verification: the Python image built with hash enforcement, installed
+Alembic 1.20.0, and passed `pip check`. Full lint and all 400 unit tests passed.
+The unit suite also exposed a stale Node 26.8.1 test literal; the assertion now
+compares against `.nvmrc`. No hosted Dependabot update, migration-backed
+integration run, provider call, or new owner acceptance is claimed.
