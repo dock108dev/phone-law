@@ -77,6 +77,7 @@ def probe(tmp_path, monkeypatch):
         "account_kind": "personal_development",
         "project_id": "proj_test",
         "reviewer": "test",
+        "issued_at": int(time.time()),
         "expires_at": int(time.time()) + 3600,
         "owner_decision": {"path": str(proof), "sha256": c.digest(proof.read_bytes())},
     }
@@ -151,7 +152,9 @@ def test_usage_never_retains_provider_strings():
     }
 
 
-@pytest.mark.parametrize("failure", ["credential", "timeout", "malformed", "success"])
+@pytest.mark.parametrize(
+    "failure", ["credential", "expired_during_entry", "timeout", "malformed", "success"]
+)
 def test_dispatch_order_retained_debit_and_cleanup(probe, monkeypatch, failure):
     from contextlib import contextmanager
     from types import SimpleNamespace
@@ -166,6 +169,10 @@ def test_dispatch_order_retained_debit_and_cleanup(probe, monkeypatch, failure):
         assert campaign.state()[1] == "reserved"
         if failure == "credential":
             raise p.AdmissionError("credential_unavailable")
+        if failure == "expired_during_entry":
+            record = c.decode(c.read_private(path))
+            record["expires_at"] = 1
+            path.write_bytes(c.encoded(record))
         return "dummy"
 
     @contextmanager
@@ -188,9 +195,116 @@ def test_dispatch_order_retained_debit_and_cleanup(probe, monkeypatch, failure):
     assert campaign.state()[0].requests == 3
     assert campaign.state()[0].micro_usd == 560000
     assert (campaign.root / (p.SCOPE + ".used")).exists()
-    assert campaign.state()[1] == ("reserved" if failure == "credential" else "dispatched")
+    assert campaign.state()[1] == (
+        "reserved" if failure in ("credential", "expired_during_entry") else "dispatched"
+    )
+    if failure == "expired_during_entry":
+        assert result["provider_dispatch_attempts"] == 0
     assert result["verified_billed_micro_usd"] is None
     if failure == "success":
         assert result["status"] == "observed_local_cli_success"
     else:
         assert result["status"] == "stopped_debit_retained"
+
+
+def test_hidden_input_never_falls_back_to_echo(monkeypatch):
+    import warnings
+
+    def fallback(prompt):
+        warnings.warn("synthetic terminal unavailable", p.getpass.GetPassWarning, stacklevel=2)
+        pytest.fail("echo fallback reached")
+
+    monkeypatch.setattr(p.getpass, "getpass", fallback)
+    with pytest.raises(c.AdmissionError, match="hidden_terminal_required"):
+        p.terminal_credential()
+
+
+@pytest.mark.parametrize("issued,expires", [(1, 9999999999), (9999999999, 99999999999)])
+def test_execution_window_cannot_be_extended(probe, issued, expires):
+    campaign, path, record = probe
+    record.update(issued_at=issued, expires_at=expires)
+    path.write_bytes(c.encoded(record))
+    with pytest.raises(c.AdmissionError, match="expiry"):
+        p.validate(campaign, path)
+    assert campaign.state()[0].requests == 2
+
+
+@pytest.fixture
+def resume(probe, monkeypatch):
+    from scripts.p1 import probe_resume as r
+
+    campaign, _, approval = probe
+    owner = p.DIRECTORY / "owner-approval-20260913.json"
+    c.create_private(
+        owner,
+        c.encoded(
+            {
+                "scope": p.SCOPE,
+                "owner_reply": "approved, no additional requests",
+                "estimated_attempt_approved": True,
+                "billing_and_redirect_limitations_accepted": True,
+                "additional_colacci_requests": 0,
+            }
+        ),
+    )
+    historical = p.DIRECTORY / "history.json"
+    c.create_private(historical, b"history")
+    c.create_private(p.DIRECTORY / "backup.json", b"history")
+    manifest = {
+        "source_sha256": "a" * 64,
+        "runtime_versions": r.runtime_versions(),
+        "python_sha256": c.digest(r.Path(r.sys.executable).resolve().read_bytes()),
+        "files": {},
+        "private_files": {owner.name: c.digest(owner.read_bytes())},
+        "media_sha256": approval["media_sha256"],
+        "ledger_sha256": c.digest(campaign.state()[2]),
+        "historical_evidence": [
+            {"path": str(historical), "backup": "backup.json", "sha256": c.digest(b"history")}
+        ],
+    }
+    c.create_private(p.DIRECTORY / "prepared.json", c.encoded(manifest))
+    monkeypatch.setattr(r, "implementation_identity", lambda: "a" * 64)
+    monkeypatch.setattr(r, "load_contract", p.load_contract)
+    monkeypatch.setattr(r, "Campaign", lambda root: campaign)
+    return r, campaign, manifest, historical
+
+
+def test_resume_fresh_binding_preserves_decision_and_ledger(resume):
+    r, campaign, manifest, _ = resume
+    before = campaign.state()[2]
+    path = r.bind("proj_private", manifest)
+    record = p.approval_record(path, p.sample()[0])
+    assert record["expires_at"] - record["issued_at"] == 3600
+    assert record["project_id"] == "proj_private"
+    assert record["owner_decision"]["path"].endswith("owner-approval-20260913.json")
+    assert campaign.state()[2] == before
+
+
+@pytest.mark.parametrize("change", ["source", "runtime", "media", "owner", "history", "ledger"])
+def test_resume_blocks_drift_before_entry(resume, monkeypatch, change):
+    r, campaign, _, historical = resume
+    if change == "source":
+        monkeypatch.setattr(r, "implementation_identity", lambda: "b" * 64)
+    elif change == "runtime":
+        monkeypatch.setattr(r, "runtime_versions", lambda: {})
+    elif change == "media":
+        (p.DIRECTORY / "generated.wav").write_bytes(b"changed")
+    elif change == "owner":
+        (p.DIRECTORY / "owner-approval-20260913.json").write_bytes(b"changed")
+    elif change == "history":
+        historical.write_bytes(b"changed")
+    else:
+        with campaign.locked():
+            campaign.reserve(c.Debit(1, 1, 1, 1), "a" * 64)
+    with pytest.raises((c.AdmissionError, wave.Error, EOFError)):
+        r.check()
+    assert not list(p.DIRECTORY.glob("execution-approval-*"))
+
+
+def test_resume_restores_only_missing_history_without_ledger_change(resume):
+    r, campaign, manifest, historical = resume
+    before = campaign.state()[2]
+    historical.unlink()
+    assert r.check() == manifest
+    assert historical.read_bytes() == b"history"
+    assert campaign.state()[2] == before

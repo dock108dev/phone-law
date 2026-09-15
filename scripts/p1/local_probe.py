@@ -13,6 +13,7 @@ import subprocess  # nosec B404 - fixed local speech generator
 import sys
 import tempfile
 import time
+import warnings
 import wave
 from pathlib import Path
 from typing import Any
@@ -39,10 +40,8 @@ from .controlled_openai import BlockedError, read_key
 from .probe_transport import fixed_tunnel
 
 SCOPE = "single-supervised-local-probe-20260913"
-# Fixed evidence location; private_directory checks ownership, permissions and ancestors.
-DIRECTORY = Path(
-    "/tmp/colacci-law-local-probe-20260913"  # noqa: S108  # nosec B108
-).resolve()
+# Durable private media and evidence; no dependency on a surviving temporary directory.
+DIRECTORY = (Path.home() / ".local/state/colacci-law/single-probe").resolve()
 TEXT = (
     "This is an invented local development test. The blue bicycle is beside the garden. "
     "Tomorrow we will count yellow flowers and write a short note."
@@ -169,7 +168,9 @@ def approval_record(path: Path, request: Request) -> dict[str, Any]:
         or not re.fullmatch(r"proj_[A-Za-z0-9_-]+", record["project_id"])
         or not record.get("reviewer")
         or type(record.get("expires_at")) is not int
-        or not time.time() < record["expires_at"] <= time.time() + 86400
+        or type(record.get("issued_at")) is not int
+        or not record["issued_at"] <= time.time() < record["expires_at"]
+        or not 0 < record["expires_at"] - record["issued_at"] <= 86400
     ):
         raise AdmissionError("probe_account_or_expiry")
     # Retain the actual owner's non-secret decisions as evidence, not manufactured flags.
@@ -200,7 +201,12 @@ def validate(campaign: Campaign, approval: Path) -> tuple[Request, dict[str, Any
 
 def terminal_credential() -> str:
     # Owner supplies selected project's key locally; never scrape saved Codex/account auth.
-    key = getpass.getpass("Selected Platform project's API key (hidden, never saved): ")
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", getpass.GetPassWarning)
+        try:
+            key = getpass.getpass("Selected Platform project's API key (hidden, never saved): ")
+        except getpass.GetPassWarning:
+            raise AdmissionError("hidden_terminal_required") from None
     if len(key) > 4096:
         raise AdmissionError("credential_size")
     data = key.encode("ascii")
@@ -249,6 +255,8 @@ def run(approval: Path) -> dict[str, Any]:
             key = None
             try:
                 key = terminal_credential()
+                # A long private-entry pause must not outlive the execution window.
+                approval_record(approval, request)
                 campaign.transition("dispatched")
                 outcome["provider_dispatch_attempts"] = 1
                 with fixed_tunnel() as tunnel:

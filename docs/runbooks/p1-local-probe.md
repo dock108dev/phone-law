@@ -27,25 +27,31 @@ Command remains `audio:transcriptions create`, model `gpt-4o-transcribe-diarize`
 Existing adapter supplies arguments, bounded process execution and strict conversion.
 No SDK/direct-HTTP transcriber replaces the CLI. The relay carries opaque TLS bytes.
 
-## What is needed now
+## Current handoff — 2026-09-15
 
-1. Owner identifies a personal/development **or** firm Platform project, with its
-   project ID. Firm ownership is optional for this generated development probe.
-   Its project key must allow transcription and the project needs billing/model access;
-   those capabilities are not proven before this first request. Codex sign-in does
-   not itself provide this transcription API credential or API billing entitlement.
-2. Confirm whether any **additional Colacci campaign provider requests** occurred.
-   Reuse P1C's reviewed zero-request records. No unrelated account-wide history is
-   required. Carry forward any additional usage or ambiguity, never invent zero.
-3. Explicitly authorize this single estimated-cost attempt despite the inability to
-   guarantee the existing absolute $2 billing ceiling. Also decide whether to accept
-   the residual same-origin redirect GETs and unverified physical request count.
-   This is not blanket approval or a silent redefinition of the six-request/$2 cap.
-   Without that explicit decision, execution remains blocked.
+**Preparation complete; USER ENTRY NEXT. Paused for today.** The accepted demo stays
+accepted. P1D, P1E and the full P1F campaign remain paused.
 
-The actual owner decision is retained as a private hash-bound non-secret record.
-No passing approval or reconciliation has been authored in advance.
-No account or saved personal credential has been inspected.
+The owner already replied **“approved, no additional requests.”** This resolves the
+single estimated-cost attempt, the stated billing/redirect limitations, and additional
+Colacci usage confirmation. Do not request these decisions again merely to resume.
+The original campaign was initialized with zero historical debit after that decision;
+provider usage and verified billed cost remain unknown. No fresh approval is invented.
+
+Only the actual personal/development Platform project ID and matching project key
+remain for private runtime entry. Account billing, transcription permission and model
+access are unobserved until the supervised attempt. Do not collect credentials in chat,
+inspect saved credentials, or claim account access from Codex sign-in.
+
+Durable preparation, sample and private evidence live at:
+`/Users/michaelfuscoletti/.local/state/colacci-law/single-probe`.
+The original ledger remains in its existing parent directory, with its original
+campaign ID, initialization marker, head witness and journal. Never initialize it again.
+
+See the [current preparation report](/Users/michaelfuscoletti/.local/state/colacci-law/single-probe/REPORT-20260915.md).
+The private `prepared.json` freezes the implementation fingerprint, runtime, sample,
+CLI contract, runtime fixture, approval and historical evidence. `history/` preserves
+previous readiness records byte for byte. The accepted demo was not changed or run.
 
 ## Pricing: estimate, not a maximum
 
@@ -61,8 +67,8 @@ full 16,000 input-token window and 2,000 output tokens:
 These assumed token quantities are not measured usage or proof of total internal
 processing. **$0.06 is a conservative planning estimate, not a guaranteed maximum.**
 No local reservation, project alert or model context limit guarantees a billing cap.
-The existing $2 spending limit remains unchanged until the owner explicitly decides
-about this one exception. No reset of historical spending is permitted.
+The existing $2 campaign limit remains; the owner accepted the stated limitation
+for this single estimated-cost attempt on September 13. No reset of historical spending is permitted.
 
 Record separately: local reservation ($0.06 if admitted), estimated cost ($0.06),
 provider numeric usage (if returned), estimated charge derived from known billable
@@ -96,55 +102,86 @@ refund, alternate campaign ID or generic safety bypass. A successful transcript 
 leaves a campaign hold because physical GET count and billed cost are unverified.
 Do not automatically resume P1D or send another request.
 
-## Exact procedure after the owner's decisions
+## Durable resume — next session only
 
-Use the retained host environment (Python 3.14.5; focused checks also run with pinned
-Docker Python 3.14.7). From the repository root:
+There is no open Terminal dependency. The old temporary `owner_run.py` launcher is
+retired: its source fingerprint mismatches current source. No execution-approval or
+project-selection record existed at reconciliation. No expiry was extended or backdated.
+The substantive approval is retained separately from a time-limited execution binding.
 
-```sh
-/tmp/colacci-law-p1b-20260913/venv/bin/python -m scripts.p1.local_probe prepare
-```
-
-This rechecks the already prepared sample; it does not overwrite or upload it.
-After the owner confirms Colacci history, retain that response and combine it with
-`/tmp/colacci-law-p1c-20260913/evidence/reconciliation-final.json` and its referenced
-records. Follow the existing campaign runbook's explicit initialization schema.
-Only if history is resolved and no state exists, create the private stable state
-directory and use `scripts.p1.operator --initialize` with the real reconciliation.
-Existing state must be reused; no initialization merely because a file is absent.
-
-Write a private canonical approval JSON with `campaign.encoded` using the validated
-fields in `local_probe.approval_record`: actual owner decisions, selected project ID,
-account kind, reviewer, expiry within 24 hours, current implementation/CLI contract/
-media hashes, one request/no retries, $0.06 estimate, and explicit spending/redirect/
-physical-count decisions. Bind the actual owner-decision record by path/SHA-256.
-An example or generated checklist is not the owner's approval.
+1. The next supervised session verifies the frozen preparation **without prompting**:
 
 ```sh
-/tmp/colacci-law-p1b-20260913/venv/bin/python -m scripts.p1.local_probe preflight --approval /absolute/private/approval.json
-/tmp/colacci-law-p1b-20260913/venv/bin/python -m scripts.p1.local_probe run --approval /absolute/private/approval.json
+cd /Users/michaelfuscoletti/Desktop/colacci-law
+/Users/michaelfuscoletti/.local/lib/colacci-law/probe-venv/bin/python -m scripts.p1.probe_resume check
 ```
 
-The second command must run in the owner's local interactive terminal. **Only after
-reservation**, it prompts without echo for the selected project's key. Never paste a
-key into chat. It uses the existing bounded pipe reader and child-environment delivery;
-no key file, shell history value, source/Compose entry or saved credential lookup.
-If a key is not available, cancel; any reservation remains held. The owner can revoke
-an ephemeral project key afterward; no revocation is claimed without account evidence.
+The stable Python environment is installed against the current hash-pinned
+`requirements.txt`; it is not the old `/tmp` virtual environment. The check verifies
+source/media/fixture, Python and installed versions, CLI binary, retained decision,
+original campaign integrity and absence of a hold/one-use marker. It also restores
+only missing historical evidence from verified durable copies to the exact paths
+embedded in the original ledger. Changed evidence stops the check; the ledger itself
+is never restored, overwritten, relocated or reset. If any identity check fails,
+stop for bounded reconciliation; do not refresh `prepared.json` automatically.
 
-On timeout, process error or malformed response: retain debit, save a fixed diagnostic,
-remove media and stop. No retry. On valid output: retain only sanitized invented text,
-timestamp/speaker counts, numeric provider usage and source/project/input identity;
-never publish the converter's mocked provenance as a live application artifact.
-One success proves only this observed local path, not general accuracy, multi-speaker
-quality, client acceptance or production readiness. `getpass`/pipe references are
-released and the child, relay and temporary media are cleaned up; in-memory zeroization
-cannot be guaranteed by Python strings. The private sample receipt remains.
+2. After that check passes, open a **new owner-local Terminal** and run:
+
+```sh
+cd /Users/michaelfuscoletti/Desktop/colacci-law
+/Users/michaelfuscoletti/.local/lib/colacci-law/probe-venv/bin/python -m scripts.p1.probe_resume enter
+```
+
+This is the only supported private-entry launcher. It verifies preparation before
+asking for the actual personal/development Platform project ID. Local entry binds
+that project to the frozen source/sample and retained original decision in a new,
+uniquely named execution record with current `issued_at` and a one-hour expiry.
+It never edits an older execution record or treats the substantive decision as an
+indefinite execution window. Expired, future-dated, mismatched or over-24-hour windows
+are rejected. Key/project matching is the owner's local selection, not a claim of
+provider-verified account access.
+
+3. Existing admission revalidates the record under the original campaign lock,
+reserves one attempt and writes the one-use marker **before** the hidden key prompt.
+Key entry fails closed if echo suppression is unavailable. Source and expiry are
+rechecked after private key entry and before dispatch, so waiting at the prompt cannot
+outlive the execution window. The key passes through a
+bounded pipe into the restricted CLI child environment, with no saved key or argv value.
+Cancellation after reservation retains the debit/hold; it does not authorize another try.
+No automatic retry runs. Never invoke `prepare` to replace missing approved media.
+
+4. Stop after this one attempt. Fixed diagnostics and sanitized result/usage evidence
+are retained privately; CLI children, relay, temporary media and the prepared WAV are
+removed in attempted-run cleanup. The sample receipt and historical evidence remain.
+A valid transcript still retains the accounting hold for unverified physical request
+count/billing. Review those facts before any separately authorized later work. No P1D,
+P1E, full P1F, production or client readiness is implied. Python string zeroization is
+not guaranteed; key references are released and no key is saved.
+
+**USER ENTRY NEXT — Owner enters the actual personal/development Platform project ID
+and its matching key privately through the supported local prompt. The next session
+verifies the prepared identity and fresh execution binding, then performs the single
+supervised probe and stops.**
+
+Do not launch the prompt during today's pause. No live probe ran on September 15;
+no credentials were accessed and no new reservation, dispatch or spending occurred.
+
+## Local Git handoff
+
+Bounded changes are reviewable in the working tree; no commit/push/merge was authorized
+or performed. No Git action is required to run the frozen local preparation. If the
+owner wants to retain these changes in Git, review and stage only
+`scripts/p1/admission.py`, `scripts/p1/local_probe.py`, `scripts/p1/probe_resume.py`,
+`tests/unit/test_p1_local_probe.py`, and `docs/runbooks/p1-local-probe.md`, then commit
+locally using the owner's normal branch workflow. The Desktop tracker and private
+runtime/evidence are outside the repository. Do not stage credentials or evidence.
+A content change requires focused requalification and a new preparation fingerprint;
+a commit alone does not alter the content binding. Push/merge remains owner-managed.
 
 ## Focused offline checks
 
 ```sh
-python -m pytest tests/unit/test_p1_local_probe.py tests/unit/test_p1_campaign.py tests/unit/test_p1_cli_adapter.py
+python -m pytest tests/unit/test_p1_local_probe.py tests/unit/test_p1_campaign.py tests/unit/test_p1_cli_adapter.py tests/unit/test_p1_cli_check.py
 python -m scripts.p1.offline_tunnel_check
 python -m scripts.p1.offline_probe_check
 python -m scripts.p1.offline_serialization_check
