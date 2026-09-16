@@ -1,10 +1,9 @@
 # Environment profiles and configuration rules
 
-P1A: the official host CLI is installed and `make p1-cli-check` verifies it with
-zero provider requests and no credentials. See [pinned setup and contract](runbooks/p1-cli-setup.md).
-P1B adds the explicit offline `local_dev` / `openai_cli_local` operator adapter;
-live execution is blocked pending P1C, and application startup remains fixture/import based. The earlier standalone
-HTTP/Whisper harness is historical implementation material, not the selected P1 path.
+The application uses offline fixture/import processing. Separate host-only P1 tooling
+implements CLI checks, an offline adapter, campaign accounting and a supervised
+generated-audio probe. See [operator boundaries](runbooks/p1-cli-adapter.md) and
+[pinned CLI setup](runbooks/p1-cli-setup.md); no application setting enables provider execution.
 
 ## Configuration sources and variable groups
 
@@ -104,12 +103,13 @@ names; wildcards, local names, and internal demo service names fail startup vali
 Configuration values are never dumped or included in an exception log. Only the content-free
 `unsafe_configuration` code is emitted when process startup is rejected.
 
-## Provider execution is unsupported
+## Application provider execution is unsupported
 
-No provider credential, endpoint, model, execution gate or CLI capability is consumed by current
-settings. Generated media remains bounded to local synthetic roots. Historical database and
+No provider credential, endpoint, model, execution gate or CLI capability is consumed by shared
+application settings. The separate `OperatorSelection` in `scripts/p1/cli_adapter.py`
+accepts `local_dev` / `openai_cli_local`; these are explicit operator arguments,
+not an additional supported `Settings` adapter triple. Campaign/probe inputs use
+private records and local entry, not `.env` keys. See [the adapter guide](runbooks/p1-cli-adapter.md).
+
+Generated media remains bounded to local synthetic roots. Historical database and
 provenance compatibility do not enable execution.
-
-## P1C accounting update
-
-See [P1C campaign admission](./runbooks/p1-campaign.md) for current zero-request preflight, durable reservations, reconciliation and explicit live blocks. P1B/retired HTTP instructions above are historical where superseded. P1D reproducible product rehearsal is next; live verification remains P1F.

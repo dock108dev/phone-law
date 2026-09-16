@@ -1,9 +1,8 @@
 # Logging and secret-handling policy
 
-P1 scope note: the application still uses offline fixture/import paths. A separate,
-explicitly invoked [generated-only P1 harness](../runbooks/controlled-openai-p1.md) now implements controlled
-OpenAI verification. Statements below about retired provider tooling refer to the
-application and old SDK/CLI path; no application provider setting is re-enabled.
+The application remains offline. Separate host-only CLI tooling lives under
+`scripts/p1/`; see [operator boundaries](../runbooks/p1-cli-adapter.md).
+The historical HTTP/Whisper harness is not the selected transport.
 
 Application logs are newline-delimited JSON and contain only event, service, timestamp, level,
 component, opaque correlation ID, safe health route, HTTP method, status, duration, profile,
@@ -16,7 +15,10 @@ URLs, raw exception details, rejected validation inputs, and provider payloads. 
 disabled.
 
 Historical provider provenance may remain in stored records, but it is never authorization to
-execute a provider request. Provider/CLI tooling and credential configuration are removed.
+execute a provider request. Application credential configuration remains absent.
+Separate host probe credentials are entered privately and passed to the restricted CLI
+child; its diagnostics and accounting limits are documented in the
+[probe runbook](../runbooks/p1-local-probe.md).
 
 Manual-upload request bodies, multipart headers, selected filenames, full content fingerprints,
 object IDs, local paths, transcript content, and raw exceptions are also excluded. Upload routes

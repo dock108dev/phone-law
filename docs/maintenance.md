@@ -21,7 +21,8 @@
 
 `apps/web/src/App.tsx` contains routing and principal state. Eight page modules under `pages/`
 contain their own view state; `shared.tsx` contains common presentation. API access remains in
-`api.ts`. Provider/CLI process experiments are fully retired.
+`api.ts`. Host-only P1 tooling is maintained separately under `scripts/p1/`; see
+[its boundaries and source owners](runbooks/p1-cli-adapter.md).
 
 The remaining source/test files over roughly 500 lines are listed below. Counts are a review
 snapshot, not a size limit. Splitting transactional methods or shared page state solely to hit a

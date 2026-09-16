@@ -27,9 +27,11 @@ Command remains `audio:transcriptions create`, model `gpt-4o-transcribe-diarize`
 Existing adapter supplies arguments, bounded process execution and strict conversion.
 No SDK/direct-HTTP transcriber replaces the CLI. The relay carries opaque TLS bytes.
 
-## Current handoff — 2026-09-15
+## Recorded handoff — 2026-09-15
 
-**Preparation complete; USER ENTRY NEXT. Paused for today.** The accepted demo stays
+**Recorded September 15 status: preparation complete; USER ENTRY NEXT; paused that day.**
+This is retained preparation evidence, not a fresh verification of private state.
+Use the Desktop tracker for current scope and the readiness procedure below at resume. The accepted demo stays
 accepted. P1D, P1E and the full P1F campaign remain paused.
 
 The owner already replied **“approved, no additional requests.”** This resolves the
@@ -163,20 +165,21 @@ and its matching key privately through the supported local prompt. The next sess
 verifies the prepared identity and fresh execution binding, then performs the single
 supervised probe and stops.**
 
-Do not launch the prompt during today's pause. No live probe ran on September 15;
+The September 15 pause did not authorize an unattended later launch. No live probe ran on September 15;
 no credentials were accessed and no new reservation, dispatch or spending occurred.
 
 ## Local Git handoff
 
-Bounded changes are reviewable in the working tree; no commit/push/merge was authorized
-or performed. No Git action is required to run the frozen local preparation. If the
-owner wants to retain these changes in Git, review and stage only
-`scripts/p1/admission.py`, `scripts/p1/local_probe.py`, `scripts/p1/probe_resume.py`,
-`tests/unit/test_p1_local_probe.py`, and `docs/runbooks/p1-local-probe.md`, then commit
-locally using the owner's normal branch workflow. The Desktop tracker and private
-runtime/evidence are outside the repository. Do not stage credentials or evidence.
-A content change requires focused requalification and a new preparation fingerprint;
-a commit alone does not alter the content binding. Push/merge remains owner-managed.
+The September 15 handoff described five uncommitted files. Those changes were
+subsequently committed in `db42ce3fdc06a667434b9e5341cc3db27dd01534`; do not repeat
+the old five-file staging instructions. Review current Git status before any owner-managed
+Git action. The Desktop tracker and private runtime/evidence remain outside the repository.
+
+Prepared content identity and Git identity are distinct. A commit alone does not
+change content hashes; changes to fingerprinted implementation or explicitly bound
+files require bounded reconciliation. Never refresh preparation just to make a
+check pass. Documentation reconciliation does not claim a fresh probe readiness
+check, credential check, live result or candidate qualification.
 
 ## Focused offline checks
 

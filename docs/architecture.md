@@ -1,9 +1,8 @@
 # Architecture and repository layout
 
-P1 scope note: the application still uses offline fixture/import paths. A separate,
-explicitly invoked [generated-only P1 harness](runbooks/controlled-openai-p1.md) now implements controlled
-OpenAI verification. Statements below about retired provider tooling refer to the
-application and old SDK/CLI path; no application provider setting is re-enabled.
+The application remains offline. Separate host-only CLI tooling lives under
+`scripts/p1/`; see [operator boundaries](runbooks/p1-cli-adapter.md).
+The historical HTTP/Whisper harness is not the selected transport.
 
 The authoritative module and caller inventory is maintained in
 [Current implementation sources of truth](ssot.md). That inventory describes runtime ownership;
@@ -77,7 +76,8 @@ repeated imports idempotent. Manual upload and the fixture verification harness 
 [Source ownership](ssot.md) identifies domain owners. API errors use `errors.py`; settings reject
 unsupported adapters. `App.tsx` owns routing and principal state, `pages/` owns page views and
 local state, `shared.tsx` owns common presentation, and `api.ts` owns all browser requests.
-Provider SDK/CLI experiments are removed; historical persisted provenance remains readable.
+Earlier application provider experiments were retired; current host-only P1 tooling
+is separate from these runtime paths. Historical persisted provenance remains readable.
 
 The supported application is a four-component local stack with immutable daily report snapshots,
 reviewer feedback/audit events, a failure queue, and playbook lifecycle routes:

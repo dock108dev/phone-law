@@ -1,13 +1,13 @@
 # Post-demo P1 — controlled OpenAI verification
 
-## Current direction: P1B offline implementation; P1C next
+## Selected CLI path
 
-Use the pinned CLI 1.15.0, `gpt-4o-transcribe-diarize` and `diarized_json`.
-[P1A setup](p1-cli-setup.md) and [P1B adapter](p1-cli-adapter.md) describe the
-implemented offline boundaries and checks. Live execution is blocked pending durable
-P1C preflight/budget controls. The original six-request/$2 campaign is preserved;
-P1B consumes zero provider requests. The older HTTP/Whisper harness below remains
-historical and is not the selected CLI transport.
+Use the [operator guide](p1-cli-adapter.md), [pinned setup](p1-cli-setup.md),
+[campaign admission](p1-campaign.md) and [separate probe runbook](p1-local-probe.md).
+The selected contract is CLI 1.15.0, `gpt-4o-transcribe-diarize`, `diarized_json`.
+The HTTP/Whisper contract below is historical; `controlled_openai live` returns
+`retired_transport_use_cli_operator` before credential access. Do not execute its old
+live procedure or apply its pricing to the CLI model.
 
 ## Historical standalone HTTP harness — retained implementation record
 
@@ -140,7 +140,3 @@ Run repository lint, strict types and unit checks plus this focused suite. Host
 qualifies live provider access. After missing prerequisites are supplied, run a fresh
 zero-request preflight and the three fixed live cases using the same campaign ledger;
 stop at the first failed case. All later phases remain separately authorized.
-
-## P1C accounting update
-
-See [P1C campaign admission](./p1-campaign.md) for current zero-request preflight, durable reservations, reconciliation and explicit live blocks. P1B/retired HTTP instructions above are historical where superseded. P1D reproducible product rehearsal is next; live verification remains P1F.

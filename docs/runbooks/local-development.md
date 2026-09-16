@@ -1,14 +1,17 @@
 # Local development and troubleshooting
 
-P1A: the official host CLI is installed and `make p1-cli-check` verifies it with
-zero provider requests and no credentials. See [pinned setup and contract](p1-cli-setup.md).
-P1B adds the explicit offline `local_dev` / `openai_cli_local` operator adapter;
-live execution is blocked pending P1C, and application startup remains fixture/import based. The earlier standalone
-HTTP/Whisper harness is historical implementation material, not the selected P1 path.
+The application uses offline fixture/import processing. Separate host-only P1 tooling
+implements CLI checks, an offline adapter, campaign accounting and a supervised
+generated-audio probe. See [operator boundaries](p1-cli-adapter.md) and
+[pinned CLI setup](p1-cli-setup.md); no application setting enables provider execution.
 
 Docker, Compose, `make`, a POSIX shell, and host `python3` are required. Host Python runs only
 deterministic fixture/evidence helpers; application code and dependencies run in the Python 3.14.7
-container. Host Node is not required.
+container. Host Node is not required. On macOS, `make` may be blocked until the installed
+Xcode/Command Line Tools license has been accepted locally. If `make help` reports
+that error, review and accept the license in your own Terminal using the command
+shown by the system, then retry `make help`. This is a host prerequisite, not an
+application or dependency failure.
 
 Follow the [root quick start](../../README.md#start-locally) from the repository root.
 
@@ -23,8 +26,8 @@ If a clean reset is necessary, `CONFIRM_LOCAL_DATA_DELETE=yes make clean` remove
 project, including its synthetic database volume (`colacci-law` by default). Then rerun bootstrap.
 
 If a locked package changes, update the exact direct version first and mechanically regenerate
-the relevant lock; run every stable command plus the separate advisory audit. Do not hand-edit a
-resolved lockfile.
+the relevant lock and follow the focused [dependency update procedure](../continuous-integration.md#dependency-update-procedure).
+Do not hand-edit a resolved lockfile.
 
 Tests, smoke checks, and migrations use no live AI, telephony, email, cloud, or identity service.
 No external credential is accepted.
@@ -205,7 +208,3 @@ Candidate build labels (`COLACCI_CANDIDATE_COMMIT`, `COLACCI_CANDIDATE_TREE`,
 `COLACCI_RUNTIME_CONTRACT`) propagate through Compose builds, including the
 launcher. Independently verify actual image IDs, runtimes and installed dependency
 versions for each execution image; a label alone is not qualification.
-
-## P1C accounting update
-
-See [P1C campaign admission](./p1-campaign.md) for current zero-request preflight, durable reservations, reconciliation and explicit live blocks. P1B/retired HTTP instructions above are historical where superseded. P1D reproducible product rehearsal is next; live verification remains P1F.

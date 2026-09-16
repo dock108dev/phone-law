@@ -1,9 +1,9 @@
 # P1A: pinned host OpenAI CLI
 
-P1A installation evidence below is retained. P1B now implements the explicit
-[offline adapter and serialization/process checks](p1-cli-adapter.md). Live execution
-remains blocked pending P1C; P1D-P1F remain pending. API, worker and browser remain
-offline. No account credential is needed for installation or offline checks.
+P1A installation evidence below is retained. See the [operator guide](p1-cli-adapter.md)
+for the implemented adapter, campaign admission and separate supervised probe.
+API, worker and browser remain offline. No account credential is needed for
+installation or offline capability checks. The Desktop tracker owns current status.
 
 ## Installation identity and reproduction
 

@@ -16,7 +16,8 @@ one bounded, allowlisted generated audio artifact or one strict invented transcr
 All HTTP body consumption is now bounded and arbitrary audio is rejected before decoding.
 
 No callback, webhook, payment, reset, invite, cookie, bearer-token, multi-tenant, or outbound-link
-surface exists. Provider SDK/CLI experiments have been removed from the repository. Local published ports bind to loopback. Staging and production configuration rejects
+surface exists. Earlier application provider SDK/CLI experiments were retired; the separate host-only
+P1 boundary is described in [the adapter guide](../runbooks/p1-cli-adapter.md). Local published ports bind to loopback. Staging and production configuration rejects
 fake authentication, fixture adapters, local storage/databases, weak secrets, missing retention,
 debug mode, permissive CORS, and local trusted hosts; a real SSO implementation and deployment
 stack do not yet exist.

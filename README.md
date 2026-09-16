@@ -1,14 +1,13 @@
 # Colacci Law Call Review
 
-P1A: the official host CLI is installed and `make p1-cli-check` verifies it with
-zero provider requests and no credentials. See [pinned setup and contract](docs/runbooks/p1-cli-setup.md).
-P1B adds the explicit offline `local_dev` / `openai_cli_local` operator adapter;
-live execution is blocked pending P1C, and application startup remains fixture/import based. The earlier standalone
-HTTP/Whisper harness is historical implementation material, not the selected P1 path.
-
 A local application for reviewing synthetic calls: daily briefings, evidence-linked reports,
 reviewer feedback, failure recovery, invented-artifact uploads and local operations.
-There is no production deployment, client-data workflow or live provider integration.
+The application has no production deployment, client-data workflow or live provider integration.
+
+The application uses offline fixture/import processing. Separate host-only P1 tooling
+implements CLI checks, an offline adapter, campaign accounting and a supervised
+generated-audio probe. See [operator boundaries](docs/runbooks/p1-cli-adapter.md) and
+[pinned CLI setup](docs/runbooks/p1-cli-setup.md); no application setting enables provider execution.
 
 ## Start locally
 

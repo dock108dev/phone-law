@@ -1,12 +1,12 @@
 # Technology choices and pinned versions
 
-P1 scope note: the application still uses offline fixture/import paths. A separate,
-explicitly invoked [generated-only P1 harness](runbooks/controlled-openai-p1.md) now implements controlled
-OpenAI verification. Statements below about retired provider tooling refer to the
-application and old SDK/CLI path; no application provider setting is re-enabled.
+The application remains offline. Separate host-only CLI tooling lives under
+`scripts/p1/`; see [operator boundaries](runbooks/p1-cli-adapter.md).
+The historical HTTP/Whisper harness is not the selected transport.
 
-The application uses local fixture transcription and invented-transcript import. Provider SDK
-and CLI dependencies are removed; historical migration/provenance contracts remain readable.
+The application uses local fixture transcription and invented-transcript import. It has no
+provider SDK or host CLI dependency; the separate P1 host tool has its own pinned contract.
+Historical migration/provenance contracts remain readable.
 
 | Layer | Exact version | Reason |
 |---|---:|---|
@@ -16,16 +16,16 @@ and CLI dependencies are removed; historical migration/provenance contracts rema
 | Starlette | 1.6.0 | Patched ASGI layer selected above advisories affecting the initial pre-1.0 pin |
 | Pydantic Settings | 2.15.0 | Typed environment parsing and model-level fail-closed validation |
 | SQLAlchemy | 2.0.52 | Explicit connection handling and portable readiness checks |
-| Psycopg | 3.3.4 | PostgreSQL driver with a Python 3.14-compatible pinned binary wheel |
-| Alembic | 1.19.1 | Reversible, inspectable database migrations |
+| Psycopg | 3.3.5 | PostgreSQL driver with a Python 3.14-compatible pinned binary wheel |
+| Alembic | 1.20.0 | Reversible, inspectable database migrations |
 | Uvicorn | 0.52.4 | Minimal API process with access logging disabled |
 | ffmpeg / ffprobe | 7:5.1.9-0+deb12u1 | Exact Debian media inspection and normalization package; fixed arguments preserve channel count |
-| Node.js | 26.3.0 | Container runtime, aligned with `.nvmrc` |
+| Node.js | 26.8.2 | Container runtime, aligned with `.nvmrc` |
 | npm | 12.0.2 | Lockfile v3 package manager, pinned in image and manifest |
-| React / React DOM | 19.2.8 | Typed dashboard shell |
+| React / React DOM | 19.3.0 | Typed dashboard shell |
 | TypeScript | 6.0.3 | Strict static checks |
-| Vite | 8.2.2 | Local development server and deterministic production build; pinned to the accepted dependency graph |
-| Playwright | 1.62.1 | Pinned Chromium end-to-end flow and responsive screenshots in a version-pinned image |
+| Vite | 8.3.0 | Local development server and deterministic production build; pinned in the current dependency graph |
+| Playwright | 1.63.0 | Pinned Chromium end-to-end flow and responsive screenshots in a version-pinned image |
 | axe-core Playwright | 4.13.0 | Automated WCAG 2 A/AA and 2.1 A/AA checks on report and call views |
 | PostgreSQL | 17.6-alpine3.22 | Supported database major with an exact patch/OS image tag |
 
@@ -37,8 +37,8 @@ exact in `package.json` and lockfile v3. Python, Node, npm, and PostgreSQL conta
 patch versions. Images are not digest-pinned because the supported local platforms differ; this
 is a documented residual reproducibility risk.
 
-Ruff 0.16.5, mypy 2.3.1, pytest 9.1.1, pytest-cov 7.1.0, Bandit 1.9.4,
-pip-audit 2.10.1, ESLint 10.9.1, typescript-eslint 8.68.0, and Vitest 4.1.11 form the
+Ruff 0.16.7, mypy 2.3.1, pytest 9.1.1, pytest-cov 7.1.0, Bandit 1.9.4,
+pip-audit 2.10.1, ESLint 10.10.0, typescript-eslint 8.70.0, and Vitest 5.0.0 form the
 quality toolchain.
 
 Bandit's hardcoded all-interface rule is excluded because both Python listeners must bind across

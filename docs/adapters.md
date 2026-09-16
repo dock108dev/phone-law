@@ -1,12 +1,11 @@
 # Supported input boundaries
 
-P1 scope note: the application still uses offline fixture/import paths. A separate,
-explicitly invoked [generated-only P1 harness](runbooks/controlled-openai-p1.md) now implements controlled
-OpenAI verification. Statements below about retired provider tooling refer to the
-application and old SDK/CLI path; no application provider setting is re-enabled.
+The application remains offline. Separate host-only CLI tooling lives under
+`scripts/p1/`; see [operator boundaries](runbooks/p1-cli-adapter.md).
+The historical HTTP/Whisper harness is not the selected transport.
 
 The application accepts deterministic fixture events, allowlisted generated audio and strict
-invented-transcript JSON. There is no telephony ingestion, live transcription provider, CLI
+invented-transcript JSON. These application paths have no telephony ingestion, live transcription provider, CLI
 transport, cloud object store or external notification implementation.
 
 ## Fixture processing
@@ -31,7 +30,8 @@ it is not a general import utility. See [testing](testing.md#transcript-fixture-
 
 ## Historical compatibility
 
-Provider experiments and their configuration, SDK dependency, preflights and fixtures are retired.
+Earlier application provider experiments and their configuration, SDK dependency, preflights
+and fixtures are retired. Current host CLI tooling is documented separately above.
 Migration history, existing metadata tables and serialized provenance remain readable so cleanup
 and audit history are not silently lost. See [data models](data-models.md) and
 [source ownership](ssot.md). Future external integrations require a new implementation and

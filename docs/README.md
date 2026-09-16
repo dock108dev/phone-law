@@ -18,6 +18,11 @@ under `decisions/`; current behavior is defined by source, tests, and the docume
 - [Technology choices](technology.md): pinned runtimes and dependency policy.
 - [Configuration](configuration.md): profiles, environment settings, and fail-closed startup rules.
 - [Adapter boundaries](adapters.md): supported synthetic inputs and historical data compatibility.
+- [Host P1 operator guide](runbooks/p1-cli-adapter.md): source ownership, offline commands,
+  campaign admission, probe boundaries and unresolved integration limits.
+- [Pinned host CLI](runbooks/p1-cli-setup.md): installation identity and zero-request checks.
+- [Single-probe runbook](runbooks/p1-local-probe.md): retained preparation and private-entry
+  procedure; consult the Desktop tracker before any execution.
 
 ## Operate and diagnose
 

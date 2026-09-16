@@ -1,10 +1,9 @@
 # Testing and validation
 
-P1A: the official host CLI is installed and `make p1-cli-check` verifies it with
-zero provider requests and no credentials. See [pinned setup and contract](runbooks/p1-cli-setup.md).
-P1B adds the explicit offline `local_dev` / `openai_cli_local` operator adapter;
-live execution is blocked pending P1C, and application startup remains fixture/import based. The earlier standalone
-HTTP/Whisper harness is historical implementation material, not the selected P1 path.
+The application uses offline fixture/import processing. Separate host-only P1 tooling
+implements CLI checks, an offline adapter, campaign accounting and a supervised
+generated-audio probe. See [operator boundaries](runbooks/p1-cli-adapter.md) and
+[pinned CLI setup](runbooks/p1-cli-setup.md); no application setting enables provider execution.
 
 Tests use deterministic invented data. Routine gates do not call OpenAI, telephony, email, cloud
 storage, identity, or notification services. Docker and Compose run project dependencies; host
@@ -70,8 +69,10 @@ seven days. See [Continuous integration](continuous-integration.md) for the exac
 
 ## Choosing the minimum gate
 
-Documentation-only changes still run `make lint` because it includes schema, secret, and web lint
-checks. Ordinary source changes run lint, type checking, unit tests, and the affected focused gate.
+For documentation-only changes, verify edited claims, local links, paths and command names
+against source, and run `git diff --check`; no application build or suite is required.
+For ordinary source changes, run the affected syntax/type check and relevant unit tests,
+then the affected focused gate when executable behavior warrants it.
 Changes to routes, runtime settings, containers, or migrations also run integration and smoke.
 Cross-cutting browser behavior runs `make test-e2e`. Dependency changes additionally run the
 online `make audit`.
@@ -111,7 +112,3 @@ fresh `COLACCI_SYNTHETIC_ROOT`. Builds, audits and workflow linting fetch public
 candidate and are separate from this working-tree check. Hosted action execution and artifact
 uploads require a GitHub run. No production deployment workflow exists; see
 [deployment boundaries](runbooks/staging-production-safety.md).
-
-## P1C accounting update
-
-See [P1C campaign admission](./runbooks/p1-campaign.md) for current zero-request preflight, durable reservations, reconciliation and explicit live blocks. P1B/retired HTTP instructions above are historical where superseded. P1D reproducible product rehearsal is next; live verification remains P1F.

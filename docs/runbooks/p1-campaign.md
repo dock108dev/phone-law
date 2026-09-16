@@ -12,8 +12,9 @@ outcome; their broader live prerequisites apply to the later full campaign.
 ## Preserved P1C offline engineering contract
 
 P1C implements shared durable accounting and zero-request preflight. It does not
-qualify or enable live transcription. P1D is the next development slice; P1F is the
-only live verification phase after P1D/P1E and all prerequisites are satisfied.
+qualify or enable the general live path. The original sequence placed live
+verification in P1F after P1D/P1E; the narrow supervised probe described above
+has its own admission path. Do not use this historical sequence as the next action.
 Owner demo acceptance is closed.
 
 ## Operator commands

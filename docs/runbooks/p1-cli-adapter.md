@@ -1,26 +1,69 @@
-# P1B offline CLI adapter
+# Host-only P1 CLI adapter and operator boundaries
 
-P1B implements an explicit host operator boundary, bounded POSIX process primitive,
-and strict conversion into the existing `Transcript` contract. It does not connect
-an application to OpenAI. P1C durable admission/preflight and P1F live verification
-remain pending. The original six-request/$2 campaign is unchanged and unused here.
+The host tooling implements strict transcript conversion, a bounded CLI process,
+durable campaign admission and a separate supervised single-sample probe. It is
+not connected to API, worker, browser or manual-upload processing. Current owner
+status and authorization remain in the Desktop tracker.
 
 ## Selection and execution
 
-`python -m scripts.p1.operator --profile local_dev --transport openai_cli_local --offline`
-runs an invented in-memory response through the adapter. Omit `--offline` and it
-returns `p1c_required` before tool or credential access. Other profiles/transports
-are rejected. `OperatorSelection` is separate from shared `Settings`, which still
-rejects CLI selection in every application profile. API, worker, browser, demo and
-ordinary tests have no CLI dependency. No environment flag enables live execution.
+From the repository root, with the pinned Python dependencies available:
 
-The injectable `Runner` protocol supports process-free unit tests. The default
-`LiveRunner` always fails closed. The private process primitive also rejects every
-non-loopback endpoint, so calling it directly cannot reach a provider in P1B.
-The pinned Mac process is always wrapped in loopback-only Seatbelt by the primitive.
-Endpoint substitution and executable substitution exist only for explicit offline
-harnesses; there is no operator flag for either. P1C must deliberately replace this
-lock with durable reservation/preflight before wiring production execution.
+```sh
+python -m scripts.p1.operator --profile local_dev --transport openai_cli_local --offline
+```
+
+This converts invented in-memory output with `MockRunner`; it sends no provider
+request and does not initialize or reserve campaign state. `OperatorSelection` is
+separate from shared `Settings`, which rejects CLI adapter selection in every
+application profile. No environment flag enables application provider execution.
+
+`--preflight` inspects the separate campaign/admission boundary without reservation.
+Omitting `--offline` runs preflight and the general execution path, which remains
+blocked by admission requirements; it no longer returns the old `p1c_required`
+code. `--initialize` writes campaign state and is not a setup or test command to
+run against an existing campaign. See [campaign admission](p1-campaign.md).
+
+The default adapter `LiveRunner` fails closed. The process primitive normally
+permits only an offline loopback endpoint. The separate supervised probe can use
+its private fixed-origin TLS-tunnel path after admission; it is not a public endpoint
+override. The [probe runbook](p1-local-probe.md) owns private entry, exact preparation,
+one-use accounting and cleanup. Its readiness check can restore missing historical
+evidence and acquire the campaign lock, so it is not a side-effect-free docs check.
+
+## Source ownership
+
+| Source under `scripts/p1/` | Responsibility |
+|---|---|
+| `cli-contract.json`, `cli_check.py` | Pinned executable, digest and capability verification |
+| `cli_adapter.py` | Explicit selection, request serialization, strict response conversion |
+| `cli_process.py` | Restricted child environment, deadlines, bounded output and cleanup |
+| `operator.py` | Offline conversion, preflight and campaign initialization entry points |
+| `campaign.py`, `admission.py` | Durable journal, admission, source identity and retained debits |
+| `local_probe.py`, `probe_resume.py` | Exact prepared sample, fresh execution binding, private entry and single attempt |
+| `probe_transport.py` | One fixed-destination CONNECT tunnel carrying opaque TLS bytes |
+| `offline_*_check.py` | Explicit isolated process, serialization, redirect and probe harnesses |
+| `controlled_openai.py` | Historical HTTP/Whisper harness plus reused private-file/key helpers; its `live` command is blocked |
+
+The probe's source fingerprint covers Python/JSON under `scripts` and `packages`,
+`requirements.txt`, `pyproject.toml` and the fixed transcript-import fixture.
+`probe_resume.check` also validates prepared file hashes, runtime, sample and ledger.
+Documentation edits do not themselves requalify any prepared runtime or candidate.
+
+## Limitations and follow-up boundaries
+
+There is no automatic CLI-to-product import or live analysis loop. That product
+rehearsal needs its separately scoped P1D work. Provider account access, transcript
+quality, usage and billed cost are not established by offline tests. The tunnel
+cannot count encrypted same-origin redirect requests or guarantee a billing cap;
+see the probe's recorded limitations. Wider qualification and hosted deployment
+remain separate decisions; the CLI is not an implemented server transport.
+
+## Retained P1B offline evidence
+
+The following records describe P1B checks, not a new run against the current checkout.
+Later campaign redirect findings are in [P1C](p1-campaign.md); the narrow probe's
+explicit proxy/project environment is described in [its runbook](p1-local-probe.md).
 
 ## Serialization established with the actual pinned CLI
 
@@ -36,9 +79,9 @@ The command uses transcription, never translation.
 
 Each of success, HTTP 408/409/429/500, and dropped connection produced exactly one
 physical loopback upload. This runtime evidence supplements P1A's source inspection
-of zero upload retries; no adapter retries exist. Redirect behavior, other failures,
-actual account access, billing, response quality and provider behavior remain
-unproven. P1C must account for physical requests and ambiguous execution.
+of zero upload retries; no adapter retries exist. At that stage, redirect behavior and live provider behavior were unproven.
+Later offline redirect observations and ambiguous accounting are documented in
+[campaign admission](p1-campaign.md).
 
 ## Process guarantees and evidence distinctions
 
@@ -92,8 +135,8 @@ P1D's actual import/product rehearsal remains pending.
 
 Use the repository's pinned Python dependency image and source-matching disposable
 copy, as described in [CI reproduction](../continuous-integration.md). Host checks
-need an isolated Python environment containing the pinned requirements; the Mac
-Python 3.14.5 run is supplemental to required Docker Python 3.14.7 checks.
+need an isolated Python environment containing the pinned requirements; historical Mac
+Python 3.14.5 evidence does not establish the current host runtime.
 
 ```sh
 # Ordinary unit tests: no child processes in the P1B adapter tests.
@@ -112,7 +155,3 @@ Run lint, types, unit tests and generated-schema checks on final source. This sl
 also runs integration and smoke for the shared provenance schema. No UI code changed;
 browser qualification and P1D/P1E workflow work are not claimed. Keep all evidence
 private and clean up only attempt-owned resources. Never reuse the owner demo.
-
-## P1C accounting update
-
-See [P1C campaign admission](./p1-campaign.md) for current zero-request preflight, durable reservations, reconciliation and explicit live blocks. P1B/retired HTTP instructions above are historical where superseded. P1D reproducible product rehearsal is next; live verification remains P1F.

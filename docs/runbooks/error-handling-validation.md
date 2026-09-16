@@ -1,6 +1,6 @@
 # Error-handling implementation validation — 2026-09-06
 
-Historical record: provider/CLI experiments are now retired. Use [current documentation](../README.md) for supported commands.
+Historical record: this describes an earlier implementation and its validation. Use [current documentation](../README.md) for supported commands.
 
 Base: `5a59ead` (clean at entry). Changes remain uncommitted. These results cover
 the working source, not a frozen release or an owner-accepted candidate.

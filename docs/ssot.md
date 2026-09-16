@@ -1,9 +1,8 @@
 # Current implementation sources of truth
 
-P1 scope note: the application still uses offline fixture/import paths. A separate,
-explicitly invoked [generated-only P1 harness](runbooks/controlled-openai-p1.md) now implements controlled
-OpenAI verification. Statements below about retired provider tooling refer to the
-application and old SDK/CLI path; no application provider setting is re-enabled.
+The application remains offline. Separate host-only CLI tooling lives under
+`scripts/p1/`; see [operator boundaries](runbooks/p1-cli-adapter.md).
+The historical HTTP/Whisper harness is not the selected transport.
 
 This inventory describes the supported local synthetic system at the current repository head.
 The Desktop roadmap remains the sole planning source of truth; this document identifies runtime
@@ -20,7 +19,8 @@ Known callers: `apps/api/colacci_api/main.py`, API unit tests, browser and smoke
 Domain: configuration
 SSOT module/file: `packages/config/settings.py`
 Why this is authoritative: API, worker, migrations, scripts, and probes all instantiate the same
-typed fail-closed settings model.
+typed fail-closed application settings model. P1 operator selection and campaign/probe
+records are separate contracts under `scripts/p1/`.
 Known callers: API and worker entry points, Alembic, seed/evidence scripts, transcription commands.
 
 Domain: demo authentication
@@ -95,10 +95,13 @@ Known callers: none.
 
 ## Retired provider experiments
 
-The provider SDK, CLI process runner, preflights, execution factory, mock-provider harnesses,
-provider-only fixtures, settings and five generated metadata schemas have been removed. No
-provider credential or model selector is part of current configuration. `local_dev` supports
-fixture processing and strict invented-transcript verification only; `live_test` is invalid.
+The earlier application provider SDK, process runner, preflights, settings and generated
+metadata schemas were retired. The separate `scripts/p1/` CLI adapter, process runner,
+admission, campaign and probe are implemented; their owners are listed in the
+[operator guide](runbooks/p1-cli-adapter.md#source-ownership). No provider credential
+or model selector is part of shared application configuration. In `Settings`,
+`local_dev` supports fixture processing and strict invented-transcript verification;
+`live_test` is invalid.
 
 Historical migration files, the three media/provider metadata tables, and serialized review
 provenance enum values remain for data readability and existing retention operations. They are
