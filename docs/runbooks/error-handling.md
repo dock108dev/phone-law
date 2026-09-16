@@ -11,6 +11,11 @@ notifications require their separate authorization gates.
 Unexpected API exceptions produce HTTP 500 with
 `{"detail":{"error":"internal_error","correlation_id":"…"}}`. The response
 retains `X-Correlation-ID`, `Cache-Control: no-store` and security headers.
+Review and operations routes translate only explicit `ResourceNotFoundError` and
+`ResourceConflictError` repository outcomes into 404 and 409. These carry fixed
+content-free codes. Unexpected lookup/value errors, including stored-model
+validation failures, reach the sanitized 500 handler; their messages are never
+returned as conflict details. Invalid request models still return 422.
 Upload routes retain their specific sanitized error envelope. Expected input,
 permission, missing-receipt and conflict errors remain 4xx. Upload `KeyError`
 and `IndexError` are programming faults and produce 500, not a misleading 404.
@@ -74,6 +79,38 @@ Operations reports `available=false` and `exact=false` when no current daily
 report exists. Invalid persisted reconciliation counts fail the request instead
 of becoming zero-count success.
 
+## Host-only supervised probe failures
+
+The application stays offline. These rules apply only to the separately admitted
+`scripts.p1.local_probe` command, not automatic startup or background processing.
+
+- Execution failures emit `probe_execution_failed` with the same sanitized source
+  locations as application errors. Unexpected faults and keyboard interruption
+  stop the attempt without retrying or releasing its debit.
+- A failed reservation write is `reservation_state_unconfirmed`: an interrupted
+  append/fsync may have persisted a debit. It is not proof of no reservation.
+- Generated-media deletion is attempted even after execution failure. An OS
+  deletion failure emits `probe_media_cleanup_failed`; the outcome is still
+  written with `media_removed=false`, `status=cleanup_failed`, the original
+  `execution_status`, and any original failure code. A successful transcript is
+  not an overall successful command when cleanup is unconfirmed.
+- Failed outcome persistence emits `probe_outcome_write_failed`. The command
+  exits 2 with `execution_unconfirmed` and `provider_requests=null` when `run`
+  fails outside its saved outcome. Even if an outcome file exists, an interrupted
+  write/fsync does not establish its completeness or durability. Prerequisite
+  failures in `prepare`/`preflight` still report zero requests because those modes
+  cannot dispatch. The outer boundary emits `probe_command_failed` without raw
+  exception text.
+
+After an uncertain result, preserve the journal, head witness, one-use marker and
+any outcome files. Reconcile them through the existing campaign procedure before
+any separately authorized continuation. Do not delete a marker, refund a debit,
+repeat a request or infer zero usage from missing evidence. Inspect the generated
+media when deletion is unconfirmed. Billing and physical request counts remain
+unknown unless independently established. A source change invalidates the old
+prepared source identity; this maintenance pass does not refresh preparation or
+resume the paused probe.
+
 ## Incident response
 
 1. Capture the response correlation ID, status, current source revision, safe
@@ -122,7 +159,8 @@ Compose project label concurrently with campaign cleanup.
 Regression coverage includes repeated 500s, safe stack locations, worker errors,
 lookup classification, recovery-write failure, cleanup after provider success,
 pre-receipt cleanup, unreadable scan input, and interrupted/invalid web responses.
-See `error-handling-validation.md` for this implementation's actual results.
+See [the September 16 validation record](error-handling-validation-20260916.md)
+for this pass and `error-handling-validation.md` for historical results.
 
 Separate production work still needs alert routing, persistent metric storage,
 crash/stale-processing recovery, and firm-owned operational controls. This change

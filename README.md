@@ -45,6 +45,7 @@ isolated project. [Testing](docs/testing.md) explains focused gates and the sepa
 - `fixtures/`: deterministic invented inputs; `scripts/`: development and validation entry points.
 - [Documentation index](docs/README.md): setup, configuration, operations and security.
 - [Architecture](docs/architecture.md) and [source ownership](docs/ssot.md): how the system fits together.
+- [Failure handling](docs/runbooks/error-handling.md): safe errors, cleanup and incident response.
 - [Maintainer guide](docs/maintenance.md): change conventions and module boundaries.
 
 The sole roadmap and owner status live in

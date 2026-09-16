@@ -39,6 +39,7 @@ from packages.contracts.operations import (
     SafeStateCount,
 )
 from packages.contracts.report import DemoPrincipal, DemoPrincipalId, DemoRole
+from packages.database.errors import ResourceConflictError, ResourceNotFoundError
 from packages.database.review_schema import (
     analyses,
     audit_events,
@@ -209,7 +210,7 @@ class LocalOperationsRepository:
                     result="unchanged",
                     created_at=now,
                 )
-                raise ValueError("configuration_unchanged")
+                raise ResourceConflictError("configuration_unchanged")
             configuration_id = hashlib.sha256(
                 f"{int(latest['version']) + 1}:{content_hash}".encode()
             ).hexdigest()[:32]
@@ -509,9 +510,9 @@ class LocalOperationsRepository:
         with self.engine.begin() as connection:
             job = self._job(connection, job_id, lock=True)
             if job is None:
-                raise LookupError("deletion_job_not_found")
+                raise ResourceNotFoundError("deletion_job_not_found")
             if job.state is not DeletionState.RETRY_SCHEDULED:
-                raise ValueError("deletion_job_not_retryable")
+                raise ResourceConflictError("deletion_job_not_retryable")
             connection.execute(
                 retention_jobs.update()
                 .where(retention_jobs.c.id == job_id)
@@ -538,7 +539,7 @@ class LocalOperationsRepository:
         with self.engine.begin() as connection:
             job = self._job(connection, job_id, lock=True)
             if job is None:
-                raise LookupError("deletion_job_not_found")
+                raise ResourceNotFoundError("deletion_job_not_found")
             if job.state in {
                 DeletionState.DELETED,
                 DeletionState.DELETION_FAILED,

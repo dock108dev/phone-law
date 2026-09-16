@@ -16,6 +16,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from apps.api.colacci_api.body_limits import RequestBodyLimitMiddleware
 from apps.api.colacci_api.errors import error_response
 from apps.api.colacci_api.operations_routes import router as operations_router
+from apps.api.colacci_api.origin_boundary import MutationOriginMiddleware
 from apps.api.colacci_api.review_routes import router as review_router
 from apps.api.colacci_api.upload_routes import router as upload_router
 from packages.config import Settings
@@ -58,6 +59,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.add_middleware(
         RequestBodyLimitMiddleware, media_max_bytes=configured.media_max_bytes, logger=logger
+    )
+    app.add_middleware(
+        MutationOriginMiddleware, allowed_origins=configured.cors_origins, logger=logger
     )
     app.add_middleware(TrustedHostMiddleware, allowed_hosts=configured.trusted_hosts)
 

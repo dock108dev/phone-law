@@ -197,3 +197,15 @@ bytes, not positive provider TLS. Relay checks independently prove fixed destina
 one tunnel and opaque forwarding. P1B/P1C positive serialization/retry/redirect evidence
 is reused. No system trust changes or real provider connection occur in these checks.
 Normal startup/tests remain offline. Full P1D/P1E/P1F are deferred.
+
+
+## Error-handling maintenance — 2026-09-16
+
+Current source distinguishes uncertain reservation/outcome persistence from zero
+provider activity and records cleanup failure even after a usable transcript.
+See [failure handling](error-handling.md#host-only-supervised-probe-failures).
+A failed `run` command is not evidence of zero requests. Do not retry automatically.
+These changes alter the implementation identity. Retained preparation, sample,
+ledger and approvals are not modified by maintenance; reconcile the changed source
+and offline checks before fresh owner-local entry. The existing substantive owner
+approval is preserved; maintenance does not resume the probe.

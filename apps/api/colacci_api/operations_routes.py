@@ -20,6 +20,7 @@ from packages.contracts.operations import (
     RetentionRunResult,
 )
 from packages.contracts.report import DemoPrincipal
+from packages.database.errors import ResourceConflictError, ResourceNotFoundError
 from packages.database.local_operations import LocalOperationsRepository
 from packages.database.review_experience import ReviewExperienceRepository
 
@@ -88,7 +89,7 @@ def publish_configuration(
     )
     try:
         return _repository(request).publish_configuration(payload, principal=principal)
-    except ValueError as exc:
+    except ResourceConflictError as exc:
         raise api_error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
 
 
@@ -109,9 +110,9 @@ def retry_deletion(job_id: str, request: Request, principal: Principal) -> Delet
     _authorize(request, principal, action="deletion_retry")
     try:
         return _repository(request).retry_deletion(job_id, principal=principal)
-    except LookupError as exc:
+    except ResourceNotFoundError as exc:
         raise api_error(request, status.HTTP_404_NOT_FOUND, "deletion_job_not_found") from exc
-    except ValueError as exc:
+    except ResourceConflictError as exc:
         raise api_error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
 
 

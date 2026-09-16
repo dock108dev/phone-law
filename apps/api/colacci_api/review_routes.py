@@ -28,6 +28,7 @@ from packages.contracts.report import (
     ReviewEventCreate,
 )
 from packages.contracts.review import Finding, ProcessingState, Provenance, TranscriptSegment
+from packages.database.errors import ResourceConflictError, ResourceNotFoundError
 from packages.database.repository import ReviewRepository
 from packages.database.review_experience import ReviewExperienceRepository
 from packages.review.fixtures import FixtureCallSource
@@ -59,7 +60,7 @@ def month_history(year: int, month: int, request: Request, _: Principal) -> Mont
         raise api_error(request, status.HTTP_404_NOT_FOUND, "synthetic_month_not_found")
     try:
         return _repository(request).month_history(year, month)
-    except LookupError as exc:
+    except ResourceNotFoundError as exc:
         raise api_error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
 
 
@@ -154,9 +155,9 @@ def create_review(
         )
     try:
         return repository.add_review(analysis_id=analysis_id, request=payload, principal=principal)
-    except ValueError as exc:
+    except ResourceConflictError as exc:
         raise api_error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
-    except LookupError as exc:
+    except ResourceNotFoundError as exc:
         raise api_error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
 
 
@@ -268,9 +269,9 @@ def create_playbook_draft(
         )
     try:
         return repository.create_playbook_draft(request=draft, principal=principal)
-    except LookupError as exc:
+    except ResourceNotFoundError as exc:
         raise api_error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
-    except ValueError as exc:
+    except ResourceConflictError as exc:
         raise api_error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
 
 
@@ -296,9 +297,9 @@ def publish_playbook(
         )
     try:
         return repository.publish_playbook(version=version, principal=principal)
-    except LookupError as exc:
+    except ResourceNotFoundError as exc:
         raise api_error(request, status.HTTP_404_NOT_FOUND, str(exc)) from exc
-    except ValueError as exc:
+    except ResourceConflictError as exc:
         raise api_error(request, status.HTTP_409_CONFLICT, str(exc)) from exc
 
 

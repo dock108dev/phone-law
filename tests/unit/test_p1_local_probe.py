@@ -1,9 +1,11 @@
 """Synthetic admission checks: no process, credential acquisition or network."""
 
 import io
+import json
 import time
 import wave
 from dataclasses import asdict
+from pathlib import Path
 
 import pytest
 
@@ -153,9 +155,20 @@ def test_usage_never_retains_provider_strings():
 
 
 @pytest.mark.parametrize(
-    "failure", ["credential", "expired_during_entry", "timeout", "malformed", "success"]
+    "failure",
+    [
+        "credential",
+        "expired_during_entry",
+        "timeout",
+        "malformed",
+        "success",
+        "cleanup",
+        "timeout_cleanup",
+        "unexpected",
+        "outcome_write",
+    ],
 )
-def test_dispatch_order_retained_debit_and_cleanup(probe, monkeypatch, failure):
+def test_dispatch_order_retained_debit_and_cleanup(probe, monkeypatch, caplog, failure):
     from contextlib import contextmanager
     from types import SimpleNamespace
 
@@ -181,8 +194,10 @@ def test_dispatch_order_retained_debit_and_cleanup(probe, monkeypatch, failure):
 
     def dispatch(*args, **kwargs):
         assert campaign.state()[1] == "dispatched"
-        if failure == "timeout":
+        if failure in {"timeout", "timeout_cleanup"}:
             raise p.AdapterError("timeout")
+        if failure == "unexpected":
+            raise RuntimeError("private-failure-content")
         if failure == "malformed":
             return b"invalid"
         return b'{"text":"Hello","segments":[{"start":0,"end":1,"speaker":"A","text":"Hello"}]}'
@@ -190,8 +205,37 @@ def test_dispatch_order_retained_debit_and_cleanup(probe, monkeypatch, failure):
     monkeypatch.setattr(p, "terminal_credential", credential)
     monkeypatch.setattr(p, "fixed_tunnel", tunnel)
     monkeypatch.setattr(p, "_execute", dispatch)
+    if failure in {"cleanup", "timeout_cleanup"}:
+        unlink = Path.unlink
+
+        def failed_cleanup(target, *args, **kwargs):
+            if target == p.DIRECTORY / "generated.wav":
+                raise PermissionError("private-failure-content")
+            return unlink(target, *args, **kwargs)
+
+        monkeypatch.setattr(Path, "unlink", failed_cleanup)
+    if failure == "outcome_write":
+        create = p.create_private
+
+        def failed_write(target, raw):
+            if target.name.startswith("outcome-"):
+                raise OSError("private-failure-content")
+            return create(target, raw)
+
+        monkeypatch.setattr(p, "create_private", failed_write)
+        monkeypatch.setattr(p.sys, "argv", ["probe", "run", "--approval", str(path)])
+        assert p.main() == 2
+        assert campaign.state()[1] == "dispatched"
+        assert campaign.state()[0].requests == 3
+        assert "probe_outcome_write_failed" in caplog.text
+        assert "private-failure-content" not in caplog.text
+        return
     result = p.run(path)
-    assert result["media_removed"]
+    assert result["media_removed"] == (failure not in {"cleanup", "timeout_cleanup"})
+    saved = list(p.DIRECTORY.glob("outcome-*.json"))
+    assert len(saved) == 1
+    assert json.loads(saved[0].read_text()) == result
+    assert "private-failure-content" not in caplog.text
     assert campaign.state()[0].requests == 3
     assert campaign.state()[0].micro_usd == 560000
     assert (campaign.root / (p.SCOPE + ".used")).exists()
@@ -201,7 +245,16 @@ def test_dispatch_order_retained_debit_and_cleanup(probe, monkeypatch, failure):
     if failure == "expired_during_entry":
         assert result["provider_dispatch_attempts"] == 0
     assert result["verified_billed_micro_usd"] is None
-    if failure == "success":
+    if failure in {"cleanup", "timeout_cleanup"}:
+        assert result["status"] == "cleanup_failed"
+        assert result["execution_status"] == (
+            "observed_local_cli_success" if failure == "cleanup" else "stopped_debit_retained"
+        )
+        if failure == "timeout_cleanup":
+            assert result["code"] == "timeout"
+            assert "probe_execution_failed" in caplog.text
+        assert "probe_media_cleanup_failed" in caplog.text
+    elif failure == "success":
         assert result["status"] == "observed_local_cli_success"
     else:
         assert result["status"] == "stopped_debit_retained"
@@ -308,3 +361,34 @@ def test_resume_restores_only_missing_history_without_ledger_change(resume):
     assert r.check() == manifest
     assert historical.read_bytes() == b"history"
     assert campaign.state()[2] == before
+
+
+@pytest.mark.parametrize("mode", ["run", "preflight"])
+def test_command_failure_never_invents_zero_dispatch_after_run(monkeypatch, capsys, mode):
+    def fail(*args, **kwargs):
+        raise OSError("private-failure-content")
+
+    monkeypatch.setattr(p, "run", fail)
+    monkeypatch.setattr(p, "Campaign", fail)
+    monkeypatch.setattr(p.sys, "argv", ["probe", mode, "--approval", "invented.json"])
+    assert p.main() == 2
+    result = json.loads(capsys.readouterr().out)
+    assert result["provider_requests"] == (None if mode == "run" else 0)
+    assert result["status"] == ("execution_unconfirmed" if mode == "run" else "blocked")
+
+
+def test_reservation_write_failure_keeps_durable_state_unknown(probe, monkeypatch):
+    campaign, path, _ = probe
+    monkeypatch.setattr(p.sys.stdin, "isatty", lambda: True)
+    monkeypatch.setattr(p, "Campaign", lambda root: campaign)
+    monkeypatch.setattr(p, "verified_executable", lambda: path)
+
+    def interrupted_reservation(*args):
+        raise OSError("simulated fsync failure")
+
+    monkeypatch.setattr(campaign, "reserve", interrupted_reservation)
+    monkeypatch.setattr(p, "terminal_credential", lambda: pytest.fail("credential entry reached"))
+    result = p.run(path)
+    assert result["status"] == "reservation_state_unconfirmed"
+    assert result["provider_dispatch_attempts"] == 0
+    assert result["media_removed"]

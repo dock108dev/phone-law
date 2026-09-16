@@ -49,6 +49,7 @@ from packages.contracts.review import (
     StructuredAnalysis,
     Transcript,
 )
+from packages.database.errors import ResourceConflictError, ResourceNotFoundError
 from packages.database.model_hydration import validated_model
 from packages.database.review_schema import (
     analyses,
@@ -443,7 +444,7 @@ class ReviewExperienceRepository:
         for day_number in range(1, final_day + 1):
             report = self.report(date(year, month, day_number))
             if report is None:
-                raise LookupError("synthetic_month_not_found")
+                raise ResourceNotFoundError("synthetic_month_not_found")
             reports.append(report)
         previous_year, previous_month = (year - 1, 12) if month == 1 else (year, month - 1)
         next_year, next_month = (year + 1, 1) if month == 12 else (year, month + 1)
@@ -665,7 +666,7 @@ class ReviewExperienceRepository:
                 sa.select(analyses.c.original_payload).where(analyses.c.id == analysis_id)
             ).scalar_one_or_none()
             if payload is None:
-                raise LookupError("analysis_not_found")
+                raise ResourceNotFoundError("analysis_not_found")
             analysis = validated_model(StructuredAnalysis, payload)
             findings = {
                 item.finding_id
@@ -677,7 +678,7 @@ class ReviewExperienceRepository:
                 )
             }
             if request.finding_id is not None and request.finding_id not in findings:
-                raise LookupError("finding_not_found")
+                raise ResourceNotFoundError("finding_not_found")
             inserted = connection.execute(
                 insert(review_events)
                 .values(
@@ -712,7 +713,7 @@ class ReviewExperienceRepository:
                         "role": principal.role.value,
                     }.items()
                 ):
-                    raise ValueError("review_request_conflict")
+                    raise ResourceConflictError("review_request_conflict")
                 return event.model_copy(update={"created_at": existing["created_at"]})
             self._insert_audit(
                 connection,
@@ -911,9 +912,9 @@ class ReviewExperienceRepository:
                 .one_or_none()
             )
             if row is None:
-                raise LookupError("playbook_not_found")
+                raise ResourceNotFoundError("playbook_not_found")
             if row["status"] != PlaybookLifecycleState.DRAFT.value:
-                raise ValueError("playbook_not_draft")
+                raise ResourceConflictError("playbook_not_draft")
             connection.execute(
                 playbook_versions.update()
                 .where(playbook_versions.c.version == version)
@@ -954,13 +955,13 @@ class ReviewExperienceRepository:
                 .one_or_none()
             )
             if source is None:
-                raise LookupError("source_playbook_not_found")
+                raise ResourceNotFoundError("source_playbook_not_found")
             if connection.execute(
                 sa.select(playbook_versions.c.id).where(
                     playbook_versions.c.version == request.version
                 )
             ).scalar_one_or_none():
-                raise ValueError("playbook_version_exists")
+                raise ResourceConflictError("playbook_version_exists")
             cloned = validated_model(PlaybookVersion, source["structured_payload"]).model_copy(
                 update={
                     "playbook_id": hashlib.sha256(

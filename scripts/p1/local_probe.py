@@ -18,6 +18,7 @@ import wave
 from pathlib import Path
 from typing import Any
 
+from packages.observability.logging import OperationalLogger
 from packages.review.transcript_import import load_transcript_only_artifact
 
 from .admission import ROOT, implementation_identity
@@ -237,6 +238,8 @@ def run(approval: Path) -> dict[str, Any]:
         "physical_http_request_count": None,
     }
     reserved = False
+    reservation_attempted = False
+    logger = OperationalLogger("local_probe")
     try:
         with campaign.locked():
             request, record, debit = validate(campaign, approval)
@@ -245,6 +248,7 @@ def run(approval: Path) -> dict[str, Any]:
                 project_id=record["project_id"],
                 media_sha256=digest(request.media),
             )
+            reservation_attempted = True
             campaign.reserve(debit, record["source_sha256"])
             reserved = True
             create_private(
@@ -296,27 +300,37 @@ def run(approval: Path) -> dict[str, Any]:
                 outcome["campaign_hold"] = "physical_request_count_and_billed_cost_unverified"
             finally:
                 key = None
-    except (
-        AdapterError,
-        AdmissionError,
-        BlockedError,
-        OSError,
-        ValueError,
-        KeyError,
-        TypeError,
-        EOFError,
-        KeyboardInterrupt,
-    ) as exc:
-        outcome["status"] = "stopped_debit_retained" if reserved else "blocked_before_reservation"
+    except (Exception, KeyboardInterrupt) as exc:
+        # This operator boundary must sanitize even unexpected faults; never retry.
+        logger.exception("probe_execution_failed", exc, component="local_probe")
+        outcome["status"] = (
+            "stopped_debit_retained"
+            if reserved
+            else "reservation_state_unconfirmed"
+            if reservation_attempted
+            else "blocked_before_reservation"
+        )
         outcome["code"] = (
             exc.code
             if isinstance(exc, AdapterError)
             else (str(exc) if isinstance(exc, (AdmissionError, BlockedError)) else "local_failure")
         )
     finally:
-        (DIRECTORY / "generated.wav").unlink(missing_ok=True)
-        outcome["media_removed"] = not (DIRECTORY / "generated.wav").exists()
-        create_private(DIRECTORY / f"outcome-{time.time_ns()}.json", encoded(outcome))
+        try:
+            (DIRECTORY / "generated.wav").unlink(missing_ok=True)
+            outcome["media_removed"] = not (DIRECTORY / "generated.wav").exists()
+        except OSError as exc:
+            logger.exception("probe_media_cleanup_failed", exc, component="local_probe")
+            outcome["media_removed"] = False
+        if not outcome["media_removed"]:
+            outcome["execution_status"] = outcome["status"]
+            outcome["status"] = "cleanup_failed"
+            outcome["cleanup_code"] = "generated_media_deletion_unconfirmed"
+        try:
+            create_private(DIRECTORY / f"outcome-{time.time_ns()}.json", encoded(outcome))
+        except Exception as exc:
+            logger.exception("probe_outcome_write_failed", exc, component="local_probe")
+            raise
     return outcome
 
 
@@ -361,18 +375,22 @@ def main() -> int:
         outcome = run(args.approval)
         print(json.dumps(outcome, sort_keys=True))
         return 0 if outcome["status"] == "observed_local_cli_success" else 2
-    except (
-        OSError,
-        ValueError,
-        KeyError,
-        TypeError,
-        AdmissionError,
-        subprocess.SubprocessError,
-        wave.Error,
-    ):
+    except (Exception, KeyboardInterrupt) as exc:
+        OperationalLogger("local_probe").exception(
+            "probe_command_failed", exc, component="local_probe"
+        )
+        # Once run was requested, an escaped failure may follow dispatch or fsync.
+        # Missing evidence never proves that no provider request occurred.
+        execution = args.mode == "run"
         print(
             json.dumps(
-                {"status": "blocked", "provider_requests": 0, "code": "probe_prerequisite_unmet"}
+                {
+                    "status": "execution_unconfirmed" if execution else "blocked",
+                    "provider_requests": None if execution else 0,
+                    "code": "probe_execution_unconfirmed"
+                    if execution
+                    else "probe_prerequisite_unmet",
+                }
             )
         )
         return 2

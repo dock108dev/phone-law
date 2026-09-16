@@ -113,3 +113,15 @@ private records and local entry, not `.env` keys. See [the adapter guide](runboo
 
 Generated media remains bounded to local synthetic roots. Historical database and
 provenance compatibility do not enable execution.
+
+## Browser mutation origins
+
+API mutation requests with an `Origin` header must match an exact `CORS_ORIGINS`
+entry or the request's own scheme/Host/port. Duplicate, null, empty or unmatched
+origins receive a content-free 403 before body parsing or route side effects.
+Trusted-host validation runs first. The local Vite proxy preserves the original
+Host, including isolated demo ports. Add the exact browser origin to
+`CORS_ORIGINS` when using a separate direct API origin; do not use a wildcard.
+Origin-less CLI requests still require normal route authorization. This browser
+defense does not authenticate native clients and does not enable hosted use.
+See [the hardening record](security/hardening-20260916.md).
